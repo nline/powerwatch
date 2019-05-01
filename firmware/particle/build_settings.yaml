@@ -2,84 +2,115 @@ build:
   - name: ghana
     folder: plugwatch_C/firmware
     product_id: 7008
+    apn: "iot-eu.aeris.net"
     output: build
   - name: predeploy
     folder: plugwatch_C/predeploy_firmware
     product_id: 7008
+    apn: "iot-eu.aeris.net"
     output: ../../deployment-tools/provision
   - name: ghana
     folder: plugwatch_C/firmware
     product_id: 7009
+    apn: "iot-eu.aeris.net"
     output: build
   - name: predeploy
     folder: plugwatch_C/predeploy_firmware
     product_id: 7009
+    apn: "iot-eu.aeris.net"
     output: ../../deployment-tools/provision
   - name: ghana
     folder: plugwatch_F/firmware
     product_id: 7010
+    apn: "iot-eu.aeris.net"
     output: build
   - name: predeploy
     folder: plugwatch_F/predeploy_firmware
     product_id: 7010
+    apn: "iot-eu.aeris.net"
     output: ../../deployment-tools/provision
   - name: ghana
     folder: plugwatch_F/firmware
     product_id: 7011
+    apn: "iot-eu.aeris.net"
     output: build
   - name: predeploy
     folder: plugwatch_F/predeploy_firmware
     product_id: 7011
+    apn: "iot-eu.aeris.net"
     output: ../../deployment-tools/provision
   - name: ghana
     folder: plugwatch_F/firmware
     product_id: 8462
+    apn: "iot-eu.aeris.net"
     output: build
   - name: predeploy
     folder: plugwatch_F/predeploy_firmware
     product_id: 8462
+    apn: "iot-eu.aeris.net"
     output: ../../deployment-tools/provision
   - name: ghana
     folder: plugwatch_F/firmware
     product_id: 8797
+    apn: "iot-eu.aeris.net"
     output: build
   - name: predeploy
     folder: plugwatch_F/predeploy_firmware
-    product_id: 8798
+    product_id: 8797
+    apn: "iot-eu.aeris.net"
     output: ../../deployment-tools/provision
   - name: testbed
     folder: plugwatch_C/firmware
     product_id: 7456
+    apn: "iot.aeris.net"
     output: build
   - name: testbed
     folder: plugwatch_F/firmware
     product_id: 8379
+    apn: "iot.aeris.net"
     output: build
   - name: predeploy
     folder: plugwatch_C/predeploy_firmware
     product_id: 7456
+    apn: "iot.aeris.net"
     output: ../../deployment-tools/provision
   - name: predeploy
     folder: plugwatch_F/predeploy_firmware
     product_id: 8379
+    apn: "iot.aeris.net"
     output: ../../deployment-tools/provision
   - name: venezuela
     folder: plugwatch_C/firmware
     product_id: 7233
+    apn: "iot-eu.aeris.net"
+    output: build
+  - name: venezuela
+    folder: plugwatch_F/firmware
+    product_id: 9394
+    apn: "iot-eu.aeris.net"
     output: build
   - name: nigeria
     folder: plugwatch_C/firmware
     product_id: 7641
+    apn: "iot-eu.aeris.net"
     output: build
   - name: jay
     folder: plugwatch_F/firmware
     product_id: 8605
+    apn: "iot-eu.aeris.net"
     output: build
   - name: india
     folder: plugwatch_F/firmware
     product_id: 8604
+    apn: "iot-eu.aeris.net"
     output: build
   - name: sierra-leone
     folder: plugwatch_F/firmware
     product_id: 8776
+    apn: "iot-eu.aeris.net"
+    output: build
+  - name: kenya-test
+    folder: plugwatch_F/firmware
+    product_id: 9393
+    apn: "iot-eu.aeris.net"
     output: build
