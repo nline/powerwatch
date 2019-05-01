@@ -49,12 +49,18 @@
 int product_id = PRODUCT;
 PRODUCT_ID(PRODUCT);
 #else
-int product_id = 8462;
-PRODUCT_ID(8462);
+int product_id = 8379;
+PRODUCT_ID(8379);
 #endif
 
-int version_int = 108; 
-PRODUCT_VERSION(108);
+#ifdef AERIS_APN
+#define AERIS_APN_LOC AERIS_APN
+#else
+#define AERIS_APN_LOC "iot-eu.aeris.net"
+#endif
+
+int version_int = 111; 
+PRODUCT_VERSION(111);
 
 SYSTEM_THREAD(ENABLED);
 STARTUP(System.enableFeature(FEATURE_RESET_INFO));
@@ -122,11 +128,9 @@ auto gpsSubsystem = Gps();
 //***********************************
 //* System Events
 //***********************************
-retained char event_log_name[50];
-auto EventLog = FileLog(SD, "event_log.txt", event_log_name);
+auto EventLog = FileLog(SD, "event_log.txt");
 std::queue<String> EventQueue;
 std::queue<String> CloudQueue;
-std::deque<String> DataDeque;
 
 //***********************************
 //* Battery check
@@ -138,7 +142,8 @@ unsigned long last_cloud_event = 0;
 //* System Data
 //***********************************
 retained char data_log_name[50];
-auto DataLog = FileLog(SD, "data_log.txt", data_log_name);
+auto DataLog = FileLog(SD, "data_log.txt");
+auto DataDequeue = FileLog(SD, "data_dequeue.txt");
 unsigned long last_logging_event  = 0;
 
 //***********************************
@@ -168,7 +173,123 @@ void handle_all_system_events(system_event_t event, int param) {
     network_state = param;
   }
 
-  Serial.printlnf("got event H: %lu event L: %lu with value %d", (uint32_t)(event>>32), (uint32_t)event, param);
+  String event_type;
+  String event_param;
+
+  switch((uint32_t) event) {
+  case setup_begin:
+    event_type = "setup_begin";
+  break;
+  case setup_update:
+    event_type = "setup_update";
+  break;
+  case setup_end:
+    event_type = "setup_end";
+  break;
+  case network_credentials:
+    event_type = "network_credentials";
+    switch(param) {
+    case network_credentials_added:
+      event_param = "added";
+    break;
+    case network_credentials_cleared:
+      event_param = "cleared";
+    break;
+    }
+  break;
+  case network_status:
+    event_type = "network_status";
+    switch(param) {
+    case network_status_powering_on:
+      event_param = "network_status_powering_on";
+    break;
+    case network_status_on:
+      event_param = "on";
+    break;
+    case network_status_powering_off:
+      event_param = "powering_off";
+    break;
+    case network_status_off:
+      event_param = "off";
+    break;
+    case network_status_connecting:
+      event_param = "connecting";
+    break;
+    case network_status_connected: 
+      event_param = "connected";
+    break;
+    }
+  break;
+  case cloud_status:
+    event_type = "cloud_status";
+    switch(param) {
+    case cloud_status_disconnecting:
+      event_param = "disconnecting";
+    break;
+    case cloud_status_disconnected: 
+      event_param = "disconnected";
+    break;
+    case cloud_status_connecting:
+      event_param = "connecting";
+    break;
+    case cloud_status_connected: 
+      event_param = "connected";
+    break;
+    }
+  break;
+  case button_status:
+    event_type = "button_status";
+  break;
+  case firmware_update:
+    event_type = "firmware_update";
+    switch(param) {
+    case firmware_update_begin:
+      event_param = "begin";
+    break;
+    case firmware_update_progress: 
+      event_param = "progress";
+    break;
+    case firmware_update_complete:
+      event_param = "complete";
+    break;
+    case firmware_update_failed: 
+      event_param = "failed";
+    break;
+    }
+  break;
+  case firmware_update_pending:
+    event_type = "firmware_update_pending";
+  break;
+  case reset_pending:
+    event_type = "reset_pending";
+  break;
+  case reset:
+    event_type = "reset";
+  break;
+  case button_click:
+    event_type = "button_click";
+  break;
+  case button_final_click:
+    event_type = "button_final_click";
+  break;
+  case time_changed:
+    event_type = "time_changed";
+    switch(param) {
+    case time_changed_manually:
+      event_param = "manual";
+    break;
+    case time_changed_sync:
+      event_param = "sync";
+    break;
+    }
+  break;
+  case low_battery:
+    event_type = "low_battery";
+  break;
+  }
+
+
+  Serial.printlnf("got event %s with param %s", event_type.c_str(), event_param.c_str());
   String system_event_str = String((int)event) + "|" + String(param);
   String time_str = String(Time.format(Time.now(), TIME_FORMAT_ISO8601_FULL));
   last_system_event_time = time_str;
@@ -255,7 +376,7 @@ const APNHelperAPN apns[7] = {
   {"8958021", "gprsweb.digitel.ve"},
   {"8958021", "internet.digitel.ve"},
   {"8923400", "9mobile"},
-  {"8918500", "iot-eu.aer.net"}
+  {"8918500", AERIS_APN_LOC}
 };
 APNHelper apnHelper(apns, sizeof(apns)/sizeof(apns[0]));
 
@@ -267,6 +388,7 @@ int reset_state(String cmd) {
   state = CheckCloudEvent;
   lastState = Wait;
   System.reset();
+  return 0;
 }
 
 //***********************************
@@ -319,12 +441,6 @@ void setup() {
   //Timesync
   timeSyncSubsystem.setup();
 
-  if(uCmd.setSMSMode(1) == RESP_OK) {
-    Serial.println("Set up SMS mode");
-  } else {
-    handle_error("SMS Mode failed", false);
-  }
-
   LEDStatus status;
   status.off();
 
@@ -367,7 +483,7 @@ void manageStateTimer(unsigned long period) {
 
 //This structure is what all of the drivers will return. It will
 //be packetized and send to the cloud in the sendPacket state
-#define RESULT_LEN 80
+#define RESULT_LEN 100
 struct ResultStruct {
   char chargeStateResult[RESULT_LEN];
   char mpuResult[RESULT_LEN];
@@ -471,7 +587,7 @@ void loop() {
               Serial.println("Particle cloud connection failed");
               //Stop trying to connect to the cloud
               Particle.disconnect();
-               //0 is the disconnected state
+              //0 is the disconnected state
               while(cloud_state != 0) {
                 Particle.process();
               };
@@ -623,7 +739,7 @@ void loop() {
 
     case SenseSDPresent: {
       //This should just be a GPIO pin
-      manageStateTimer(1000);
+      manageStateTimer(10000);
 
       LoopStatus result = SD.loop();
 
@@ -659,8 +775,10 @@ void loop() {
     }
 
     case UpdateSystemStat: {
-      manageStateTimer(1000);
+      manageStateTimer(10000);
+      Serial.println("Writing system stats");
       snprintf(sensingResults.systemStat, RESULT_LEN-1, "%lu|%s|%u", system_cnt, shield_id.c_str(), reboot_cnt);
+      Serial.println("Transitioning to next state");
       state = nextState(state);
       break;
     }
@@ -671,16 +789,16 @@ void loop() {
       SD.PowerOn();
 
       //We should get the sd stat before logging the packet to the sd card
-      int size = DataLog.getFileSize();
+      int size = DataLog.getRotatedFileSize(Time.now());
       if(size == -1) {
         handle_error("Data logging size error", false);
       } else {
-        snprintf(sensingResults.SDstat, RESULT_LEN-1, "%d|%d|%s", sd_cnt, size, DataLog.getCurrentName().c_str());
+        snprintf(sensingResults.SDstat, RESULT_LEN-1, "%u|%d", sd_cnt, size);
       }
 
       String packet = stringifyResults(sensingResults);
-      if(DataLog.append(packet)) {
-        handle_error("Data logging error", true);
+      if(DataLog.appendAndRotate(packet, Time.now())) {
+        handle_error("Data logging error", false);
       } else {
         sd_cnt++;
         last_logging_event = millis();
@@ -691,86 +809,107 @@ void loop() {
     }
 
     case SendPacket: {
-      manageStateTimer(40000);
+      manageStateTimer(60000);
 
       static int count = 0;
-
+     
+      String packet = "";
       if(count == 0) {
-        String packet = stringifyResults(sensingResults);
-
-        // Add the packet to the data queue
-        if(DataDeque.size() < 200) {
-          DataDeque.push_front(packet);
-        } else {
-          DataDeque.pop_back();
-          DataDeque.push_front(packet);
-        }
+        packet = stringifyResults(sensingResults);
+      } else {
+        packet = DataDequeue.getLastLine();
       }
-      count++;
 
-
-      Serial.printlnf("Data Queue size %d",DataDeque.size());
-
+      Serial.print("Attempting to write: ");
+      Serial.print(packet.c_str());
+      Serial.print(" on attempt ");
+      Serial.println(count);
+      
       if(Particle.connected()) {
-        if(!DataDeque.empty() && count < 5) {
+        Serial.println("Particle connected");
+        if(packet != "" && count < 4) {
 
-          Serial.printlnf("Sending data - size %d",DataDeque.size());
-          String toSend = DataDeque.front();
+          if(packet.length() > 240) {
+            if(!Cloud::Publish("g",packet.substring(0,240))) {
+              //log the packet because it failed to send
 
-          if(toSend.length() > 240) {
-            if(!Cloud::Publish("g",toSend.substring(0,240))) {
-              handle_error("Data publishing error", true);
+              Serial.println("Failed to send packet. Appending to dequeue.");
+              DataDequeue.append(packet);
+
+              handle_error("Data publishing error", false);
             } else {
-              if(!Cloud::Publish("g",toSend.substring(240))) {
-                handle_error("Data publishing error", true);
-              } else {
-                DataDeque.pop_front();
+              Serial.println("Sent packet successfully");
+              if(count != 0) {
+                Serial.println("This was from the dequeue, so removing");
+                //this came from the dequeue and sent
+                //so remove the last line
+                DataDequeue.removeLastLine();
               }
             }
           } else {
-            if(!Cloud::Publish("g",toSend)) {
-              handle_error("Data publishing error", true);
+            if(!Cloud::Publish("g",packet)) {
+              //log the packet because it failed to send
+              Serial.println("Failed to send packet. Appending to dequeue.");
+              DataDequeue.append(packet);
+
+              handle_error("Data publishing error", false);
             } else {
-              DataDeque.pop_front();
+              Serial.println("Sent packet successfully");
+              if(count != 0) {
+                Serial.println("This was from the dequeue, so removing");
+                //this came from the dequeue and sent
+                //so remove the last line
+                DataDequeue.removeLastLine();
+              }
+
               last_cloud_event = millis();
             }
           }
         } else {
+          //great our log is empty!
+          Serial.println("Log empty or count too high");
           count = 0;
           state = nextState(state);
         }
-
       } else {
-        handle_error("Data publishing error", true);
+        //add the packet to the queue
+        Serial.println("Particle not connected");
+        if(count == 0) {
+          Serial.println("appending packet to the dequeue");
+          DataDequeue.append(packet);
+        }
+
+        handle_error("Data publishing error", false);
         count = 0;
         state = nextState(state);
+      }
+      
+      if(state == SendPacket) {
+        count++;
       }
 
       break;
     }
 
     case SendUDP: {
-      manageStateTimer(40000);
+      manageStateTimer(60000);
 
       static int count = 0;
       count++;
 
-      Serial.printlnf("Data Queue size %d",DataDeque.size());
-
-      if(Cellular.ready()) {
+      if(Cellular.ready() && !Particle.connected()) {
         UDP udp;
 
         if(udp.begin(8888) != true) {
           Serial.println("UDP Begin error");
         }
 
-        if(!DataDeque.empty() && count < 5) {
+        String packet = DataDequeue.getLastLine();
 
-          Serial.printlnf("Sending data - size %d",DataDeque.size());
-          String toSend = DataDeque.front();
+        if(packet != "" && count < 4) {
 
           //construct some json
-          String data = "\"data\": \"" + toSend + "\", ";
+          String data = "\"data\": \"" + packet + "\", ";
           String version = "\"version\": " + String(version_int) + ", ";
           String product = "\"productID\": " + String(product_id) + ", ";
           String core = "\"coreid\": \"" + System.deviceID() + "\"";
@@ -797,34 +936,38 @@ void loop() {
             handle_error("Data publishing error", false);
             Serial.printlnf("Got error code: %d",r);
           } else {
-            DataDeque.pop_front();
+            DataDequeue.removeLastLine();
             last_cloud_event = millis();
           }
 
         } else {
+          //great our log is empty
           count = 0;
           state = nextState(state);
         }
 
         udp.stop();
+
       } else {
         handle_error("Data publishing error", false);
         count = 0;
         state = nextState(state);
       }
 
+      count++;
+
       break;
     }
 
     case LogError: {
-      manageStateTimer(30000);
+      manageStateTimer(60000);
       static int count = 0;
 
       SD.PowerOn();
       if(!EventQueue.empty() && count < 4) {
         count++;
         if(EventLog.append(EventQueue.front())) {
-          handle_error("Event logging error", true);
+          handle_error("Event logging error", false);
         } else {
           EventQueue.pop();
         }
@@ -837,7 +980,7 @@ void loop() {
     }
 
     case SendError: {
-      manageStateTimer(30000);
+      manageStateTimer(60000);
       static int count = 0;
 
       if(Particle.connected()) {
@@ -857,72 +1000,14 @@ void loop() {
       break;
     }
 
-    /*case CheckSMS: {
-      manageStateTimer(120000);
-
-      SINGLE_THREADED_BLOCK() {
-        if(uCmd.checkMessages(10000) == RESP_OK) {
-          uCmd.smsPtr = uCmd.smsResults;
-          Serial.printlnf("Got %d messages",uCmd.numMessages);
-          bool first = true;
-
-          for(unsigned int i = 0; i < uCmd.numMessages; i++) {
-            Serial.printlnf("Got message: %s from %s",uCmd.smsPtr->sms,uCmd.smsPtr->phone);
-            String message = String(uCmd.smsPtr->sms);
-            String phone = String(uCmd.smsPtr->phone);
-
-            // Delete the message
-            if(uCmd.deleteMessage(uCmd.smsPtr->mess,10000) == RESP_OK) {
-              Serial.println("Deleted message");
-            } else {
-              Serial.println("Error deleting message");
-            }
-
-            if(first) {
-              // Respond to the message
-              first = false;
-              if(message == "!Status") {
-                Serial.println("About to send status response");
-                String packet = stringifyResults(sensingResults);
-                if(!uCmd.sendMessage((char*)packet.substring(0,100).c_str(), (char*)phone.c_str(), 10000) == RESP_OK) {
-                  Serial.println("Error sending message");
-                }
-                if(!uCmd.sendMessage((char*)packet.substring(100,200).c_str(), (char*)phone.c_str(), 10000) == RESP_OK) {
-                  Serial.println("Error sending message");
-                }
-                if(packet.length() > 200) {
-                  if(!uCmd.sendMessage((char*)packet.substring(200).c_str(), (char*)phone.c_str(), 10000) == RESP_OK) {
-                    Serial.println("Error sending message");
-                  }
-                }
-              } else if(message == "!Reset") {
-                Serial.println("About to send reset response");
-                char stat[140] = "ACK";
-                if(!uCmd.sendMessage(stat, (char*)phone.c_str(), 10000) == RESP_OK) {
-                  Serial.println("Error sending message");
-                }
-                delay(10000);
-                reset_helper();
-              }
-            }
-          }
-
-          state = nextState(state);
-        } else {
-          handle_error("SMS Check error", false);
-          state = nextState(state);
-        }
-      }
-
-      break;
-    }*/
-
     case Wait: {
       manageStateTimer(1200000);
 
       static bool first = false;
+
       static unsigned long mill = 0;
       if(!first) {
+        Serial.println("Looping in wait state");
         mill = millis();
         first = true;
         SD.PowerOff();
@@ -940,6 +1025,7 @@ void loop() {
         delay(1000);
         digitalWrite(DAC, LOW);
       }
+
       break;
     }
 
@@ -958,7 +1044,13 @@ void loop() {
 void soft_watchdog_reset() {
   //reset_flag = true; //let the reset subsystem shutdown gracefully
   //TODO change to system reset after a certain number of times called
-  System.reset();
+
+  //This function won't work from an ISR??
+  //System.reset();
+  
+  //Rick suggests this one
+  Serial.println("Trying to reset");
+  System.sleep(SLEEP_MODE_DEEP, 60);
 }
 
 String id() {
