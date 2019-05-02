@@ -37,7 +37,7 @@ if(not os.path.isdir('./gen')):
 
 print("")
 print("Printing stickers...")
-def print_small(args.core,args.shield):
+def print_small(particle_id,shield_id):
 
     img = Image.new('L', (100, 450), "white")
     qr_basewidth = 80
@@ -133,5 +133,5 @@ def print_case(particle_id, shield_id):
     os.system('brother_ql_create --model QL-800 ./gen/case_logo_gen.png -r 90 > ./gen/'+str(particle_id) + ":" + str(shield_id)+'.bin')
     os.system('brother_ql_print --backend pyusb ./gen/'+str(particle_id) + ":" + str(shield_id) + '.bin')
 
-print_case(particle_id,shield_id)
-print_small(particle_id,shield_id)
+print_case(args.core,args.shield)
+print_small(args.core,args.shield)
