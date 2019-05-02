@@ -56,11 +56,11 @@ PRODUCT_ID(8379);
 #ifdef AERIS_APN
 #define AERIS_APN_LOC AERIS_APN
 #else
-#define AERIS_APN_LOC "iot-eu.aeris.net"
+#define AERIS_APN_LOC "iot-eu.aer.net"
 #endif
 
-int version_int = 111; 
-PRODUCT_VERSION(111);
+int version_int = 112; 
+PRODUCT_VERSION(112);
 
 SYSTEM_THREAD(ENABLED);
 STARTUP(System.enableFeature(FEATURE_RESET_INFO));
