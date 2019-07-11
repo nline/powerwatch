@@ -21876,6 +21876,16 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <wire x1="0.75" y1="0.55" x2="0.75" y2="0.75" width="0.127" layer="21"/>
 <wire x1="0.75" y1="0.75" x2="0.55" y2="0.75" width="0.127" layer="21"/>
 </package>
+<package name="LED-0603">
+<wire x1="0.46" y1="0.17" x2="0" y2="0.17" width="0.2032" layer="21"/>
+<wire x1="-0.46" y1="0.17" x2="0" y2="0.17" width="0.2032" layer="21"/>
+<wire x1="0" y1="0.17" x2="0.2338" y2="-0.14" width="0.2032" layer="21"/>
+<wire x1="-0.0254" y1="0.1546" x2="-0.2184" y2="-0.14" width="0.2032" layer="21"/>
+<smd name="C" x="0" y="0.75" dx="0.8" dy="0.8" layer="1"/>
+<smd name="A" x="0" y="-0.75" dx="0.8" dy="0.8" layer="1"/>
+<text x="-0.6985" y="0" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center">&gt;NAME</text>
+<text x="0.8255" y="0" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="top-center">&gt;VALUE</text>
+</package>
 </packages>
 <symbols>
 <symbol name="LED_TRICOLOR">
@@ -21933,6 +21943,25 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <wire x1="-0.508" y1="-0.508" x2="-0.508" y2="0.508" width="0.254" layer="94"/>
 <wire x1="-0.508" y1="-3.302" x2="-0.508" y2="-2.032" width="0.254" layer="94"/>
 </symbol>
+<symbol name="LED">
+<wire x1="-0.889" y1="0" x2="-0.889" y2="-1.016" width="0.254" layer="94"/>
+<wire x1="-0.889" y1="-1.016" x2="0.762" y2="0" width="0.254" layer="94"/>
+<wire x1="0.762" y1="0" x2="-0.889" y2="1.016" width="0.254" layer="94"/>
+<wire x1="-0.889" y1="1.016" x2="-0.889" y2="0" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="0" x2="-0.889" y2="0" width="0.1524" layer="94"/>
+<wire x1="0.762" y1="0" x2="2.54" y2="0" width="0.1524" layer="94"/>
+<wire x1="0.762" y1="-0.508" x2="0.762" y2="0" width="0.254" layer="94"/>
+<pin name="ANODE" x="-2.54" y="0" visible="off" length="point"/>
+<wire x1="0.762" y1="0" x2="0.762" y2="0.508" width="0.254" layer="94"/>
+<pin name="CATHODE" x="2.54" y="0" visible="off" length="point"/>
+<text x="0" y="1.905" size="1.778" layer="95" ratio="12" align="bottom-center">&gt;NAME</text>
+<text x="0" y="-3.175" size="1.778" layer="96" ratio="12" align="bottom-center">&gt;VALUE</text>
+<wire x1="-0.254" y1="1.016" x2="1.016" y2="1.524" width="0.127" layer="94"/>
+<wire x1="1.016" y1="1.524" x2="0.762" y2="1.016" width="0.127" layer="94"/>
+<wire x1="0.762" y1="1.016" x2="1.778" y2="1.524" width="0.127" layer="94"/>
+<wire x1="1.778" y1="1.524" x2="1.397" y2="1.651" width="0.127" layer="94"/>
+<wire x1="1.778" y1="1.524" x2="1.651" y2="1.143" width="0.127" layer="94"/>
+</symbol>
 </symbols>
 <devicesets>
 <deviceset name="SML-LX0404SIUPGUSB" prefix="D">
@@ -21954,6 +21983,23 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <attribute name="MANUFACTURER" value="Lumex Opto" constant="no"/>
 <attribute name="MPN" value="SML-LX0404SIUPGUSB" constant="no"/>
 </technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="LED" prefix="D">
+<description>LED</description>
+<gates>
+<gate name="G$1" symbol="LED" x="0" y="0"/>
+</gates>
+<devices>
+<device name="0603" package="LED-0603">
+<connects>
+<connect gate="G$1" pin="ANODE" pad="A"/>
+<connect gate="G$1" pin="CATHODE" pad="C"/>
+</connects>
+<technologies>
+<technology name=""/>
 </technologies>
 </device>
 </devices>
@@ -22386,6 +22432,378 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 </deviceset>
 </devicesets>
 </library>
+<library name="SparkFun-Capacitors">
+<description>&lt;h3&gt;SparkFun Electronics' preferred foot prints&lt;/h3&gt;
+In this library you'll find resistors, capacitors, inductors, test points, jumper pads, etc.&lt;br&gt;&lt;br&gt;
+We've spent an enormous amount of time creating and checking these footprints and parts, but it is the end user's responsibility to ensure correctness and suitablity for a given componet or application. If you enjoy using this library, please buy one of our products at www.sparkfun.com.
+&lt;br&gt;&lt;br&gt;
+&lt;b&gt;Licensing:&lt;/b&gt; CC v3.0 Share-Alike You are welcome to use this library for commercial purposes. For attribution, we ask that when you begin to sell your device using our footprint, you email us with a link to the product being sold. We want bragging rights that we helped (in a very small part) to create your 8th world wonder. We would like the opportunity to feature your device on our homepage.</description>
+<packages>
+<package name="1206">
+<wire x1="-2.473" y1="0.983" x2="2.473" y2="0.983" width="0.0508" layer="39"/>
+<wire x1="2.473" y1="-0.983" x2="-2.473" y2="-0.983" width="0.0508" layer="39"/>
+<wire x1="-2.473" y1="-0.983" x2="-2.473" y2="0.983" width="0.0508" layer="39"/>
+<wire x1="2.473" y1="0.983" x2="2.473" y2="-0.983" width="0.0508" layer="39"/>
+<wire x1="-0.965" y1="0.787" x2="0.965" y2="0.787" width="0.1016" layer="51"/>
+<wire x1="-0.965" y1="-0.787" x2="0.965" y2="-0.787" width="0.1016" layer="51"/>
+<smd name="1" x="-1.4" y="0" dx="1.6" dy="1.8" layer="1"/>
+<smd name="2" x="1.4" y="0" dx="1.6" dy="1.8" layer="1"/>
+<text x="-1.27" y="1.143" size="0.4064" layer="25">&gt;NAME</text>
+<text x="-1.397" y="-1.524" size="0.4064" layer="27">&gt;VALUE</text>
+<rectangle x1="-1.7018" y1="-0.8509" x2="-0.9517" y2="0.8491" layer="51"/>
+<rectangle x1="0.9517" y1="-0.8491" x2="1.7018" y2="0.8509" layer="51"/>
+<rectangle x1="-0.1999" y1="-0.4001" x2="0.1999" y2="0.4001" layer="35"/>
+</package>
+<package name="CAP-PTH-SMALL">
+<wire x1="1.27" y1="0.635" x2="1.27" y2="-0.635" width="0.2032" layer="21"/>
+<pad name="1" x="0" y="0" drill="0.7" diameter="1.651"/>
+<pad name="2" x="2.54" y="0" drill="0.7" diameter="1.651"/>
+<text x="0.508" y="1.27" size="0.4064" layer="25">&gt;Name</text>
+<text x="0.254" y="-1.524" size="0.4064" layer="27">&gt;Value</text>
+</package>
+<package name="CAP-PTH-SMALL2">
+<wire x1="1.27" y1="0.635" x2="1.27" y2="-0.635" width="0.2032" layer="21"/>
+<wire x1="-1.27" y1="1.27" x2="3.81" y2="1.27" width="0.2032" layer="21"/>
+<wire x1="3.81" y1="1.27" x2="3.81" y2="-1.27" width="0.2032" layer="21"/>
+<wire x1="3.81" y1="-1.27" x2="-1.27" y2="-1.27" width="0.2032" layer="21"/>
+<wire x1="-1.27" y1="-1.27" x2="-1.27" y2="1.27" width="0.2032" layer="21"/>
+<pad name="1" x="0" y="0" drill="0.7" diameter="1.651"/>
+<pad name="2" x="2.54" y="0" drill="0.7" diameter="1.651"/>
+<text x="-1.27" y="1.905" size="0.6096" layer="25">&gt;Name</text>
+<text x="-1.27" y="-2.54" size="0.6096" layer="27">&gt;Value</text>
+</package>
+<package name="0805">
+<wire x1="-0.3" y1="0.6" x2="0.3" y2="0.6" width="0.1524" layer="21"/>
+<wire x1="-0.3" y1="-0.6" x2="0.3" y2="-0.6" width="0.1524" layer="21"/>
+<smd name="1" x="-0.9" y="0" dx="0.8" dy="1.2" layer="1"/>
+<smd name="2" x="0.9" y="0" dx="0.8" dy="1.2" layer="1"/>
+<text x="-0.762" y="0.8255" size="0.4064" layer="25">&gt;NAME</text>
+<text x="-1.016" y="-1.397" size="0.4064" layer="27">&gt;VALUE</text>
+</package>
+<package name="CAP-PTH-LARGE">
+<wire x1="0" y1="0.635" x2="0" y2="0" width="0.2032" layer="21"/>
+<wire x1="0" y1="0" x2="0" y2="-0.635" width="0.2032" layer="21"/>
+<wire x1="0" y1="0" x2="-2.54" y2="0" width="0.2032" layer="21"/>
+<wire x1="0" y1="0" x2="2.54" y2="0" width="0.2032" layer="21"/>
+<pad name="1" x="-4.826" y="0" drill="0.9" diameter="1.905"/>
+<pad name="2" x="4.572" y="0" drill="0.9" diameter="1.905"/>
+<text x="-0.762" y="1.27" size="0.4064" layer="25">&gt;Name</text>
+<text x="-1.016" y="-1.524" size="0.4064" layer="27">&gt;Value</text>
+</package>
+<package name="GRM43D">
+<wire x1="2.25" y1="1.6" x2="1.1" y2="1.6" width="0.127" layer="51"/>
+<wire x1="1.1" y1="1.6" x2="-1.1" y2="1.6" width="0.127" layer="51"/>
+<wire x1="-1.1" y1="1.6" x2="-2.25" y2="1.6" width="0.127" layer="51"/>
+<wire x1="-2.25" y1="1.6" x2="-2.25" y2="-1.6" width="0.127" layer="51"/>
+<wire x1="-2.25" y1="-1.6" x2="-1.1" y2="-1.6" width="0.127" layer="51"/>
+<wire x1="-1.1" y1="-1.6" x2="1.1" y2="-1.6" width="0.127" layer="51"/>
+<wire x1="1.1" y1="-1.6" x2="2.25" y2="-1.6" width="0.127" layer="51"/>
+<wire x1="2.25" y1="-1.6" x2="2.25" y2="1.6" width="0.127" layer="51"/>
+<wire x1="1.1" y1="1.6" x2="1.1" y2="-1.6" width="0.127" layer="51"/>
+<wire x1="-1.1" y1="1.6" x2="-1.1" y2="-1.6" width="0.127" layer="51"/>
+<wire x1="-2.3" y1="1.8" x2="2.3" y2="1.8" width="0.127" layer="21"/>
+<wire x1="-2.3" y1="-1.8" x2="2.3" y2="-1.8" width="0.127" layer="21"/>
+<smd name="A" x="1.927" y="0" dx="3.2" dy="1.65" layer="1" rot="R90"/>
+<smd name="C" x="-1.927" y="0" dx="3.2" dy="1.65" layer="1" rot="R90"/>
+<text x="-2" y="2" size="0.4064" layer="25">&gt;NAME</text>
+<text x="0" y="-2" size="0.4064" layer="27" rot="R180">&gt;VALUE</text>
+<rectangle x1="-2.2" y1="-1.6" x2="-1.1" y2="1.6" layer="51"/>
+<rectangle x1="1.1" y1="-1.6" x2="2.2" y2="1.6" layer="51"/>
+</package>
+<package name="0603-CAP">
+<wire x1="-1.473" y1="0.983" x2="1.473" y2="0.983" width="0.0508" layer="39"/>
+<wire x1="1.473" y1="0.983" x2="1.473" y2="-0.983" width="0.0508" layer="39"/>
+<wire x1="1.473" y1="-0.983" x2="-1.473" y2="-0.983" width="0.0508" layer="39"/>
+<wire x1="-1.473" y1="-0.983" x2="-1.473" y2="0.983" width="0.0508" layer="39"/>
+<wire x1="-0.356" y1="0.432" x2="0.356" y2="0.432" width="0.1016" layer="51"/>
+<wire x1="-0.356" y1="-0.419" x2="0.356" y2="-0.419" width="0.1016" layer="51"/>
+<wire x1="0" y1="0.0305" x2="0" y2="-0.0305" width="0.5588" layer="21"/>
+<smd name="1" x="-0.85" y="0" dx="1.1" dy="1" layer="1"/>
+<smd name="2" x="0.85" y="0" dx="1.1" dy="1" layer="1"/>
+<text x="-0.889" y="0.762" size="0.4064" layer="25" font="vector">&gt;NAME</text>
+<text x="-1.016" y="-1.143" size="0.4064" layer="27" font="vector">&gt;VALUE</text>
+<rectangle x1="-0.8382" y1="-0.4699" x2="-0.3381" y2="0.4801" layer="51"/>
+<rectangle x1="0.3302" y1="-0.4699" x2="0.8303" y2="0.4801" layer="51"/>
+<rectangle x1="-0.1999" y1="-0.3" x2="0.1999" y2="0.3" layer="35"/>
+</package>
+<package name="0402-CAP">
+<description>&lt;b&gt;CAPACITOR&lt;/b&gt;&lt;p&gt;
+chip</description>
+<wire x1="-0.245" y1="0.224" x2="0.245" y2="0.224" width="0.1524" layer="51"/>
+<wire x1="0.245" y1="-0.224" x2="-0.245" y2="-0.224" width="0.1524" layer="51"/>
+<wire x1="-1.473" y1="0.483" x2="1.473" y2="0.483" width="0.0508" layer="39"/>
+<wire x1="1.473" y1="0.483" x2="1.473" y2="-0.483" width="0.0508" layer="39"/>
+<wire x1="1.473" y1="-0.483" x2="-1.473" y2="-0.483" width="0.0508" layer="39"/>
+<wire x1="-1.473" y1="-0.483" x2="-1.473" y2="0.483" width="0.0508" layer="39"/>
+<wire x1="0" y1="0.0305" x2="0" y2="-0.0305" width="0.4064" layer="21"/>
+<smd name="1" x="-0.65" y="0" dx="0.7" dy="0.9" layer="1"/>
+<smd name="2" x="0.65" y="0" dx="0.7" dy="0.9" layer="1"/>
+<text x="-0.889" y="0.6985" size="0.4064" layer="25">&gt;NAME</text>
+<text x="-1.0795" y="-1.143" size="0.4064" layer="27">&gt;VALUE</text>
+<rectangle x1="-0.554" y1="-0.3048" x2="-0.254" y2="0.2951" layer="51"/>
+<rectangle x1="0.2588" y1="-0.3048" x2="0.5588" y2="0.2951" layer="51"/>
+<rectangle x1="-0.1999" y1="-0.3" x2="0.1999" y2="0.3" layer="35"/>
+</package>
+<package name="CAP-PTH-5MM">
+<wire x1="0" y1="0.635" x2="0" y2="-0.635" width="0.2032" layer="21"/>
+<pad name="1" x="-2.5" y="0" drill="0.7" diameter="1.651"/>
+<pad name="2" x="2.5" y="0" drill="0.7" diameter="1.651"/>
+<text x="-0.762" y="1.27" size="0.4064" layer="25">&gt;Name</text>
+<text x="-1.016" y="-1.524" size="0.4064" layer="27">&gt;Value</text>
+</package>
+<package name="AXIAL-5MM">
+<wire x1="-1.14" y1="0.762" x2="1.14" y2="0.762" width="0.2032" layer="21"/>
+<wire x1="1.14" y1="0.762" x2="1.14" y2="0" width="0.2032" layer="21"/>
+<wire x1="1.14" y1="0" x2="1.14" y2="-0.762" width="0.2032" layer="21"/>
+<wire x1="1.14" y1="-0.762" x2="-1.14" y2="-0.762" width="0.2032" layer="21"/>
+<wire x1="-1.14" y1="-0.762" x2="-1.14" y2="0" width="0.2032" layer="21"/>
+<wire x1="-1.14" y1="0" x2="-1.14" y2="0.762" width="0.2032" layer="21"/>
+<wire x1="1.14" y1="0" x2="1.394" y2="0" width="0.2032" layer="21"/>
+<wire x1="-1.14" y1="0" x2="-1.394" y2="0" width="0.2032" layer="21"/>
+<pad name="P$1" x="-2.5" y="0" drill="0.9" diameter="1.8796"/>
+<pad name="P$2" x="2.5" y="0" drill="0.9" diameter="1.8796"/>
+<text x="-2.54" y="1.17" size="0.4" layer="25">&gt;Name</text>
+<text x="-1.032" y="-0.208" size="0.4" layer="21" ratio="15">&gt;Value</text>
+</package>
+<package name="1210">
+<wire x1="-1.6" y1="1.3" x2="1.6" y2="1.3" width="0.127" layer="51"/>
+<wire x1="1.6" y1="1.3" x2="1.6" y2="-1.3" width="0.127" layer="51"/>
+<wire x1="1.6" y1="-1.3" x2="-1.6" y2="-1.3" width="0.127" layer="51"/>
+<wire x1="-1.6" y1="-1.3" x2="-1.6" y2="1.3" width="0.127" layer="51"/>
+<wire x1="-1.6" y1="1.3" x2="1.6" y2="1.3" width="0.2032" layer="21"/>
+<wire x1="-1.6" y1="-1.3" x2="1.6" y2="-1.3" width="0.2032" layer="21"/>
+<smd name="1" x="-1.6" y="0" dx="1.2" dy="2" layer="1"/>
+<smd name="2" x="1.6" y="0" dx="1.2" dy="2" layer="1"/>
+<text x="-0.8" y="0.5" size="0.4064" layer="25">&gt;NAME</text>
+<text x="-0.9" y="-0.7" size="0.4064" layer="27">&gt;VALUE</text>
+</package>
+<package name="CTZ3">
+<description>CTZ3 Series land pattern for variable capacitor - CTZ3E-50C-W1-PF</description>
+<wire x1="-1.6" y1="1.4" x2="-1.6" y2="-2.25" width="0.127" layer="51"/>
+<wire x1="-1.6" y1="-2.25" x2="1.6" y2="-2.25" width="0.127" layer="51"/>
+<wire x1="1.6" y1="1.4" x2="1.6" y2="-2.25" width="0.127" layer="51"/>
+<wire x1="-0.5" y1="0" x2="0.5" y2="0" width="0.127" layer="51"/>
+<wire x1="-1.6" y1="1.4" x2="-1" y2="2.2" width="0.127" layer="51"/>
+<wire x1="1.6" y1="1.4" x2="1" y2="2.2" width="0.127" layer="51"/>
+<wire x1="-1" y1="2.2" x2="1" y2="2.2" width="0.127" layer="51"/>
+<wire x1="0" y1="0.8" x2="0" y2="-0.8" width="0.127" layer="51"/>
+<wire x1="-0.8" y1="0" x2="0.8" y2="0" width="0.127" layer="51"/>
+<wire x1="-1.05" y1="2.25" x2="-1.7" y2="1.45" width="0.127" layer="21"/>
+<wire x1="-1.7" y1="1.45" x2="-1.7" y2="-2.35" width="0.127" layer="21"/>
+<wire x1="-1.7" y1="-2.35" x2="-1.05" y2="-2.35" width="0.127" layer="21"/>
+<wire x1="1.05" y1="2.25" x2="1.7" y2="1.4" width="0.127" layer="21"/>
+<wire x1="1.7" y1="1.4" x2="1.7" y2="-2.35" width="0.127" layer="21"/>
+<wire x1="1.7" y1="-2.35" x2="1.05" y2="-2.35" width="0.127" layer="21"/>
+<smd name="+" x="0" y="2.05" dx="1.5" dy="1.2" layer="1"/>
+<smd name="-" x="0" y="-2.05" dx="1.5" dy="1.2" layer="1"/>
+<text x="-2" y="3" size="0.4064" layer="25">&gt;NAME</text>
+<text x="-2" y="-3.4" size="0.4064" layer="27">&gt;VALUE</text>
+</package>
+<package name="CAP-PTH-SMALL-KIT">
+<description>&lt;h3&gt;CAP-PTH-SMALL-KIT&lt;/h3&gt;
+Commonly used for small ceramic capacitors. Like our 0.1uF (http://www.sparkfun.com/products/8375) or 22pF caps (http://www.sparkfun.com/products/8571).&lt;br&gt;
+&lt;br&gt;
+&lt;b&gt;Warning:&lt;/b&gt; This is the KIT version of this package. This package has a smaller diameter top stop mask, which doesn't cover the diameter of the pad. This means only the bottom side of the pads' copper will be exposed. You'll only be able to solder to the bottom side.</description>
+<wire x1="0" y1="0.635" x2="0" y2="-0.635" width="0.254" layer="21"/>
+<wire x1="-2.667" y1="1.27" x2="2.667" y2="1.27" width="0.254" layer="21"/>
+<wire x1="2.667" y1="1.27" x2="2.667" y2="-1.27" width="0.254" layer="21"/>
+<wire x1="2.667" y1="-1.27" x2="-2.667" y2="-1.27" width="0.254" layer="21"/>
+<wire x1="-2.667" y1="-1.27" x2="-2.667" y2="1.27" width="0.254" layer="21"/>
+<pad name="1" x="-1.397" y="0" drill="1.016" diameter="2.032" stop="no"/>
+<pad name="2" x="1.397" y="0" drill="1.016" diameter="2.032" stop="no"/>
+<polygon width="0.127" layer="30">
+<vertex x="-1.4021" y="-0.9475" curve="-90"/>
+<vertex x="-2.357" y="-0.0178" curve="-90.011749"/>
+<vertex x="-1.4046" y="0.9576" curve="-90"/>
+<vertex x="-0.4546" y="-0.0204" curve="-90.024193"/>
+</polygon>
+<polygon width="0.127" layer="29">
+<vertex x="-1.4046" y="-0.4395" curve="-90.012891"/>
+<vertex x="-1.8491" y="-0.0153" curve="-90"/>
+<vertex x="-1.4046" y="0.452" curve="-90"/>
+<vertex x="-0.9627" y="-0.0051" curve="-90.012967"/>
+</polygon>
+<polygon width="0.127" layer="30">
+<vertex x="1.397" y="-0.9475" curve="-90"/>
+<vertex x="0.4421" y="-0.0178" curve="-90.011749"/>
+<vertex x="1.3945" y="0.9576" curve="-90"/>
+<vertex x="2.3445" y="-0.0204" curve="-90.024193"/>
+</polygon>
+<polygon width="0.127" layer="29">
+<vertex x="1.3945" y="-0.4395" curve="-90.012891"/>
+<vertex x="0.95" y="-0.0153" curve="-90"/>
+<vertex x="1.3945" y="0.452" curve="-90"/>
+<vertex x="1.8364" y="-0.0051" curve="-90.012967"/>
+</polygon>
+</package>
+<package name="CAP-PTH-SMALLEZ">
+<description>This is the "EZ" version of the .1" spaced ceramic thru-hole cap.&lt;br&gt;
+It has reduced top mask to make it harder to put the component on the wrong side of the board.</description>
+<wire x1="1.27" y1="0.635" x2="1.27" y2="-0.635" width="0.2032" layer="21"/>
+<wire x1="-1.27" y1="1.27" x2="3.81" y2="1.27" width="0.2032" layer="21"/>
+<wire x1="3.81" y1="1.27" x2="3.81" y2="-1.27" width="0.2032" layer="21"/>
+<wire x1="3.81" y1="-1.27" x2="-1.27" y2="-1.27" width="0.2032" layer="21"/>
+<wire x1="-1.27" y1="-1.27" x2="-1.27" y2="1.27" width="0.2032" layer="21"/>
+<pad name="1" x="0" y="0" drill="0.7" diameter="1.651" stop="no"/>
+<pad name="2" x="2.54" y="0" drill="0.7" diameter="1.651" stop="no"/>
+<text x="-1.27" y="1.905" size="0.6096" layer="25">&gt;Name</text>
+<text x="-1.27" y="-2.54" size="0.6096" layer="27">&gt;Value</text>
+<circle x="0" y="0" radius="0.898025" width="0" layer="30"/>
+<circle x="2.54" y="0" radius="0.915809375" width="0" layer="30"/>
+<circle x="0" y="0" radius="0.40160625" width="0" layer="29"/>
+<circle x="2.54" y="0" radius="0.40160625" width="0" layer="29"/>
+</package>
+</packages>
+<symbols>
+<symbol name="CAP">
+<wire x1="0" y1="2.54" x2="0" y2="2.032" width="0.1524" layer="94"/>
+<wire x1="0" y1="0" x2="0" y2="0.508" width="0.1524" layer="94"/>
+<text x="1.524" y="2.921" size="1.778" layer="95">&gt;NAME</text>
+<text x="1.524" y="-2.159" size="1.778" layer="96">&gt;VALUE</text>
+<rectangle x1="-2.032" y1="0.508" x2="2.032" y2="1.016" layer="94"/>
+<rectangle x1="-2.032" y1="1.524" x2="2.032" y2="2.032" layer="94"/>
+<pin name="1" x="0" y="5.08" visible="off" length="short" direction="pas" swaplevel="1" rot="R270"/>
+<pin name="2" x="0" y="-2.54" visible="off" length="short" direction="pas" swaplevel="1" rot="R90"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="CAP" prefix="C" uservalue="yes">
+<description>&lt;b&gt;Capacitor&lt;/b&gt;
+Standard 0603 ceramic capacitor, and 0.1" leaded capacitor.</description>
+<gates>
+<gate name="G$1" symbol="CAP" x="0" y="0"/>
+</gates>
+<devices>
+<device name="PTH" package="CAP-PTH-SMALL">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="PTH2" package="CAP-PTH-SMALL2">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="0805" package="0805">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="PTH3" package="CAP-PTH-LARGE">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="SMD" package="GRM43D">
+<connects>
+<connect gate="G$1" pin="1" pad="A"/>
+<connect gate="G$1" pin="2" pad="C"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="0603-CAP" package="0603-CAP">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="0402-CAP" package="0402-CAP">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="PTH1" package="CAP-PTH-5MM">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="_" package="AXIAL-5MM">
+<connects>
+<connect gate="G$1" pin="1" pad="P$1"/>
+<connect gate="G$1" pin="2" pad="P$2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="1210" package="1210">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="1206" package="1206">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="ASMD" package="CTZ3">
+<connects>
+<connect gate="G$1" pin="1" pad="+"/>
+<connect gate="G$1" pin="2" pad="-"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="KIT" package="CAP-PTH-SMALL-KIT">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="EZ" package="CAP-PTH-SMALLEZ">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 <attribute name="AUTHOR" value="Joshua Adkins"/>
@@ -22442,10 +22860,10 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <attribute name="MPN" value="CC0402KRX5R6BB104"/>
 </part>
 <part name="C29" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
-<attribute name="DESCRIPTION" value="CAP CER 4.7UF 6.3V X5R 0402"/>
-<attribute name="DIGIKEY" value="445-5947-1-ND"/>
-<attribute name="MANUFACTURER" value="TDK"/>
-<attribute name="MPN" value="C1005X5R0J475K050BC"/>
+<attribute name="DESCRIPTION" value="CAP CER 4.7UF 6.3V X5R 0402 "/>
+<attribute name="DIGIKEY" value="445-5947-1-ND "/>
+<attribute name="MANUFACTURER" value="TDK Corporation "/>
+<attribute name="MPN" value="C1005X5R0J475K050BC "/>
 </part>
 <part name="C32" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="10uF">
 <attribute name="DESCRIPTION" value="CAP CER 10UF 6.3V X5R 0402"/>
@@ -22482,12 +22900,6 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <part name="P+12" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="P+1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="P+2" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
-<part name="R14" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
-<attribute name="DESCRIPTION" value="RES SMD 10K OHM 1% 1/16W 0402 "/>
-<attribute name="DIGIKEY" value="RMCF0402FT10K0CT-ND "/>
-<attribute name="MANUFACTURER" value="Stackpole Electronics Inc. "/>
-<attribute name="MPN" value="RMCF0402FT10K0 "/>
-</part>
 <part name="R15" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DESCRIPTION" value="RES SMD 10K OHM 1% 1/16W 0402 "/>
 <attribute name="DIGIKEY" value="RMCF0402FT10K0CT-ND "/>
@@ -22506,25 +22918,31 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <attribute name="MANUFACTURER" value="Stackpole Electronics Inc. "/>
 <attribute name="MPN" value="RMCF0402FT10K0 "/>
 </part>
-<part name="R27" library="passives" deviceset="RESISTOR" device="0402_RES" value="100k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R18" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
+<attribute name="DESCRIPTION" value="RES SMD 10K OHM 1% 1/16W 0402 "/>
+<attribute name="DIGIKEY" value="RMCF0402FT10K0CT-ND "/>
+<attribute name="MANUFACTURER" value="Stackpole Electronics Inc. "/>
+<attribute name="MPN" value="RMCF0402FT10K0 "/>
 </part>
 <part name="R28" library="passives" deviceset="RESISTOR" device="0402_RES" value="100k">
 <attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<attribute name="DIGIKEY" value="311-100KLRCT-ND"/>
+<attribute name="MANUFACTURER" value="Yageo"/>
+<attribute name="MPN" value="RC0402FR-07100KL"/>
 </part>
 <part name="R29" library="passives" deviceset="RESISTOR" device="0402_RES" value="100k">
 <attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<attribute name="DIGIKEY" value="311-100KLRCT-ND"/>
+<attribute name="MANUFACTURER" value="Yageo"/>
+<attribute name="MPN" value="RC0402FR-07100KL"/>
 </part>
-<part name="R18" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
+<part name="R30" library="passives" deviceset="RESISTOR" device="0402_RES" value="100k">
+<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="311-100KLRCT-ND"/>
+<attribute name="MANUFACTURER" value="Yageo"/>
+<attribute name="MPN" value="RC0402FR-07100KL"/>
+</part>
+<part name="R19" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DESCRIPTION" value="RES SMD 10K OHM 1% 1/16W 0402 "/>
 <attribute name="DIGIKEY" value="RMCF0402FT10K0CT-ND "/>
 <attribute name="MANUFACTURER" value="Stackpole Electronics Inc. "/>
@@ -22546,10 +22964,10 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <attribute name="MPN" value="BGA725L6E6327FTSA1"/>
 </part>
 <part name="U5" library="Particle" deviceset="FILTERS" device="" value="SAFFB1G56KB0F0A">
-<attribute name="DESCRIPTION" value="FILTER SAW 1.582GHZ 5SMD"/>
-<attribute name="DIGIKEY" value="587-3990-1-ND"/>
+<attribute name="DESCRIPTION" value="FILTER SAW 1.575GHZ 5SMD"/>
+<attribute name="DIGIKEY" value="587-5642-1-ND"/>
 <attribute name="MANUFACTURER" value="Taiyo Yuden"/>
-<attribute name="MPN" value="F6QA1G582H2JM-J"/>
+<attribute name="MPN" value="F6QA1G575H2JF-J"/>
 </part>
 <part name="U8" library="u-blox" library_urn="urn:adsk.eagle:library:406" deviceset="MAX-M8" device="">
 <attribute name="DESCRIPTION" value="IC RECEIVER GPS/GNSS 18LCC"/>
@@ -22561,7 +22979,7 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <attribute name="SPICEPREFIX" value="X"/>
 </part>
 <part name="P+4" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
-<part name="R13" library="passives" deviceset="RESISTOR" device="0402_RES" value="5.1k">
+<part name="R14" library="passives" deviceset="RESISTOR" device="0402_RES" value="5.1k">
 <attribute name="DESCRIPTION" value="RES SMD 5.1K OHM 1% 1/10W 0402"/>
 <attribute name="DIGIKEY" value="P5.10KLCT-ND"/>
 <attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
@@ -22570,26 +22988,27 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <part name="GND41" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="FRAME5" library="lab11-frames" deviceset="LETTER_L_BLANK" device=""/>
 <part name="GND13" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="R36" library="passives" deviceset="RESISTOR" device="0402_RES" value="825k">
+<part name="R37" library="passives" deviceset="RESISTOR" device="0402_RES" value="825k">
 <attribute name="DESCRIPTION" value="RES SMD 825K OHM 1% 1/10W 0402"/>
 <attribute name="DIGIKEY" value="P825KLCT-ND"/>
 <attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
 <attribute name="MPN" value="ERJ-2RKF8253X"/>
 </part>
-<part name="R45" library="passives" deviceset="RESISTOR" device="0402_RES" value="1M">
-<attribute name="DESCRIPTION" value="RES SMD 499K OHM 1% 1/10W 0402"/>
-<attribute name="DIGIKEY" value="P499KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
-<attribute name="MPN" value="ERJ-2RKF4993X"/>
+<part name="R46" library="passives" deviceset="RESISTOR" device="0402_RES" value="1M">
+<attribute name="DESCRIPTION" value="RES 1M OHM 1% 1/16W 0402 "/>
+<attribute name="DIGIKEY" value="RMCF0402FT1M00CT-ND "/>
+<attribute name="MANUFACTURER" value="Stackpole Electronics Inc "/>
+<attribute name="MPN" value="RMCF0402FT1M00 "/>
 </part>
 <part name="GND39" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="U9" library="chips" deviceset="MAX67XX" device="MAX67XX" technology="MAX6749"/>
 <part name="GND40" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND42" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="C23" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.82uF">
-<attribute name="DIGIKEY" value="490-10440-1-ND"/>
-<attribute name="MANUFACTURER" value="Murata Electronics North America"/>
-<attribute name="MPN" value="GRM155C80J824KE15D"/>
+<attribute name="DESCRIPTION" value="CAP CER 0.82UF 10V X5R 0402"/>
+<attribute name="DIGIKEY" value="311-3789-1-ND"/>
+<attribute name="MANUFACTURER" value="Yageo"/>
+<attribute name="MPN" value="CC0402KRX5R6BB824"/>
 </part>
 <part name="C28" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="2.2uF">
 <attribute name="DIGIKEY" value="490-12696-1-ND"/>
@@ -22649,37 +23068,37 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <attribute name="MPN" value="GRM1555C2A470JA01D"/>
 </part>
 <part name="X2" library="crystals" deviceset="ABS07-32.768KHZ" device="-7-T"/>
-<part name="R19" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
-<attribute name="DESCRIPTION" value="RES SMD 10K OHM 1% 1/16W 0402 "/>
-<attribute name="DIGIKEY" value="RMCF0402FT10K0CT-ND "/>
-<attribute name="MANUFACTURER" value="Stackpole Electronics Inc. "/>
-<attribute name="MPN" value="RMCF0402FT10K0 "/>
-</part>
-<part name="R30" library="passives" deviceset="RESISTOR" device="0402_RES" value="100k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
-</part>
-<part name="R31" library="passives" deviceset="RESISTOR" device="0402_RES" value="100k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
-</part>
 <part name="R20" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DESCRIPTION" value="RES SMD 10K OHM 1% 1/16W 0402 "/>
 <attribute name="DIGIKEY" value="RMCF0402FT10K0CT-ND "/>
 <attribute name="MANUFACTURER" value="Stackpole Electronics Inc. "/>
 <attribute name="MPN" value="RMCF0402FT10K0 "/>
 </part>
-<part name="R26" library="passives" deviceset="RESISTOR" device="0402_RES" value="66.5k">
-<attribute name="DESCRIPTION" value="RES SMD 66.5 OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="YAG3210CT-ND"/>
+<part name="R31" library="passives" deviceset="RESISTOR" device="0402_RES" value="100k">
+<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="311-100KLRCT-ND"/>
 <attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="RC0402FR-0766R5L"/>
+<attribute name="MPN" value="RC0402FR-07100KL"/>
 </part>
-<part name="R25" library="passives" deviceset="RESISTOR" device="0402_RES" value="34k">
+<part name="R32" library="passives" deviceset="RESISTOR" device="0402_RES" value="100k">
+<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="311-100KLRCT-ND"/>
+<attribute name="MANUFACTURER" value="Yageo"/>
+<attribute name="MPN" value="RC0402FR-07100KL"/>
+</part>
+<part name="R21" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
+<attribute name="DESCRIPTION" value="RES SMD 10K OHM 1% 1/16W 0402 "/>
+<attribute name="DIGIKEY" value="RMCF0402FT10K0CT-ND "/>
+<attribute name="MANUFACTURER" value="Stackpole Electronics Inc. "/>
+<attribute name="MPN" value="RMCF0402FT10K0 "/>
+</part>
+<part name="R27" library="passives" deviceset="RESISTOR" device="0402_RES" value="66.5k">
+<attribute name="DESCRIPTION" value="RES SMD 66.5K OHM 1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="YAG3209CT-ND"/>
+<attribute name="MANUFACTURER" value="Yageo"/>
+<attribute name="MPN" value="RC0402FR-0766K5L"/>
+</part>
+<part name="R26" library="passives" deviceset="RESISTOR" device="0402_RES" value="34k">
 <attribute name="DESCRIPTION" value="RES SMD 34K OHM 1% 1/10W 0402"/>
 <attribute name="DIGIKEY" value="P34.0KLCT-ND"/>
 <attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
@@ -22690,13 +23109,13 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <attribute name="MOUSER" value="511-LIS2DH12TR"/>
 <attribute name="MPN" value="LIS2DH12TR"/>
 </part>
-<part name="R21" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
+<part name="R22" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DESCRIPTION" value="RES SMD 10K OHM 1% 1/16W 0402 "/>
 <attribute name="DIGIKEY" value="RMCF0402FT10K0CT-ND "/>
 <attribute name="MANUFACTURER" value="Stackpole Electronics Inc. "/>
 <attribute name="MPN" value="RMCF0402FT10K0 "/>
 </part>
-<part name="R22" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
+<part name="R23" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DESCRIPTION" value="RES SMD 10K OHM 1% 1/16W 0402 "/>
 <attribute name="DIGIKEY" value="RMCF0402FT10K0CT-ND "/>
 <attribute name="MANUFACTURER" value="Stackpole Electronics Inc. "/>
@@ -22714,46 +23133,60 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <attribute name="MANUFACTURER" value="JST Sales America Inc."/>
 <attribute name="MPN" value="B2B-PH-SM4-TB(LF)(SN)"/>
 </part>
-<part name="R23" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
+<part name="R24" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DESCRIPTION" value="RES SMD 10K OHM 1% 1/16W 0402 "/>
 <attribute name="DIGIKEY" value="RMCF0402FT10K0CT-ND "/>
 <attribute name="MANUFACTURER" value="Stackpole Electronics Inc. "/>
 <attribute name="MPN" value="RMCF0402FT10K0 "/>
 </part>
 <part name="P+3" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
-<part name="R32" library="passives" deviceset="RESISTOR" device="0402_RES" value="100k">
+<part name="R33" library="passives" deviceset="RESISTOR" device="0402_RES" value="100k">
 <attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<attribute name="DIGIKEY" value="311-100KLRCT-ND"/>
+<attribute name="MANUFACTURER" value="Yageo"/>
+<attribute name="MPN" value="RC0402FR-07100KL"/>
 </part>
 <part name="U14" library="chips" deviceset="SIP32510" device=""/>
 <part name="SUPPLY2" library="umich" deviceset="GND" device=""/>
-<part name="R46" library="passives" deviceset="RESISTOR" device="0402_RES" value="1M">
-<attribute name="DESCRIPTION" value="RES 1M OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="RMCF0402FT1M00CT-ND"/>
-<attribute name="MANUFACTURER" value="Stackpole Electronics Inc."/>
-<attribute name="MPN" value="RMCF0402FT1M00"/>
+<part name="R47" library="passives" deviceset="RESISTOR" device="0402_RES" value="1M">
+<attribute name="DESCRIPTION" value="RES 1M OHM 1% 1/16W 0402 "/>
+<attribute name="DIGIKEY" value="RMCF0402FT1M00CT-ND "/>
+<attribute name="MANUFACTURER" value="Stackpole Electronics Inc "/>
+<attribute name="MPN" value="RMCF0402FT1M00 "/>
 </part>
 <part name="Q2" library="fets" deviceset="NX3008PBK" device=""/>
 <part name="P+5" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
-<part name="R33" library="passives" deviceset="RESISTOR" device="0402_RES" value="100k">
-<attribute name="DESCRIPTION" value="RES SMD 34K OHM 1% 1/10W 0402"/>
-<attribute name="DIGIKEY" value="P34.0KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
-<attribute name="MPN" value="ERJ-2RKF3402X"/>
+<part name="R34" library="passives" deviceset="RESISTOR" device="0402_RES" value="100k">
+<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="311-100KLRCT-ND"/>
+<attribute name="MANUFACTURER" value="Yageo"/>
+<attribute name="MPN" value="RC0402FR-07100KL"/>
 </part>
-<part name="Q1" library="fets" deviceset="MOSFET-NCHANNEL" device="SMD"/>
-<part name="R47" library="passives" deviceset="RESISTOR" device="0402_RES" value="1M">
-<attribute name="DESCRIPTION" value="RES SMD 499K OHM 1% 1/10W 0402"/>
-<attribute name="DIGIKEY" value="P499KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
-<attribute name="MPN" value="ERJ-2RKF4993X"/>
+<part name="Q1" library="fets" deviceset="MOSFET-NCHANNEL" device="SMD">
+<attribute name="DESCRIPTION" value="MOSFET N-CH 60V 115MA SOT23-3"/>
+<attribute name="DIGIKEY" value="2N7002-FDICT-ND"/>
+<attribute name="MANUFACTURER" value="Diodes Incorporated"/>
+<attribute name="MPN" value="2N7002-7-F"/>
 </part>
-<part name="R1" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-US_" device="R2512" package3d_urn="urn:adsk.eagle:package:23545/2" value="1"/>
+<part name="R48" library="passives" deviceset="RESISTOR" device="0402_RES" value="1M">
+<attribute name="DESCRIPTION" value="RES 1M OHM 1% 1/16W 0402 "/>
+<attribute name="DIGIKEY" value="RMCF0402FT1M00CT-ND "/>
+<attribute name="MANUFACTURER" value="Stackpole Electronics Inc "/>
+<attribute name="MPN" value="RMCF0402FT1M00 "/>
+</part>
+<part name="R1" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-US_" device="R2512" package3d_urn="urn:adsk.eagle:package:23545/2" value="1">
+<attribute name="DESCRIPTION" value="RES SMD 1 OHM 5% 2W 2512"/>
+<attribute name="DIGIKEY" value="CRM2512-JW-1R0ELFCT-ND"/>
+<attribute name="MANUFACTURER" value="Bourns Inc."/>
+<attribute name="MPN" value="CRM2512-JW-1R0ELF"/>
+</part>
 <part name="SUPPLY3" library="umich" deviceset="GND" device=""/>
 <part name="U11" library="ref2033" deviceset="REF2033AIDDCR" device="" value="REF2030AIDDCR">
+<attribute name="DESCRIPTION" value="IC VREF SERIES 1.5V/3V 5SOT"/>
+<attribute name="DIGIKEY" value="296-47351-1-ND"/>
+<attribute name="MANUFACTURER" value="Texas Instruments"/>
 <attribute name="MANUFACTURER_PART_NUMBER" value="REF2030AIDDCR"/>
+<attribute name="MPN" value="REF2030AIDDCR"/>
 </part>
 <part name="SUPPLY4" library="umich" deviceset="GND" device=""/>
 <part name="C16" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
@@ -22763,23 +23196,23 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <attribute name="MPN" value="CC0402KRX5R6BB104"/>
 </part>
 <part name="SUPPLY5" library="umich" deviceset="GND" device=""/>
-<part name="R11" library="passives" deviceset="RESISTOR" device="0402_RES" value="3.74k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R12" library="passives" deviceset="RESISTOR" device="0402_RES" value="3.74k">
+<attribute name="DESCRIPTION" value="RES SMD 3.74KOHM 0.1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="P3.74KDCCT-ND"/>
+<attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
+<attribute name="MPN" value="ERA-2AEB3741X"/>
 </part>
-<part name="R37" library="passives" deviceset="RESISTOR" device="0402_RES" value="953k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R38" library="passives" deviceset="RESISTOR" device="0805_RES" value="953k">
+<attribute name="DESCRIPTION" value="RES SMD 953K OHM 0.1% 1/8W 0805"/>
+<attribute name="DIGIKEY" value="P953KDACT-ND"/>
+<attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
+<attribute name="MPN" value="ERA-6AEB9533V"/>
 </part>
-<part name="R38" library="passives" deviceset="RESISTOR" device="0402_RES" value="953k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R39" library="passives" deviceset="RESISTOR" device="0805_RES" value="953k">
+<attribute name="DESCRIPTION" value="RES SMD 953K OHM 0.1% 1/8W 0805"/>
+<attribute name="DIGIKEY" value="P953KDACT-ND"/>
+<attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
+<attribute name="MPN" value="ERA-6AEB9533V"/>
 </part>
 <part name="SUPPLY6" library="umich" deviceset="GND" device=""/>
 <part name="C17" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
@@ -22789,23 +23222,23 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <attribute name="MPN" value="CC0402KRX5R6BB104"/>
 </part>
 <part name="SUPPLY7" library="umich" deviceset="GND" device=""/>
-<part name="R39" library="passives" deviceset="RESISTOR" device="0402_RES" value="953k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R40" library="passives" deviceset="RESISTOR" device="0805_RES" value="953k">
+<attribute name="DESCRIPTION" value="RES SMD 953K OHM 0.1% 1/8W 0805"/>
+<attribute name="DIGIKEY" value="P953KDACT-ND"/>
+<attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
+<attribute name="MPN" value="ERA-6AEB9533V"/>
 </part>
-<part name="R40" library="passives" deviceset="RESISTOR" device="0402_RES" value="953k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R41" library="passives" deviceset="RESISTOR" device="0805_RES" value="953k">
+<attribute name="DESCRIPTION" value="RES SMD 953K OHM 0.1% 1/8W 0805"/>
+<attribute name="DIGIKEY" value="P953KDACT-ND"/>
+<attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
+<attribute name="MPN" value="ERA-6AEB9533V"/>
 </part>
-<part name="R12" library="passives" deviceset="RESISTOR" device="0402_RES" value="3.74k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R13" library="passives" deviceset="RESISTOR" device="0402_RES" value="3.74k">
+<attribute name="DESCRIPTION" value="RES SMD 3.74KOHM 0.1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="P3.74KDCCT-ND"/>
+<attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
+<attribute name="MPN" value="ERA-2AEB3741X"/>
 </part>
 <part name="SUPPLY8" library="umich" deviceset="GND" device=""/>
 <part name="C18" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
@@ -22815,23 +23248,23 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <attribute name="MPN" value="CC0402KRX5R6BB104"/>
 </part>
 <part name="SUPPLY9" library="umich" deviceset="GND" device=""/>
-<part name="R41" library="passives" deviceset="RESISTOR" device="0402_RES" value="953k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R42" library="passives" deviceset="RESISTOR" device="0805_RES" value="953k">
+<attribute name="DESCRIPTION" value="RES SMD 953K OHM 0.1% 1/8W 0805"/>
+<attribute name="DIGIKEY" value="P953KDACT-ND"/>
+<attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
+<attribute name="MPN" value="ERA-6AEB9533V"/>
 </part>
-<part name="R42" library="passives" deviceset="RESISTOR" device="0402_RES" value="953k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R43" library="passives" deviceset="RESISTOR" device="0805_RES" value="953k">
+<attribute name="DESCRIPTION" value="RES SMD 953K OHM 0.1% 1/8W 0805"/>
+<attribute name="DIGIKEY" value="P953KDACT-ND"/>
+<attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
+<attribute name="MPN" value="ERA-6AEB9533V"/>
 </part>
 <part name="R8" library="passives" deviceset="RESISTOR" device="0402_RES" value="1.00k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<attribute name="DESCRIPTION" value="RES SMD 1K OHM 0.1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="YAG2306CT-ND"/>
+<attribute name="MANUFACTURER" value="Yageo"/>
+<attribute name="MPN" value="RT0402BRE071KL"/>
 </part>
 <part name="SUPPLY10" library="umich" deviceset="GND" device=""/>
 <part name="C19" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
@@ -22841,27 +23274,32 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <attribute name="MPN" value="CC0402KRX5R6BB104"/>
 </part>
 <part name="SUPPLY11" library="umich" deviceset="GND" device=""/>
-<part name="R43" library="passives" deviceset="RESISTOR" device="0402_RES" value="953k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R44" library="passives" deviceset="RESISTOR" device="0805_RES" value="953k">
+<attribute name="DESCRIPTION" value="RES SMD 953K OHM 0.1% 1/8W 0805"/>
+<attribute name="DIGIKEY" value="P953KDACT-ND"/>
+<attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
+<attribute name="MPN" value="ERA-6AEB9533V"/>
 </part>
-<part name="R44" library="passives" deviceset="RESISTOR" device="0402_RES" value="953k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R45" library="passives" deviceset="RESISTOR" device="0805_RES" value="953k">
+<attribute name="DESCRIPTION" value="RES SMD 953K OHM 0.1% 1/8W 0805"/>
+<attribute name="DIGIKEY" value="P953KDACT-ND"/>
+<attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
+<attribute name="MPN" value="ERA-6AEB9533V"/>
 </part>
 <part name="R9" library="passives" deviceset="RESISTOR" device="0402_RES" value="1.00k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<attribute name="DESCRIPTION" value="RES SMD 1K OHM 0.1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="YAG2306CT-ND"/>
+<attribute name="MANUFACTURER" value="Yageo"/>
+<attribute name="MPN" value="RT0402BRE071KL"/>
 </part>
 <part name="SUPPLY12" library="umich" deviceset="GND" device=""/>
 <part name="FRAME2" library="lab11-frames" deviceset="LETTER_L_BLANK" device=""/>
-<part name="U21" library="tps7933" deviceset="TPS79330DBVR" device=""/>
+<part name="U21" library="tps7933" deviceset="TPS79330DBVR" device="">
+<attribute name="DESCRIPTION" value="IC REG LINEAR 3V 200MA SOT23-5"/>
+<attribute name="DIGIKEY" value="296-12159-1-ND"/>
+<attribute name="MANUFACTURER" value="Texas Instruments"/>
+<attribute name="MPN" value="TPS79330DBVR"/>
+</part>
 <part name="SUPPLY13" library="umich" deviceset="GND" device=""/>
 <part name="U19" library="chips" deviceset="STM32L432KC" device=""/>
 <part name="C20" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
@@ -22871,10 +23309,10 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <attribute name="MPN" value="CC0402KRX5R6BB104"/>
 </part>
 <part name="C25" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
-<attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
-<attribute name="DIGIKEY" value="311-1336-1-ND"/>
-<attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="CC0402KRX5R6BB104"/>
+<attribute name="DESCRIPTION" value="CAP CER 1UF 10V X7S 0402"/>
+<attribute name="DIGIKEY" value="490-13409-1-ND"/>
+<attribute name="MANUFACTURER" value="Murata Electronics North America"/>
+<attribute name="MPN" value="GCM155C71A105KE38D"/>
 </part>
 <part name="C21" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
@@ -22883,195 +23321,328 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <attribute name="MPN" value="CC0402KRX5R6BB104"/>
 </part>
 <part name="C26" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
-<attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
-<attribute name="DIGIKEY" value="311-1336-1-ND"/>
-<attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="CC0402KRX5R6BB104"/>
+<attribute name="DESCRIPTION" value="CAP CER 1UF 10V X7S 0402"/>
+<attribute name="DIGIKEY" value="490-13409-1-ND"/>
+<attribute name="MANUFACTURER" value="Murata Electronics North America"/>
+<attribute name="MPN" value="GCM155C71A105KE38D"/>
 </part>
 <part name="C30" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
-<attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
-<attribute name="DIGIKEY" value="311-1336-1-ND"/>
-<attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="CC0402KRX5R6BB104"/>
+<attribute name="DESCRIPTION" value="CAP CER 4.7UF 6.3V X5R 0402 "/>
+<attribute name="DIGIKEY" value="445-5947-1-ND "/>
+<attribute name="MANUFACTURER" value="TDK Corporation "/>
+<attribute name="MPN" value="C1005X5R0J475K050BC "/>
 </part>
 <part name="SUPPLY14" library="umich" deviceset="GND" device=""/>
 <part name="X1" library="crystals" deviceset="ABS05-32.768KHZ" device="-T"/>
 <part name="C1" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.3pF">
-<attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
-<attribute name="DIGIKEY" value="311-1336-1-ND"/>
-<attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="CC0402KRX5R6BB104"/>
+<attribute name="DESCRIPTION" value="CAP CER 4.3PF 50V C0G/NP0 0402"/>
+<attribute name="DIGIKEY" value="490-3099-1-ND"/>
+<attribute name="MANUFACTURER" value="Murata Electronics North America"/>
+<attribute name="MPN" value="GJM1555C1H4R3CB01D"/>
 </part>
 <part name="C2" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.3pF">
-<attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
-<attribute name="DIGIKEY" value="311-1336-1-ND"/>
-<attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="CC0402KRX5R6BB104"/>
+<attribute name="DESCRIPTION" value="CAP CER 4.3PF 50V C0G/NP0 0402"/>
+<attribute name="DIGIKEY" value="490-3099-1-ND"/>
+<attribute name="MANUFACTURER" value="Murata Electronics North America"/>
+<attribute name="MPN" value="GJM1555C1H4R3CB01D"/>
 </part>
 <part name="SUPPLY15" library="umich" deviceset="GND" device=""/>
-<part name="R24" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R25" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
+<attribute name="DESCRIPTION" value="RES SMD 10K OHM 1% 1/16W 0402  "/>
+<attribute name="DIGIKEY" value="RMCF0402FT10K0CT-ND  "/>
+<attribute name="MANUFACTURER" value="Stackpole Electronics Inc.  "/>
+<attribute name="MPN" value="RMCF0402FT10K0  "/>
 </part>
 <part name="SUPPLY16" library="umich" deviceset="GND" device=""/>
 <part name="SUPPLY17" library="umich" deviceset="GND" device=""/>
-<part name="J2" library="connector" deviceset="TC2030-JLINK" device="-L"/>
+<part name="J2" library="connector" deviceset="TC2030-JLINK" device="-L">
+<attribute name="DIGIKEY" value="DNP"/>
+<attribute name="MANUFACTURER" value="DNP"/>
+<attribute name="MPN" value="DNP"/>
+</part>
 <part name="SUPPLY18" library="umich" deviceset="GND" device=""/>
 <part name="S1" library="switches" deviceset="B3U" device="-1000P"/>
 <part name="SUPPLY19" library="umich" deviceset="GND" device=""/>
-<part name="U20" library="tca9406" deviceset="TCA9406DCUR" device=""/>
+<part name="U20" library="tca9406" deviceset="TCA9406DCUR" device="">
+<attribute name="DESCRIPTION" value="IC TRNSLTR BIDIRECTIONAL US8"/>
+<attribute name="DIGIKEY" value="296-28109-1-ND"/>
+<attribute name="MANUFACTURER" value="Texas Instruments"/>
+<attribute name="MPN" value="TCA9406DCUR"/>
+</part>
 <part name="SUPPLY20" library="umich" deviceset="GND" device=""/>
-<part name="D6" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V"/>
-<part name="D7" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V"/>
-<part name="D8" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V"/>
-<part name="D9" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V"/>
-<part name="D10" library="SparkFun-DiscreteSemi" library_urn="urn:adsk.eagle:library:514" deviceset="DIODE-ZENER" device="-MM3Z3V3T1G" package3d_urn="urn:adsk.eagle:package:38441/1" value="3V"/>
+<part name="D6" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V">
+<attribute name="DESCRIPTION" value="DIODE ZENER 200V 3W DO214AA"/>
+<attribute name="DIGIKEY" value="1PGSMB5956R5GCT-ND"/>
+<attribute name="MANUFACTURER" value="Taiwan Semiconductor Corporation"/>
+<attribute name="MPN" value="1PGSMB5956 R5G"/>
+</part>
+<part name="D7" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V">
+<attribute name="DESCRIPTION" value="DIODE ZENER 200V 3W DO214AA"/>
+<attribute name="DIGIKEY" value="1PGSMB5956R5GCT-ND"/>
+<attribute name="MANUFACTURER" value="Taiwan Semiconductor Corporation"/>
+<attribute name="MPN" value="1PGSMB5956 R5G"/>
+</part>
+<part name="D8" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V">
+<attribute name="DESCRIPTION" value="DIODE ZENER 200V 3W DO214AA"/>
+<attribute name="DIGIKEY" value="1PGSMB5956R5GCT-ND"/>
+<attribute name="MANUFACTURER" value="Taiwan Semiconductor Corporation"/>
+<attribute name="MPN" value="1PGSMB5956 R5G"/>
+</part>
+<part name="D9" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V">
+<attribute name="DESCRIPTION" value="DIODE ZENER 200V 3W DO214AA"/>
+<attribute name="DIGIKEY" value="1PGSMB5956R5GCT-ND"/>
+<attribute name="MANUFACTURER" value="Taiwan Semiconductor Corporation"/>
+<attribute name="MPN" value="1PGSMB5956 R5G"/>
+</part>
+<part name="D1" library="SparkFun-DiscreteSemi" library_urn="urn:adsk.eagle:library:514" deviceset="DIODE-ZENER" device="-MM3Z3V3T1G" package3d_urn="urn:adsk.eagle:package:38441/1" value="3V">
+<attribute name="DESCRIPTION" value="DIODE ZENER 3V 300MW SOD323"/>
+<attribute name="DIGIKEY" value="MM3Z3V0ST1GOSCT-ND"/>
+<attribute name="MANUFACTURER" value="ON Semiconductor"/>
+<attribute name="MPN" value="MM3Z3V0ST1G"/>
+</part>
 <part name="C10" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="10nF">
-<attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
-<attribute name="DIGIKEY" value="311-1336-1-ND"/>
-<attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="CC0402KRX5R6BB104"/>
+<attribute name="DESCRIPTION" value="CAP CER 10000PF 16V X7R 0402"/>
+<attribute name="DIGIKEY" value="490-1313-1-ND"/>
+<attribute name="MANUFACTURER" value="Murata Electronics North America"/>
+<attribute name="MPN" value="GRM155R71C103KA01D"/>
 </part>
 <part name="R2" library="passives" deviceset="RESISTOR" device="0402_RES" value="10">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<attribute name="DESCRIPTION" value="RES SMD 10 OHM 1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="311-10.0LRCT-ND"/>
+<attribute name="MANUFACTURER" value="Yageo"/>
+<attribute name="MPN" value="RC0402FR-0710RL"/>
 </part>
 <part name="SUPPLY21" library="umich" deviceset="GND" device=""/>
-<part name="D1" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AC" package3d_urn="urn:adsk.eagle:package:43417/2" value="2000Vr"/>
-<part name="D15" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V"/>
-<part name="D16" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V"/>
-<part name="D17" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V"/>
-<part name="D18" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V"/>
-<part name="D19" library="SparkFun-DiscreteSemi" library_urn="urn:adsk.eagle:library:514" deviceset="DIODE-ZENER" device="-MM3Z3V3T1G" package3d_urn="urn:adsk.eagle:package:38441/1" value="3V"/>
+<part name="D14" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AC" package3d_urn="urn:adsk.eagle:package:43417/2" value="1000Vr">
+<attribute name="DESCRIPTION" value="DIODE GEN PURP 1KV 1A SMA"/>
+<attribute name="DIGIKEY" value="S1M-FDICT-ND"/>
+<attribute name="MANUFACTURER" value="Diodes Incorporated"/>
+<attribute name="MPN" value="S1M-13-F"/>
+</part>
+<part name="D10" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V">
+<attribute name="DESCRIPTION" value="DIODE ZENER 200V 3W DO214AA"/>
+<attribute name="DIGIKEY" value="1PGSMB5956R5GCT-ND"/>
+<attribute name="MANUFACTURER" value="Taiwan Semiconductor Corporation"/>
+<attribute name="MPN" value="1PGSMB5956 R5G"/>
+</part>
+<part name="D11" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V">
+<attribute name="DESCRIPTION" value="DIODE ZENER 200V 3W DO214AA"/>
+<attribute name="DIGIKEY" value="1PGSMB5956R5GCT-ND"/>
+<attribute name="MANUFACTURER" value="Taiwan Semiconductor Corporation"/>
+<attribute name="MPN" value="1PGSMB5956 R5G"/>
+</part>
+<part name="D12" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V">
+<attribute name="DESCRIPTION" value="DIODE ZENER 200V 3W DO214AA"/>
+<attribute name="DIGIKEY" value="1PGSMB5956R5GCT-ND"/>
+<attribute name="MANUFACTURER" value="Taiwan Semiconductor Corporation"/>
+<attribute name="MPN" value="1PGSMB5956 R5G"/>
+</part>
+<part name="D13" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="200V">
+<attribute name="DESCRIPTION" value="DIODE ZENER 200V 3W DO214AA"/>
+<attribute name="DIGIKEY" value="1PGSMB5956R5GCT-ND"/>
+<attribute name="MANUFACTURER" value="Taiwan Semiconductor Corporation"/>
+<attribute name="MPN" value="1PGSMB5956 R5G"/>
+</part>
+<part name="D2" library="SparkFun-DiscreteSemi" library_urn="urn:adsk.eagle:library:514" deviceset="DIODE-ZENER" device="-MM3Z3V3T1G" package3d_urn="urn:adsk.eagle:package:38441/1" value="3V">
+<attribute name="DESCRIPTION" value="DIODE ZENER 3V 300MW SOD323"/>
+<attribute name="DIGIKEY" value="MM3Z3V0ST1GOSCT-ND"/>
+<attribute name="MANUFACTURER" value="ON Semiconductor"/>
+<attribute name="MPN" value="MM3Z3V0ST1G"/>
+</part>
 <part name="C11" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="10nF">
-<attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
-<attribute name="DIGIKEY" value="311-1336-1-ND"/>
-<attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="CC0402KRX5R6BB104"/>
+<attribute name="DESCRIPTION" value="CAP CER 10000PF 16V X7R 0402"/>
+<attribute name="DIGIKEY" value="490-1313-1-ND"/>
+<attribute name="MANUFACTURER" value="Murata Electronics North America"/>
+<attribute name="MPN" value="GRM155R71C103KA01D"/>
 </part>
 <part name="R3" library="passives" deviceset="RESISTOR" device="0402_RES" value="10">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<attribute name="DESCRIPTION" value="RES SMD 10 OHM 1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="311-10.0LRCT-ND"/>
+<attribute name="MANUFACTURER" value="Yageo"/>
+<attribute name="MPN" value="RC0402FR-0710RL"/>
 </part>
 <part name="SUPPLY22" library="umich" deviceset="GND" device=""/>
-<part name="D21" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AC" package3d_urn="urn:adsk.eagle:package:43417/2" value="2000Vr"/>
-<part name="U15" library="SN74LVC1G86" deviceset="SN74LVC1G86DRLR" device="DRL5-L" value="SN74LVC1G86DRLRDRL5-L"/>
-<part name="U16" library="SN74LVC1G86" deviceset="SN74LVC1G86DRLR" device="DRL5-L" value="SN74LVC1G86DRLRDRL5-L"/>
+<part name="D15" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AC" package3d_urn="urn:adsk.eagle:package:43417/2" value="1000Vr">
+<attribute name="DESCRIPTION" value="DIODE GEN PURP 1KV 1A SMA"/>
+<attribute name="DIGIKEY" value="S1M-FDICT-ND"/>
+<attribute name="MANUFACTURER" value="Diodes Incorporated"/>
+<attribute name="MPN" value="S1M-13-F"/>
+</part>
+<part name="U15" library="SN74LVC1G86" deviceset="SN74LVC1G86DRLR" device="DRL5-L" value="SN74LVC1G86DRLRDRL5-L">
+<attribute name="DESCRIPTION" value="IC GATE XOR 1CH 2-INP SOT5"/>
+<attribute name="DIGIKEY" value="296-18613-1-ND"/>
+<attribute name="MANUFACTURER" value="Texas Instruments"/>
+<attribute name="MPN" value="SN74LVC1G86DRLR"/>
+</part>
+<part name="U16" library="SN74LVC1G86" deviceset="SN74LVC1G86DRLR" device="DRL5-L" value="SN74LVC1G86DRLRDRL5-L">
+<attribute name="DESCRIPTION" value="IC GATE XOR 1CH 2-INP SOT5"/>
+<attribute name="DIGIKEY" value="296-18613-1-ND"/>
+<attribute name="MANUFACTURER" value="Texas Instruments"/>
+<attribute name="MPN" value="SN74LVC1G86DRLR"/>
+</part>
 <part name="FRAME7" library="lab11-frames" deviceset="LETTER_L_BLANK" device=""/>
 <part name="SUPPLY23" library="umich" deviceset="GND" device=""/>
 <part name="SUPPLY24" library="umich" deviceset="GND" device=""/>
 <part name="SUPPLY25" library="umich" deviceset="GND" device=""/>
 <part name="C4" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="100pF">
-<attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
-<attribute name="DIGIKEY" value="311-1336-1-ND"/>
+<attribute name="DESCRIPTION" value="CAP CER 100PF 50V C0G/NPO 0402"/>
+<attribute name="DIGIKEY" value="311-1024-1-ND"/>
 <attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="CC0402KRX5R6BB104"/>
+<attribute name="MPN" value="CC0402JRNPO9BN101"/>
 </part>
 <part name="SUPPLY26" library="umich" deviceset="GND" device=""/>
-<part name="R4" library="passives" deviceset="RESISTOR" device="0402_RES" value="40">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R4" library="passives" deviceset="RESISTOR" device="0402_RES" value="40.2">
+<attribute name="DESCRIPTION" value="RES 40.2 OHM 1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="RMCF0402FT40R2CT-ND"/>
+<attribute name="MANUFACTURER" value="Stackpole Electronics Inc"/>
+<attribute name="MPN" value="RMCF0402FT40R2"/>
 </part>
-<part name="D23" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AC" package3d_urn="urn:adsk.eagle:package:43417/2" value="2000Vr"/>
-<part name="C12" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="10nF">
-<attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
-<attribute name="DIGIKEY" value="311-1336-1-ND"/>
-<attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="CC0402KRX5R6BB104"/>
+<part name="D16" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AC" package3d_urn="urn:adsk.eagle:package:43417/2" value="1000Vr">
+<attribute name="DESCRIPTION" value="DIODE GEN PURP 1KV 1A SMA"/>
+<attribute name="DIGIKEY" value="S1M-FDICT-ND"/>
+<attribute name="MANUFACTURER" value="Diodes Incorporated"/>
+<attribute name="MPN" value="S1M-13-F"/>
 </part>
-<part name="D24" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AC" package3d_urn="urn:adsk.eagle:package:43417/2" value="&gt;1kVr"/>
+<part name="C12" library="SparkFun-Capacitors" deviceset="CAP" device="1206" value="10nF">
+<attribute name="DESCRIPTION" value="CAP CER 10000PF 630V X7R 1206"/>
+<attribute name="DIGIKEY" value="445-2291-1-ND"/>
+<attribute name="MANUFACTURER" value="TDK Corporation"/>
+<attribute name="MPN" value="C3216X7R2J103K115AA"/>
+</part>
+<part name="D17" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AC" package3d_urn="urn:adsk.eagle:package:43417/2" value="1000Vr">
+<attribute name="DESCRIPTION" value="DIODE GEN PURP 1KV 1A SMA"/>
+<attribute name="DIGIKEY" value="S1M-FDICT-ND"/>
+<attribute name="MANUFACTURER" value="Diodes Incorporated"/>
+<attribute name="MPN" value="S1M-13-F"/>
+</part>
 <part name="SUPPLY27" library="umich" deviceset="GND" device=""/>
-<part name="R34" library="passives" deviceset="RESISTOR" device="0402_RES" value="800k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R35" library="passives" deviceset="RESISTOR" device="0805_RES" value="806k">
+<attribute name="DESCRIPTION" value="RES SMD 806K OHM 1% 1/8W 0805"/>
+<attribute name="DIGIKEY" value="311-806KCRCT-ND"/>
+<attribute name="MANUFACTURER" value="Yageo"/>
+<attribute name="MPN" value="RC0805FR-07806KL"/>
 </part>
 <part name="C6" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1nF">
-<attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
-<attribute name="DIGIKEY" value="311-1336-1-ND"/>
-<attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="CC0402KRX5R6BB104"/>
+<attribute name="DESCRIPTION" value="CAP CER 1000PF 50V X7R 0402"/>
+<attribute name="DIGIKEY" value="490-6350-1-ND"/>
+<attribute name="MANUFACTURER" value="Murata Electronics North America"/>
+<attribute name="MPN" value="GRM155R71H102KA01J"/>
 </part>
 <part name="SUPPLY28" library="umich" deviceset="GND" device=""/>
-<part name="D25" library="SparkFun-DiscreteSemi" library_urn="urn:adsk.eagle:library:514" deviceset="DIODE-ZENER" device="-MM3Z3V3T1G" package3d_urn="urn:adsk.eagle:package:38441/1" value="3V"/>
+<part name="D4" library="SparkFun-DiscreteSemi" library_urn="urn:adsk.eagle:library:514" deviceset="DIODE-ZENER" device="-MM3Z3V3T1G" package3d_urn="urn:adsk.eagle:package:38441/1" value="3V">
+<attribute name="DESCRIPTION" value="DIODE ZENER 3V 300MW SOD323"/>
+<attribute name="DIGIKEY" value="MM3Z3V0ST1GOSCT-ND"/>
+<attribute name="MANUFACTURER" value="ON Semiconductor"/>
+<attribute name="MPN" value="MM3Z3V0ST1G"/>
+</part>
 <part name="SUPPLY29" library="umich" deviceset="GND" device=""/>
-<part name="U17" library="SN74LVC1G86" deviceset="SN74LVC1G86DRLR" device="DRL5-L" value="SN74LVC1G86DRLRDRL5-L"/>
-<part name="U18" library="SN74LVC1G86" deviceset="SN74LVC1G86DRLR" device="DRL5-L" value="SN74LVC1G86DRLRDRL5-L"/>
+<part name="U17" library="SN74LVC1G86" deviceset="SN74LVC1G86DRLR" device="DRL5-L" value="SN74LVC1G86DRLRDRL5-L">
+<attribute name="DESCRIPTION" value="IC GATE XOR 1CH 2-INP SOT5"/>
+<attribute name="DIGIKEY" value="296-18613-1-ND"/>
+<attribute name="MANUFACTURER" value="Texas Instruments"/>
+<attribute name="MPN" value="SN74LVC1G86DRLR"/>
+</part>
+<part name="U18" library="SN74LVC1G86" deviceset="SN74LVC1G86DRLR" device="DRL5-L" value="SN74LVC1G86DRLRDRL5-L">
+<attribute name="DESCRIPTION" value="IC GATE XOR 1CH 2-INP SOT5"/>
+<attribute name="DIGIKEY" value="296-18613-1-ND"/>
+<attribute name="MANUFACTURER" value="Texas Instruments"/>
+<attribute name="MPN" value="SN74LVC1G86DRLR"/>
+</part>
 <part name="SUPPLY30" library="umich" deviceset="GND" device=""/>
 <part name="SUPPLY31" library="umich" deviceset="GND" device=""/>
 <part name="SUPPLY32" library="umich" deviceset="GND" device=""/>
 <part name="C5" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="100pF">
-<attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
-<attribute name="DIGIKEY" value="311-1336-1-ND"/>
+<attribute name="DESCRIPTION" value="CAP CER 100PF 50V C0G/NPO 0402"/>
+<attribute name="DIGIKEY" value="311-1024-1-ND"/>
 <attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="CC0402KRX5R6BB104"/>
+<attribute name="MPN" value="CC0402JRNPO9BN101"/>
 </part>
 <part name="SUPPLY33" library="umich" deviceset="GND" device=""/>
-<part name="R5" library="passives" deviceset="RESISTOR" device="0402_RES" value="40">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R5" library="passives" deviceset="RESISTOR" device="0402_RES" value="40.2">
+<attribute name="DESCRIPTION" value="RES 40.2 OHM 1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="RMCF0402FT40R2CT-ND"/>
+<attribute name="MANUFACTURER" value="Stackpole Electronics Inc"/>
+<attribute name="MPN" value="RMCF0402FT40R2"/>
 </part>
-<part name="D26" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AC" package3d_urn="urn:adsk.eagle:package:43417/2" value="2000Vr"/>
-<part name="C13" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="10nF">
-<attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
-<attribute name="DIGIKEY" value="311-1336-1-ND"/>
-<attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="CC0402KRX5R6BB104"/>
+<part name="D18" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AC" package3d_urn="urn:adsk.eagle:package:43417/2" value="1000Vr">
+<attribute name="DESCRIPTION" value="DIODE GEN PURP 1KV 1A SMA"/>
+<attribute name="DIGIKEY" value="S1M-FDICT-ND"/>
+<attribute name="MANUFACTURER" value="Diodes Incorporated"/>
+<attribute name="MPN" value="S1M-13-F"/>
 </part>
-<part name="D27" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AC" package3d_urn="urn:adsk.eagle:package:43417/2" value="&gt;1kVr"/>
+<part name="C13" library="SparkFun-Capacitors" deviceset="CAP" device="1206" value="10nF">
+<attribute name="DESCRIPTION" value="CAP CER 10000PF 630V X7R 1206"/>
+<attribute name="DIGIKEY" value="445-2291-1-ND"/>
+<attribute name="MANUFACTURER" value="TDK Corporation"/>
+<attribute name="MPN" value="C3216X7R2J103K115AA"/>
+</part>
+<part name="D19" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AC" package3d_urn="urn:adsk.eagle:package:43417/2" value="1000Vr">
+<attribute name="DESCRIPTION" value="DIODE GEN PURP 1KV 1A SMA"/>
+<attribute name="DIGIKEY" value="S1M-FDICT-ND"/>
+<attribute name="MANUFACTURER" value="Diodes Incorporated"/>
+<attribute name="MPN" value="S1M-13-F"/>
+</part>
 <part name="SUPPLY34" library="umich" deviceset="GND" device=""/>
-<part name="R35" library="passives" deviceset="RESISTOR" device="0402_RES" value="800k">
-<attribute name="DESCRIPTION" value="RES SMD 100K OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="541-100KLCT-ND"/>
-<attribute name="MANUFACTURER" value="Vishay Dale"/>
-<attribute name="MPN" value="CRCW0402100KFKED"/>
+<part name="R36" library="passives" deviceset="RESISTOR" device="0805_RES" value="806k">
+<attribute name="DESCRIPTION" value="RES SMD 806K OHM 1% 1/8W 0805"/>
+<attribute name="DIGIKEY" value="311-806KCRCT-ND"/>
+<attribute name="MANUFACTURER" value="Yageo"/>
+<attribute name="MPN" value="RC0805FR-07806KL"/>
 </part>
 <part name="C7" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1nF">
-<attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
-<attribute name="DIGIKEY" value="311-1336-1-ND"/>
-<attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="CC0402KRX5R6BB104"/>
+<attribute name="DESCRIPTION" value="CAP CER 1000PF 50V X7R 0402"/>
+<attribute name="DIGIKEY" value="490-6350-1-ND"/>
+<attribute name="MANUFACTURER" value="Murata Electronics North America"/>
+<attribute name="MPN" value="GRM155R71H102KA01J"/>
 </part>
 <part name="SUPPLY35" library="umich" deviceset="GND" device=""/>
-<part name="D28" library="SparkFun-DiscreteSemi" library_urn="urn:adsk.eagle:library:514" deviceset="DIODE-ZENER" device="-MM3Z3V3T1G" package3d_urn="urn:adsk.eagle:package:38441/1" value="3V"/>
+<part name="D3" library="SparkFun-DiscreteSemi" library_urn="urn:adsk.eagle:library:514" deviceset="DIODE-ZENER" device="-MM3Z3V3T1G" package3d_urn="urn:adsk.eagle:package:38441/1" value="3V">
+<attribute name="DESCRIPTION" value="DIODE ZENER 3V 300MW SOD323"/>
+<attribute name="DIGIKEY" value="MM3Z3V0ST1GOSCT-ND"/>
+<attribute name="MANUFACTURER" value="ON Semiconductor"/>
+<attribute name="MPN" value="MM3Z3V0ST1G"/>
+</part>
 <part name="SUPPLY36" library="umich" deviceset="GND" device=""/>
-<part name="U2" library="ada4096-4" deviceset="ADA4096-4ACPZ-R7" device=""/>
+<part name="U2" library="ada4096-4" deviceset="ADA4096-4ACPZ-R7" device="">
+<attribute name="DESCRIPTION" value="IC OPAMP GP 4 CIRCUIT 16LFCSP"/>
+<attribute name="DIGIKEY" value="ADA4096-4ACPZ-R7CT-ND"/>
+<attribute name="MANUFACTURER" value="Analog Devices Inc."/>
+<attribute name="MPN" value="ADA4096-4ACPZ-R7"/>
+</part>
 <part name="D29" library="leds" deviceset="SML-LX0404SIUPGUSB" device=""/>
-<part name="R10" library="passives" deviceset="RESISTOR" device="0402_RES" value="1.68k">
-<attribute name="DESCRIPTION" value="RES SMD 66.5 OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="YAG3210CT-ND"/>
+<part name="R10" library="passives" deviceset="RESISTOR" device="0402_RES" value="1.69k">
+<attribute name="DESCRIPTION" value="RES SMD 1.69K OHM 1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="YAG3044CT-ND"/>
 <attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="RC0402FR-0766R5L"/>
+<attribute name="MPN" value="RC0402FR-071K69L"/>
 </part>
 <part name="R7" library="passives" deviceset="RESISTOR" device="0402_RES" value="750">
-<attribute name="DESCRIPTION" value="RES SMD 66.5 OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="YAG3210CT-ND"/>
-<attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="RC0402FR-0766R5L"/>
+<attribute name="DESCRIPTION" value="RES SMD 750 OHM 1% 1/10W 0402"/>
+<attribute name="DIGIKEY" value="P750LCT-ND"/>
+<attribute name="MANUFACTURER" value="Panasonic Electronic Components"/>
+<attribute name="MPN" value="ERJ-2RKF7500X"/>
 </part>
-<part name="R6" library="passives" deviceset="RESISTOR" device="0402_RES" value="474">
-<attribute name="DESCRIPTION" value="RES SMD 66.5 OHM 1% 1/16W 0402"/>
-<attribute name="DIGIKEY" value="YAG3210CT-ND"/>
-<attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="RC0402FR-0766R5L"/>
+<part name="R6" library="passives" deviceset="RESISTOR" device="0402_RES" value="475">
+<attribute name="DESCRIPTION" value="RES 475 OHM 1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="RMCF0402FT475RCT-ND"/>
+<attribute name="MANUFACTURER" value="Stackpole Electronics Inc"/>
+<attribute name="MPN" value="RMCF0402FT475R"/>
 </part>
 <part name="P+6" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
-<part name="U10" library="MAX7315ATET" deviceset="MAX7315ATET" device=""/>
+<part name="U10" library="MAX7315ATET" deviceset="MAX7315ATET" device="">
+<attribute name="DESCRIPTION" value="IC I/O EXPANDER I2C 8B 16TQFN"/>
+<attribute name="DIGIKEY" value="MAX7315ATE+-ND"/>
+<attribute name="MANUFACTURER" value="Maxim Integrated"/>
+<attribute name="MPN" value="MAX7315ATE+"/>
+</part>
 <part name="GND2" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="P+7" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
-<part name="TP1" library="headers" deviceset="TEST_POINT_0.040IN" device=""/>
-<part name="TP2" library="headers" deviceset="TEST_POINT_0.040IN" device=""/>
+<part name="TP1" library="headers" deviceset="TEST_POINT_0.040IN" device="">
+<attribute name="DESCRIPTION" value="7cm, 18AWG wire with 4mm stripped on each end. Attach to bottom of board. Ask for clarification."/>
+</part>
+<part name="TP2" library="headers" deviceset="TEST_POINT_0.040IN" device="">
+<attribute name="DESCRIPTION" value="7cm, 18AWG wire with 4mm stripped on each end. Attach to bottom of board. Ask for clarification."/>
+</part>
 <part name="C22" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
 <attribute name="DIGIKEY" value="311-1336-1-ND"/>
@@ -23079,11 +23650,24 @@ Allows current flow in one direction, but allows reverse flow when above breakdo
 <attribute name="MPN" value="CC0402KRX5R6BB104"/>
 </part>
 <part name="C27" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
-<attribute name="DESCRIPTION" value="CAP CER 0.1UF 10V X5R 0402"/>
-<attribute name="DIGIKEY" value="311-1336-1-ND"/>
-<attribute name="MANUFACTURER" value="Yageo"/>
-<attribute name="MPN" value="CC0402KRX5R6BB104"/>
+<attribute name="DESCRIPTION" value="CAP CER 1UF 10V X7S 0402"/>
+<attribute name="DIGIKEY" value="490-13409-1-ND"/>
+<attribute name="MANUFACTURER" value="Murata Electronics North America"/>
+<attribute name="MPN" value="GCM155C71A105KE38D"/>
 </part>
+<part name="D5" library="leds" deviceset="LED" device="0603">
+<attribute name="DESCRIPTION" value="LED RED DIFFUSED 1608 SMD"/>
+<attribute name="DIGIKEY" value="SML-D12U1WT86CT-ND"/>
+<attribute name="MANUFACTURER" value="Rohm Semiconductor"/>
+<attribute name="MPN" value="SML-D12U1WT86"/>
+</part>
+<part name="R11" library="passives" deviceset="RESISTOR" device="0402_RES" value="1.69k">
+<attribute name="DESCRIPTION" value="RES SMD 1.69K OHM 1% 1/16W 0402"/>
+<attribute name="DIGIKEY" value="YAG3044CT-ND"/>
+<attribute name="MANUFACTURER" value="Yageo"/>
+<attribute name="MPN" value="RC0402FR-071K69L"/>
+</part>
+<part name="SUPPLY37" library="umich" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -23177,7 +23761,7 @@ many sources of noise.</text>
 <instance part="P+3" gate="VCC" x="160.02" y="132.08" smashed="yes">
 <attribute name="VALUE" x="157.48" y="129.54" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="R32" gate="G$1" x="134.62" y="132.08" smashed="yes">
+<instance part="R33" gate="G$1" x="134.62" y="132.08" smashed="yes">
 <attribute name="DIGIKEY" x="134.62" y="132.08" size="1.27" layer="96" font="vector" display="off"/>
 <attribute name="NAME" x="130.81" y="133.5786" size="1.778" layer="95"/>
 <attribute name="VALUE" x="130.81" y="128.778" size="1.778" layer="96"/>
@@ -23192,6 +23776,10 @@ many sources of noise.</text>
 <instance part="R1" gate="G$1" x="88.9" y="175.26" smashed="yes">
 <attribute name="NAME" x="85.09" y="176.7586" size="1.778" layer="95"/>
 <attribute name="VALUE" x="85.09" y="171.958" size="1.778" layer="96"/>
+<attribute name="DIGIKEY" x="88.9" y="175.26" size="1.016" layer="96" align="bottom-center"/>
+<attribute name="MANUFACTURER" x="88.9" y="175.26" size="1.016" layer="96" align="bottom-center"/>
+<attribute name="MPN" x="88.9" y="175.26" size="1.016" layer="96" align="bottom-center"/>
+<attribute name="DESCRIPTION" x="88.9" y="175.26" size="1.016" layer="96" align="bottom-center"/>
 </instance>
 <instance part="SUPPLY3" gate="1" x="195.58" y="55.88" smashed="yes">
 <attribute name="VALUE" x="193.04" y="53.34" size="1.778" layer="96"/>
@@ -23199,6 +23787,10 @@ many sources of noise.</text>
 <instance part="U11" gate="A" x="180.34" y="129.54" smashed="yes">
 <attribute name="NAME" x="195.9356" y="138.6586" size="2.0828" layer="95" ratio="6" rot="SR0"/>
 <attribute name="VALUE" x="195.3006" y="136.1186" size="2.0828" layer="96" ratio="6" rot="SR0"/>
+<attribute name="DIGIKEY" x="180.34" y="129.54" size="1.016" layer="96" align="bottom-center"/>
+<attribute name="MANUFACTURER" x="180.34" y="129.54" size="1.016" layer="96" align="bottom-center"/>
+<attribute name="MPN" x="180.34" y="129.54" size="1.016" layer="96" align="bottom-center"/>
+<attribute name="DESCRIPTION" x="180.34" y="129.54" size="1.016" layer="96" align="bottom-center"/>
 </instance>
 <instance part="SUPPLY4" gate="1" x="180.34" y="121.92" smashed="yes">
 <attribute name="VALUE" x="177.8" y="119.38" size="1.778" layer="96"/>
@@ -23214,17 +23806,17 @@ many sources of noise.</text>
 <instance part="SUPPLY5" gate="1" x="91.44" y="93.98" smashed="yes">
 <attribute name="VALUE" x="88.9" y="91.44" size="1.778" layer="96"/>
 </instance>
-<instance part="R11" gate="G$1" x="142.24" y="88.9" smashed="yes">
+<instance part="R12" gate="G$1" x="142.24" y="88.9" smashed="yes">
 <attribute name="DIGIKEY" x="142.24" y="88.9" size="1.27" layer="96" font="vector" display="off"/>
 <attribute name="NAME" x="138.43" y="90.3986" size="1.778" layer="95"/>
 <attribute name="VALUE" x="135.89" y="85.598" size="1.778" layer="96"/>
 </instance>
-<instance part="R37" gate="G$1" x="121.92" y="93.98" smashed="yes">
+<instance part="R38" gate="G$1" x="121.92" y="93.98" smashed="yes">
 <attribute name="DIGIKEY" x="121.92" y="93.98" size="1.27" layer="96" font="vector" display="off"/>
 <attribute name="NAME" x="118.11" y="95.4786" size="1.778" layer="95"/>
 <attribute name="VALUE" x="123.19" y="95.758" size="1.778" layer="96"/>
 </instance>
-<instance part="R38" gate="G$1" x="121.92" y="88.9" smashed="yes">
+<instance part="R39" gate="G$1" x="121.92" y="88.9" smashed="yes">
 <attribute name="DIGIKEY" x="121.92" y="88.9" size="1.27" layer="96" font="vector" display="off"/>
 <attribute name="NAME" x="118.11" y="90.3986" size="1.778" layer="95"/>
 <attribute name="VALUE" x="123.19" y="90.678" size="1.778" layer="96"/>
@@ -23243,17 +23835,17 @@ many sources of noise.</text>
 <instance part="SUPPLY7" gate="1" x="91.44" y="63.5" smashed="yes">
 <attribute name="VALUE" x="88.9" y="60.96" size="1.778" layer="96"/>
 </instance>
-<instance part="R39" gate="G$1" x="116.84" y="73.66" smashed="yes">
+<instance part="R40" gate="G$1" x="116.84" y="73.66" smashed="yes">
 <attribute name="DIGIKEY" x="116.84" y="73.66" size="1.27" layer="96" font="vector" display="off"/>
 <attribute name="NAME" x="113.03" y="75.1586" size="1.778" layer="95"/>
 <attribute name="VALUE" x="118.11" y="75.438" size="1.778" layer="96"/>
 </instance>
-<instance part="R40" gate="G$1" x="116.84" y="68.58" smashed="yes">
+<instance part="R41" gate="G$1" x="116.84" y="68.58" smashed="yes">
 <attribute name="DIGIKEY" x="116.84" y="68.58" size="1.27" layer="96" font="vector" display="off"/>
 <attribute name="NAME" x="113.03" y="70.0786" size="1.778" layer="95"/>
 <attribute name="VALUE" x="118.11" y="70.358" size="1.778" layer="96"/>
 </instance>
-<instance part="R12" gate="G$1" x="129.54" y="68.58" smashed="yes" rot="R180">
+<instance part="R13" gate="G$1" x="129.54" y="68.58" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" x="129.54" y="68.58" size="1.27" layer="96" font="vector" rot="R180" display="off"/>
 <attribute name="NAME" x="133.35" y="67.0814" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="133.35" y="71.882" size="1.778" layer="96" rot="R180"/>
@@ -23272,12 +23864,12 @@ many sources of noise.</text>
 <instance part="SUPPLY9" gate="1" x="93.98" y="22.86" smashed="yes">
 <attribute name="VALUE" x="91.44" y="20.32" size="1.778" layer="96"/>
 </instance>
-<instance part="R41" gate="G$1" x="121.92" y="25.4" smashed="yes" rot="R180">
+<instance part="R42" gate="G$1" x="121.92" y="25.4" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" x="121.92" y="25.4" size="1.27" layer="96" font="vector" rot="R180" display="off"/>
 <attribute name="NAME" x="125.73" y="23.9014" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="120.65" y="23.622" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="R42" gate="G$1" x="121.92" y="33.02" smashed="yes" rot="R180">
+<instance part="R43" gate="G$1" x="121.92" y="33.02" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" x="121.92" y="33.02" size="1.27" layer="96" font="vector" rot="R180" display="off"/>
 <attribute name="NAME" x="125.73" y="31.5214" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="120.65" y="31.242" size="1.778" layer="96" rot="R180"/>
@@ -23301,12 +23893,12 @@ many sources of noise.</text>
 <instance part="SUPPLY11" gate="1" x="91.44" y="40.64" smashed="yes">
 <attribute name="VALUE" x="91.44" y="40.64" size="1.778" layer="96"/>
 </instance>
-<instance part="R43" gate="G$1" x="116.84" y="50.8" smashed="yes" rot="R180">
+<instance part="R44" gate="G$1" x="116.84" y="50.8" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" x="116.84" y="50.8" size="1.27" layer="96" font="vector" rot="R180" display="off"/>
 <attribute name="NAME" x="120.65" y="49.3014" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="115.57" y="49.022" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="R44" gate="G$1" x="116.84" y="45.72" smashed="yes" rot="R180">
+<instance part="R45" gate="G$1" x="116.84" y="45.72" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" x="116.84" y="45.72" size="1.27" layer="96" font="vector" rot="R180" display="off"/>
 <attribute name="NAME" x="120.65" y="44.2214" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="115.57" y="43.942" size="1.778" layer="96" rot="R180"/>
@@ -23335,7 +23927,7 @@ many sources of noise.</text>
 <attribute name="NAME" x="14.7574" y="81.28" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="20.0914" y="76.2" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="D10" gate="G$1" x="15.24" y="45.72" smashed="yes" rot="R90">
+<instance part="D1" gate="G$1" x="15.24" y="45.72" smashed="yes" rot="R90">
 <attribute name="NAME" x="13.208" y="43.18" size="1.778" layer="95" font="vector" rot="R90"/>
 <attribute name="VALUE" x="17.272" y="43.18" size="1.778" layer="96" font="vector" rot="R90" align="top-left"/>
 </instance>
@@ -23355,27 +23947,27 @@ many sources of noise.</text>
 <instance part="SUPPLY21" gate="1" x="15.24" y="33.02" smashed="yes">
 <attribute name="VALUE" x="12.7" y="30.48" size="1.778" layer="96"/>
 </instance>
-<instance part="D1" gate="G$1" x="15.24" y="101.6" smashed="yes" rot="R270">
+<instance part="D14" gate="G$1" x="15.24" y="101.6" smashed="yes" rot="R270">
 <attribute name="NAME" x="15.7226" y="99.06" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="18.0086" y="104.14" size="1.778" layer="96" rot="R270"/>
 </instance>
-<instance part="D15" gate="G$1" x="35.56" y="55.88" smashed="yes" rot="R90">
+<instance part="D10" gate="G$1" x="35.56" y="55.88" smashed="yes" rot="R90">
 <attribute name="NAME" x="33.02" y="55.88" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="40.4114" y="53.34" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="D16" gate="G$1" x="35.56" y="63.5" smashed="yes" rot="R90">
+<instance part="D11" gate="G$1" x="35.56" y="63.5" smashed="yes" rot="R90">
 <attribute name="NAME" x="33.02" y="63.5" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="40.4114" y="60.96" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="D17" gate="G$1" x="35.56" y="71.12" smashed="yes" rot="R90">
+<instance part="D12" gate="G$1" x="35.56" y="71.12" smashed="yes" rot="R90">
 <attribute name="NAME" x="33.02" y="71.12" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="40.4114" y="68.58" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="D18" gate="G$1" x="35.56" y="78.74" smashed="yes" rot="R90">
+<instance part="D13" gate="G$1" x="35.56" y="78.74" smashed="yes" rot="R90">
 <attribute name="NAME" x="33.02" y="78.74" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="40.4114" y="76.2" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="D19" gate="G$1" x="35.56" y="45.72" smashed="yes" rot="R90">
+<instance part="D2" gate="G$1" x="35.56" y="45.72" smashed="yes" rot="R90">
 <attribute name="NAME" x="33.528" y="43.18" size="1.778" layer="95" font="vector" rot="R90"/>
 <attribute name="VALUE" x="37.592" y="43.18" size="1.778" layer="96" font="vector" rot="R90" align="top-left"/>
 </instance>
@@ -23395,7 +23987,7 @@ many sources of noise.</text>
 <instance part="SUPPLY22" gate="1" x="35.56" y="33.02" smashed="yes">
 <attribute name="VALUE" x="33.02" y="30.48" size="1.778" layer="96"/>
 </instance>
-<instance part="D21" gate="G$1" x="35.56" y="101.6" smashed="yes" rot="R270">
+<instance part="D15" gate="G$1" x="35.56" y="101.6" smashed="yes" rot="R270">
 <attribute name="NAME" x="36.0426" y="99.06" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="38.3286" y="104.14" size="1.778" layer="96" rot="R270"/>
 </instance>
@@ -23406,9 +23998,11 @@ many sources of noise.</text>
 <instance part="U2" gate="SUPPLY" x="190.5" y="68.58" smashed="yes"/>
 <instance part="TP1" gate="G$1" x="35.56" y="175.26" smashed="yes">
 <attribute name="NAME" x="32.385" y="175.26" size="1.016" layer="95" ratio="12" align="center-right"/>
+<attribute name="DESCRIPTION" x="35.56" y="175.26" size="1.016" layer="96" align="bottom-center"/>
 </instance>
 <instance part="TP2" gate="G$1" x="35.56" y="157.48" smashed="yes">
 <attribute name="NAME" x="32.385" y="157.48" size="1.016" layer="95" ratio="12" align="center-right"/>
+<attribute name="DESCRIPTION" x="35.56" y="157.48" size="1.016" layer="96" align="bottom-center"/>
 </instance>
 </instances>
 <busses>
@@ -23438,7 +24032,7 @@ many sources of noise.</text>
 <pinref part="U14" gate="G$1" pin="GND"/>
 <wire x1="114.3" y1="121.92" x2="114.3" y2="132.08" width="0.1524" layer="91"/>
 <wire x1="119.38" y1="121.92" x2="114.3" y2="121.92" width="0.1524" layer="91"/>
-<pinref part="R32" gate="G$1" pin="1"/>
+<pinref part="R33" gate="G$1" pin="1"/>
 <wire x1="129.54" y1="132.08" x2="114.3" y2="132.08" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="121.92" x2="111.76" y2="121.92" width="0.1524" layer="91"/>
 <junction x="114.3" y="121.92"/>
@@ -23456,7 +24050,7 @@ many sources of noise.</text>
 <pinref part="SUPPLY5" gate="1" pin="GND"/>
 </segment>
 <segment>
-<pinref part="R38" gate="G$1" pin="1"/>
+<pinref part="R39" gate="G$1" pin="1"/>
 <pinref part="SUPPLY6" gate="1" pin="GND"/>
 <wire x1="116.84" y1="88.9" x2="111.76" y2="88.9" width="0.1524" layer="91"/>
 </segment>
@@ -23468,7 +24062,7 @@ many sources of noise.</text>
 <segment>
 <pinref part="SUPPLY8" gate="1" pin="GND"/>
 <wire x1="109.22" y1="66.04" x2="109.22" y2="68.58" width="0.1524" layer="91"/>
-<pinref part="R40" gate="G$1" pin="1"/>
+<pinref part="R41" gate="G$1" pin="1"/>
 <wire x1="109.22" y1="68.58" x2="111.76" y2="68.58" width="0.1524" layer="91"/>
 </segment>
 <segment>
@@ -23479,7 +24073,7 @@ many sources of noise.</text>
 <segment>
 <pinref part="SUPPLY10" gate="1" pin="GND"/>
 <wire x1="109.22" y1="22.86" x2="109.22" y2="25.4" width="0.1524" layer="91"/>
-<pinref part="R41" gate="G$1" pin="2"/>
+<pinref part="R42" gate="G$1" pin="2"/>
 <wire x1="109.22" y1="25.4" x2="119.38" y2="25.4" width="0.1524" layer="91"/>
 </segment>
 <segment>
@@ -23488,12 +24082,12 @@ many sources of noise.</text>
 <wire x1="91.44" y1="43.18" x2="91.44" y2="45.72" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="R44" gate="G$1" pin="2"/>
+<pinref part="R45" gate="G$1" pin="2"/>
 <pinref part="SUPPLY12" gate="1" pin="GND"/>
 <wire x1="114.3" y1="45.72" x2="104.14" y2="45.72" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="D10" gate="G$1" pin="A"/>
+<pinref part="D1" gate="G$1" pin="A"/>
 <pinref part="SUPPLY21" gate="1" pin="GND"/>
 <wire x1="15.24" y1="43.18" x2="15.24" y2="38.1" width="0.1524" layer="91"/>
 <pinref part="C10" gate="G$1" pin="2"/>
@@ -23503,7 +24097,7 @@ many sources of noise.</text>
 <junction x="15.24" y="38.1"/>
 </segment>
 <segment>
-<pinref part="D19" gate="G$1" pin="A"/>
+<pinref part="D2" gate="G$1" pin="A"/>
 <pinref part="SUPPLY22" gate="1" pin="GND"/>
 <wire x1="35.56" y1="43.18" x2="35.56" y2="38.1" width="0.1524" layer="91"/>
 <pinref part="C11" gate="G$1" pin="2"/>
@@ -23520,12 +24114,12 @@ many sources of noise.</text>
 </net>
 <net name="AC_L_SENSE" class="0">
 <segment>
-<pinref part="R37" gate="G$1" pin="1"/>
+<pinref part="R38" gate="G$1" pin="1"/>
 <wire x1="116.84" y1="93.98" x2="114.3" y2="93.98" width="0.1524" layer="91"/>
 <label x="114.3" y="93.98" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="R42" gate="G$1" pin="2"/>
+<pinref part="R43" gate="G$1" pin="2"/>
 <wire x1="119.38" y1="33.02" x2="116.84" y2="33.02" width="0.1524" layer="91"/>
 <label x="116.84" y="33.02" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -23536,7 +24130,7 @@ many sources of noise.</text>
 <label x="60.96" y="175.26" size="1.27" layer="95" rot="R90" xref="yes"/>
 </segment>
 <segment>
-<pinref part="D1" gate="G$1" pin="A"/>
+<pinref part="D14" gate="G$1" pin="A"/>
 <wire x1="15.24" y1="104.14" x2="15.24" y2="109.22" width="0.1524" layer="91"/>
 <label x="15.24" y="109.22" size="1.27" layer="95" rot="R90" xref="yes"/>
 </segment>
@@ -23576,7 +24170,7 @@ many sources of noise.</text>
 <wire x1="147.32" y1="132.08" x2="147.32" y2="137.16" width="0.1524" layer="91"/>
 <wire x1="147.32" y1="137.16" x2="144.78" y2="137.16" width="0.1524" layer="91"/>
 <label x="144.78" y="137.16" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="R32" gate="G$1" pin="2"/>
+<pinref part="R33" gate="G$1" pin="2"/>
 <wire x1="137.16" y1="132.08" x2="147.32" y2="132.08" width="0.1524" layer="91"/>
 <junction x="147.32" y="132.08"/>
 </segment>
@@ -23606,17 +24200,17 @@ many sources of noise.</text>
 <pinref part="TP2" gate="G$1" pin="TESTPOINT"/>
 </segment>
 <segment>
-<pinref part="R39" gate="G$1" pin="1"/>
+<pinref part="R40" gate="G$1" pin="1"/>
 <wire x1="111.76" y1="73.66" x2="109.22" y2="73.66" width="0.1524" layer="91"/>
 <label x="109.22" y="73.66" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="R43" gate="G$1" pin="2"/>
+<pinref part="R44" gate="G$1" pin="2"/>
 <wire x1="114.3" y1="50.8" x2="106.68" y2="50.8" width="0.1524" layer="91"/>
 <label x="106.68" y="50.8" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="D21" gate="G$1" pin="A"/>
+<pinref part="D15" gate="G$1" pin="A"/>
 <wire x1="35.56" y1="104.14" x2="35.56" y2="109.22" width="0.1524" layer="91"/>
 <label x="35.56" y="109.22" size="1.27" layer="95" rot="R90" xref="yes"/>
 </segment>
@@ -23696,7 +24290,7 @@ many sources of noise.</text>
 </net>
 <net name="AC_L_LV_OUT" class="0">
 <segment>
-<pinref part="R11" gate="G$1" pin="2"/>
+<pinref part="R12" gate="G$1" pin="2"/>
 <wire x1="144.78" y1="88.9" x2="154.94" y2="88.9" width="0.1524" layer="91"/>
 <wire x1="154.94" y1="88.9" x2="154.94" y2="96.52" width="0.1524" layer="91"/>
 <wire x1="154.94" y1="96.52" x2="160.02" y2="96.52" width="0.1524" layer="91"/>
@@ -23709,13 +24303,13 @@ many sources of noise.</text>
 <net name="N$4" class="0">
 <segment>
 <wire x1="134.62" y1="93.98" x2="127" y2="93.98" width="0.1524" layer="91"/>
-<pinref part="R11" gate="G$1" pin="1"/>
+<pinref part="R12" gate="G$1" pin="1"/>
 <wire x1="137.16" y1="88.9" x2="127" y2="88.9" width="0.1524" layer="91"/>
 <wire x1="127" y1="88.9" x2="127" y2="93.98" width="0.1524" layer="91"/>
 <wire x1="127" y1="93.98" x2="124.46" y2="93.98" width="0.1524" layer="91"/>
 <junction x="127" y="93.98"/>
-<pinref part="R37" gate="G$1" pin="2"/>
 <pinref part="R38" gate="G$1" pin="2"/>
+<pinref part="R39" gate="G$1" pin="2"/>
 <wire x1="124.46" y1="88.9" x2="127" y2="88.9" width="0.1524" layer="91"/>
 <junction x="127" y="88.9"/>
 <pinref part="U2" gate="C" pin="-"/>
@@ -23724,14 +24318,14 @@ many sources of noise.</text>
 <net name="N$3" class="0">
 <segment>
 <wire x1="134.62" y1="73.66" x2="124.46" y2="73.66" width="0.1524" layer="91"/>
-<pinref part="R39" gate="G$1" pin="2"/>
-<wire x1="124.46" y1="73.66" x2="119.38" y2="73.66" width="0.1524" layer="91"/>
 <pinref part="R40" gate="G$1" pin="2"/>
+<wire x1="124.46" y1="73.66" x2="119.38" y2="73.66" width="0.1524" layer="91"/>
+<pinref part="R41" gate="G$1" pin="2"/>
 <wire x1="119.38" y1="68.58" x2="124.46" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="124.46" y1="68.58" x2="124.46" y2="73.66" width="0.1524" layer="91"/>
 <junction x="124.46" y="73.66"/>
 <pinref part="U2" gate="A" pin="-"/>
-<pinref part="R12" gate="G$1" pin="2"/>
+<pinref part="R13" gate="G$1" pin="2"/>
 <wire x1="124.46" y1="68.58" x2="127" y2="68.58" width="0.1524" layer="91"/>
 <junction x="124.46" y="68.58"/>
 </segment>
@@ -23739,7 +24333,7 @@ many sources of noise.</text>
 <net name="AC_N_LV_OUT" class="0">
 <segment>
 <wire x1="154.94" y1="76.2" x2="154.94" y2="68.58" width="0.1524" layer="91"/>
-<pinref part="R12" gate="G$1" pin="1"/>
+<pinref part="R13" gate="G$1" pin="1"/>
 <wire x1="134.62" y1="68.58" x2="154.94" y2="68.58" width="0.1524" layer="91"/>
 <label x="160.02" y="76.2" size="1.27" layer="95" xref="yes"/>
 <pinref part="U2" gate="A" pin="OUT"/>
@@ -23753,12 +24347,12 @@ many sources of noise.</text>
 <pinref part="R8" gate="G$1" pin="1"/>
 <wire x1="132.08" y1="33.02" x2="132.08" y2="25.4" width="0.1524" layer="91"/>
 <wire x1="132.08" y1="25.4" x2="134.62" y2="25.4" width="0.1524" layer="91"/>
-<pinref part="R42" gate="G$1" pin="1"/>
+<pinref part="R43" gate="G$1" pin="1"/>
 <wire x1="127" y1="33.02" x2="132.08" y2="33.02" width="0.1524" layer="91"/>
 <junction x="132.08" y="33.02"/>
 <pinref part="U2" gate="D" pin="-"/>
 <wire x1="132.08" y1="33.02" x2="134.62" y2="33.02" width="0.1524" layer="91"/>
-<pinref part="R41" gate="G$1" pin="1"/>
+<pinref part="R42" gate="G$1" pin="1"/>
 <wire x1="127" y1="25.4" x2="132.08" y2="25.4" width="0.1524" layer="91"/>
 <junction x="132.08" y="25.4"/>
 </segment>
@@ -23780,8 +24374,8 @@ many sources of noise.</text>
 <wire x1="134.62" y1="50.8" x2="127" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="127" y1="50.8" x2="127" y2="45.72" width="0.1524" layer="91"/>
 <wire x1="127" y1="45.72" x2="121.92" y2="45.72" width="0.1524" layer="91"/>
+<pinref part="R45" gate="G$1" pin="1"/>
 <pinref part="R44" gate="G$1" pin="1"/>
-<pinref part="R43" gate="G$1" pin="1"/>
 <wire x1="121.92" y1="50.8" x2="127" y2="50.8" width="0.1524" layer="91"/>
 <junction x="127" y="50.8"/>
 <pinref part="U2" gate="B" pin="-"/>
@@ -23833,7 +24427,7 @@ many sources of noise.</text>
 <net name="AC_L_800V_DETECT" class="0">
 <segment>
 <pinref part="D6" gate="G$1" pin="A"/>
-<pinref part="D10" gate="G$1" pin="C"/>
+<pinref part="D1" gate="G$1" pin="C"/>
 <wire x1="15.24" y1="53.34" x2="15.24" y2="50.8" width="0.1524" layer="91"/>
 <pinref part="C10" gate="G$1" pin="1"/>
 <wire x1="15.24" y1="50.8" x2="15.24" y2="48.26" width="0.1524" layer="91"/>
@@ -23854,36 +24448,36 @@ many sources of noise.</text>
 </net>
 <net name="N$32" class="0">
 <segment>
-<pinref part="D1" gate="G$1" pin="C"/>
+<pinref part="D14" gate="G$1" pin="C"/>
 <pinref part="R2" gate="G$1" pin="2"/>
 <wire x1="15.24" y1="99.06" x2="15.24" y2="93.98" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$35" class="0">
 <segment>
-<pinref part="D18" gate="G$1" pin="A"/>
-<pinref part="D17" gate="G$1" pin="C"/>
+<pinref part="D13" gate="G$1" pin="A"/>
+<pinref part="D12" gate="G$1" pin="C"/>
 <wire x1="35.56" y1="76.2" x2="35.56" y2="73.66" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$37" class="0">
 <segment>
-<pinref part="D17" gate="G$1" pin="A"/>
-<pinref part="D16" gate="G$1" pin="C"/>
+<pinref part="D12" gate="G$1" pin="A"/>
+<pinref part="D11" gate="G$1" pin="C"/>
 <wire x1="35.56" y1="68.58" x2="35.56" y2="66.04" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$38" class="0">
 <segment>
-<pinref part="D16" gate="G$1" pin="A"/>
-<pinref part="D15" gate="G$1" pin="C"/>
+<pinref part="D11" gate="G$1" pin="A"/>
+<pinref part="D10" gate="G$1" pin="C"/>
 <wire x1="35.56" y1="60.96" x2="35.56" y2="58.42" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="AC_N_800V_DETECT" class="0">
 <segment>
-<pinref part="D15" gate="G$1" pin="A"/>
-<pinref part="D19" gate="G$1" pin="C"/>
+<pinref part="D10" gate="G$1" pin="A"/>
+<pinref part="D2" gate="G$1" pin="C"/>
 <wire x1="35.56" y1="53.34" x2="35.56" y2="50.8" width="0.1524" layer="91"/>
 <pinref part="C11" gate="G$1" pin="1"/>
 <wire x1="35.56" y1="50.8" x2="35.56" y2="48.26" width="0.1524" layer="91"/>
@@ -23897,14 +24491,14 @@ many sources of noise.</text>
 </net>
 <net name="N$46" class="0">
 <segment>
-<pinref part="D18" gate="G$1" pin="C"/>
+<pinref part="D13" gate="G$1" pin="C"/>
 <pinref part="R3" gate="G$1" pin="1"/>
 <wire x1="35.56" y1="81.28" x2="35.56" y2="86.36" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$47" class="0">
 <segment>
-<pinref part="D21" gate="G$1" pin="C"/>
+<pinref part="D15" gate="G$1" pin="C"/>
 <pinref part="R3" gate="G$1" pin="2"/>
 <wire x1="35.56" y1="99.06" x2="35.56" y2="93.98" width="0.1524" layer="91"/>
 </segment>
@@ -23929,6 +24523,10 @@ can be powered by the reference.</text>
 <instance part="U21" gate="A" x="12.7" y="165.1" smashed="yes">
 <attribute name="NAME" x="35.9156" y="174.2186" size="2.0828" layer="95" ratio="6" rot="SR0"/>
 <attribute name="VALUE" x="35.2806" y="171.6786" size="2.0828" layer="96" ratio="6" rot="SR0"/>
+<attribute name="DIGIKEY" x="12.7" y="165.1" size="1.016" layer="96" align="bottom-center"/>
+<attribute name="MANUFACTURER" x="12.7" y="165.1" size="1.016" layer="96" align="bottom-center"/>
+<attribute name="MPN" x="12.7" y="165.1" size="1.016" layer="96" align="bottom-center"/>
+<attribute name="DESCRIPTION" x="12.7" y="165.1" size="1.016" layer="96" align="bottom-center"/>
 </instance>
 <instance part="SUPPLY13" gate="1" x="12.7" y="152.4" smashed="yes">
 <attribute name="VALUE" x="10.16" y="149.86" size="1.778" layer="96"/>
@@ -24002,7 +24600,7 @@ can be powered by the reference.</text>
 <instance part="SUPPLY15" gate="1" x="10.16" y="76.2" smashed="yes">
 <attribute name="VALUE" x="7.62" y="73.66" size="1.778" layer="96"/>
 </instance>
-<instance part="R24" gate="G$1" x="162.56" y="96.52" smashed="yes" rot="R90">
+<instance part="R25" gate="G$1" x="162.56" y="96.52" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" x="162.56" y="96.52" size="1.27" layer="96" font="vector" rot="R90" display="off"/>
 <attribute name="NAME" x="161.0614" y="92.71" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="165.862" y="92.71" size="1.778" layer="96" rot="R90"/>
@@ -24016,6 +24614,9 @@ can be powered by the reference.</text>
 <instance part="J2" gate="G$1" x="210.82" y="162.56" smashed="yes">
 <attribute name="NAME" x="200.66" y="170.434" size="1.778" layer="95" ratio="12"/>
 <attribute name="VALUE" x="200.66" y="152.654" size="1.778" layer="96" ratio="12"/>
+<attribute name="DIGIKEY" x="210.82" y="162.56" size="1.016" layer="96" align="bottom-center"/>
+<attribute name="MANUFACTURER" x="210.82" y="162.56" size="1.016" layer="96" align="bottom-center"/>
+<attribute name="MPN" x="210.82" y="162.56" size="1.016" layer="96" align="bottom-center"/>
 </instance>
 <instance part="SUPPLY18" gate="1" x="193.04" y="152.4" smashed="yes">
 <attribute name="VALUE" x="190.5" y="149.86" size="1.778" layer="96"/>
@@ -24029,6 +24630,10 @@ can be powered by the reference.</text>
 <instance part="U20" gate="A" x="25.4" y="20.32" smashed="yes">
 <attribute name="NAME" x="53.6956" y="29.4386" size="2.0828" layer="95" ratio="6" rot="SR0"/>
 <attribute name="VALUE" x="53.0606" y="26.8986" size="2.0828" layer="96" ratio="6" rot="SR0"/>
+<attribute name="DIGIKEY" x="25.4" y="20.32" size="1.016" layer="96" align="bottom-center"/>
+<attribute name="MANUFACTURER" x="25.4" y="20.32" size="1.016" layer="96" align="bottom-center"/>
+<attribute name="MPN" x="25.4" y="20.32" size="1.016" layer="96" align="bottom-center"/>
+<attribute name="DESCRIPTION" x="25.4" y="20.32" size="1.016" layer="96" align="bottom-center"/>
 </instance>
 <instance part="SUPPLY20" gate="1" x="17.78" y="15.24" smashed="yes">
 <attribute name="VALUE" x="15.24" y="12.7" size="1.778" layer="96"/>
@@ -24048,6 +24653,18 @@ can be powered by the reference.</text>
 <attribute name="DESCRIPTION" x="66.04" y="121.92" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="NAME" x="64.77" y="120.65" size="1.778" layer="95" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="67.31" y="120.65" size="1.778" layer="96" ratio="12" rot="R270" align="bottom-center"/>
+</instance>
+<instance part="D5" gate="G$1" x="41.91" y="69.85" smashed="yes" rot="R270">
+<attribute name="NAME" x="43.815" y="69.85" size="1.778" layer="95" ratio="12" rot="R270" align="bottom-center"/>
+<attribute name="VALUE" x="38.735" y="69.85" size="1.778" layer="96" ratio="12" rot="R270" align="bottom-center"/>
+</instance>
+<instance part="R11" gate="G$1" x="41.91" y="62.23" smashed="yes" rot="R90">
+<attribute name="DIGIKEY" x="41.91" y="62.23" size="1.27" layer="96" font="vector" rot="R90" display="off"/>
+<attribute name="NAME" x="40.4114" y="58.42" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="45.212" y="58.42" size="1.778" layer="96" rot="R90"/>
+</instance>
+<instance part="SUPPLY37" gate="1" x="41.91" y="52.07" smashed="yes">
+<attribute name="VALUE" x="39.37" y="49.53" size="1.778" layer="96"/>
 </instance>
 </instances>
 <busses>
@@ -24102,7 +24719,7 @@ can be powered by the reference.</text>
 </segment>
 <segment>
 <pinref part="SUPPLY16" gate="1" pin="GND"/>
-<pinref part="R24" gate="G$1" pin="1"/>
+<pinref part="R25" gate="G$1" pin="1"/>
 <wire x1="162.56" y1="88.9" x2="162.56" y2="91.44" width="0.1524" layer="91"/>
 </segment>
 <segment>
@@ -24126,6 +24743,11 @@ can be powered by the reference.</text>
 <pinref part="U20" gate="A" pin="GND"/>
 <pinref part="SUPPLY20" gate="1" pin="GND"/>
 <wire x1="17.78" y1="17.78" x2="27.94" y2="17.78" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="SUPPLY37" gate="1" pin="GND"/>
+<pinref part="R11" gate="G$1" pin="1"/>
+<wire x1="41.91" y1="54.61" x2="41.91" y2="57.15" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="AC_COPROC_VCC" class="0">
@@ -24219,10 +24841,10 @@ can be powered by the reference.</text>
 <segment>
 <pinref part="C2" gate="G$1" pin="2"/>
 <wire x1="25.4" y1="81.28" x2="30.48" y2="81.28" width="0.1524" layer="91"/>
-<wire x1="30.48" y1="81.28" x2="45.72" y2="81.28" width="0.1524" layer="91"/>
-<wire x1="45.72" y1="81.28" x2="45.72" y2="91.44" width="0.1524" layer="91"/>
+<wire x1="30.48" y1="81.28" x2="38.1" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="38.1" y1="81.28" x2="38.1" y2="91.44" width="0.1524" layer="91"/>
 <pinref part="U19" gate="G$1" pin="PC15/OSC32OUT"/>
-<wire x1="45.72" y1="91.44" x2="81.28" y2="91.44" width="0.1524" layer="91"/>
+<wire x1="38.1" y1="91.44" x2="81.28" y2="91.44" width="0.1524" layer="91"/>
 <pinref part="X1" gate="G$1" pin="1"/>
 <wire x1="30.48" y1="83.82" x2="30.48" y2="81.28" width="0.1524" layer="91"/>
 <junction x="30.48" y="81.28"/>
@@ -24395,7 +25017,7 @@ can be powered by the reference.</text>
 </net>
 <net name="BOOT0" class="0">
 <segment>
-<pinref part="R24" gate="G$1" pin="2"/>
+<pinref part="R25" gate="G$1" pin="2"/>
 <wire x1="162.56" y1="99.06" x2="162.56" y2="101.6" width="0.1524" layer="91"/>
 <pinref part="U19" gate="G$1" pin="PH3/BOOT0"/>
 <wire x1="162.56" y1="101.6" x2="127" y2="101.6" width="0.1524" layer="91"/>
@@ -24414,6 +25036,23 @@ can be powered by the reference.</text>
 <pinref part="U19" gate="G$1" pin="PA2"/>
 <wire x1="127" y1="91.44" x2="132.08" y2="91.44" width="0.1524" layer="91"/>
 <label x="132.08" y="91.44" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="N$1" class="0">
+<segment>
+<pinref part="R11" gate="G$1" pin="2"/>
+<pinref part="D5" gate="G$1" pin="CATHODE"/>
+<wire x1="41.91" y1="64.77" x2="41.91" y2="67.31" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$7" class="0">
+<segment>
+<pinref part="D5" gate="G$1" pin="ANODE"/>
+<wire x1="41.91" y1="72.39" x2="41.91" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="U19" gate="G$1" pin="PB1"/>
+<wire x1="81.28" y1="81.28" x2="78.74" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="78.74" y1="81.28" x2="77.47" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="41.91" y1="81.28" x2="77.47" y2="81.28" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
@@ -24526,7 +25165,7 @@ and insulation.</text>
 <attribute name="NAME" x="74.7014" y="130.81" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="79.502" y="130.81" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="D23" gate="G$1" x="144.78" y="139.7" smashed="yes">
+<instance part="D16" gate="G$1" x="144.78" y="139.7" smashed="yes">
 <attribute name="NAME" x="147.32" y="140.1826" size="1.778" layer="95"/>
 <attribute name="VALUE" x="142.24" y="134.8486" size="1.778" layer="96"/>
 </instance>
@@ -24535,17 +25174,17 @@ and insulation.</text>
 <attribute name="MANUFACTURER" x="165.1" y="116.84" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="MPN" x="165.1" y="116.84" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="DESCRIPTION" x="165.1" y="116.84" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
-<attribute name="NAME" x="163.83" y="115.57" size="1.778" layer="95" ratio="12" rot="R90" align="bottom-center"/>
-<attribute name="VALUE" x="166.37" y="115.57" size="1.778" layer="96" ratio="12" rot="R270" align="bottom-center"/>
+<attribute name="NAME" x="161.29" y="118.11" size="1.778" layer="95" ratio="12" rot="R90" align="bottom-center"/>
+<attribute name="VALUE" x="168.91" y="118.11" size="1.778" layer="96" ratio="12" rot="R270" align="bottom-center"/>
 </instance>
-<instance part="D24" gate="G$1" x="165.1" y="134.62" smashed="yes" rot="R270">
+<instance part="D17" gate="G$1" x="165.1" y="134.62" smashed="yes" rot="R270">
 <attribute name="NAME" x="165.5826" y="132.08" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="160.2486" y="134.62" size="1.778" layer="96" rot="R270"/>
 </instance>
 <instance part="SUPPLY27" gate="1" x="165.1" y="104.14" smashed="yes">
 <attribute name="VALUE" x="162.56" y="101.6" size="1.778" layer="96"/>
 </instance>
-<instance part="R34" gate="G$1" x="177.8" y="127" smashed="yes" rot="R90">
+<instance part="R35" gate="G$1" x="177.8" y="127" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" x="177.8" y="127" size="1.27" layer="96" font="vector" rot="R90" display="off"/>
 <attribute name="NAME" x="176.3014" y="123.19" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="181.102" y="123.19" size="1.778" layer="96" rot="R90"/>
@@ -24561,7 +25200,7 @@ and insulation.</text>
 <instance part="SUPPLY28" gate="1" x="198.12" y="104.14" smashed="yes">
 <attribute name="VALUE" x="195.58" y="101.6" size="1.778" layer="96"/>
 </instance>
-<instance part="D25" gate="G$1" x="177.8" y="114.3" smashed="yes" rot="R90">
+<instance part="D4" gate="G$1" x="177.8" y="114.3" smashed="yes" rot="R90">
 <attribute name="NAME" x="175.768" y="111.76" size="1.778" layer="95" font="vector" rot="R90"/>
 <attribute name="VALUE" x="179.832" y="111.76" size="1.778" layer="96" font="vector" rot="R90" align="top-left"/>
 </instance>
@@ -24601,7 +25240,7 @@ and insulation.</text>
 <attribute name="NAME" x="77.2414" y="57.15" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="82.042" y="57.15" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="D26" gate="G$1" x="147.32" y="66.04" smashed="yes">
+<instance part="D18" gate="G$1" x="147.32" y="66.04" smashed="yes">
 <attribute name="NAME" x="149.86" y="66.5226" size="1.778" layer="95"/>
 <attribute name="VALUE" x="144.78" y="61.1886" size="1.778" layer="96"/>
 </instance>
@@ -24610,17 +25249,17 @@ and insulation.</text>
 <attribute name="MANUFACTURER" x="167.64" y="43.18" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="MPN" x="167.64" y="43.18" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="DESCRIPTION" x="167.64" y="43.18" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
-<attribute name="NAME" x="166.37" y="41.91" size="1.778" layer="95" ratio="12" rot="R90" align="bottom-center"/>
-<attribute name="VALUE" x="168.91" y="41.91" size="1.778" layer="96" ratio="12" rot="R270" align="bottom-center"/>
+<attribute name="NAME" x="163.83" y="44.45" size="1.778" layer="95" ratio="12" rot="R90" align="bottom-center"/>
+<attribute name="VALUE" x="171.45" y="44.45" size="1.778" layer="96" ratio="12" rot="R270" align="bottom-center"/>
 </instance>
-<instance part="D27" gate="G$1" x="167.64" y="60.96" smashed="yes" rot="R270">
+<instance part="D19" gate="G$1" x="167.64" y="60.96" smashed="yes" rot="R270">
 <attribute name="NAME" x="168.1226" y="58.42" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="162.7886" y="60.96" size="1.778" layer="96" rot="R270"/>
 </instance>
 <instance part="SUPPLY34" gate="1" x="167.64" y="30.48" smashed="yes">
 <attribute name="VALUE" x="165.1" y="27.94" size="1.778" layer="96"/>
 </instance>
-<instance part="R35" gate="G$1" x="180.34" y="53.34" smashed="yes" rot="R90">
+<instance part="R36" gate="G$1" x="180.34" y="53.34" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" x="180.34" y="53.34" size="1.27" layer="96" font="vector" rot="R90" display="off"/>
 <attribute name="NAME" x="178.8414" y="49.53" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="183.642" y="49.53" size="1.778" layer="96" rot="R90"/>
@@ -24636,7 +25275,7 @@ and insulation.</text>
 <instance part="SUPPLY35" gate="1" x="200.66" y="30.48" smashed="yes">
 <attribute name="VALUE" x="198.12" y="27.94" size="1.778" layer="96"/>
 </instance>
-<instance part="D28" gate="G$1" x="180.34" y="38.1" smashed="yes" rot="R90">
+<instance part="D3" gate="G$1" x="180.34" y="38.1" smashed="yes" rot="R90">
 <attribute name="NAME" x="178.308" y="35.56" size="1.778" layer="95" font="vector" rot="R90"/>
 <attribute name="VALUE" x="182.372" y="38.1" size="1.778" layer="96" font="vector" rot="R90" align="top-left"/>
 </instance>
@@ -24674,10 +25313,10 @@ and insulation.</text>
 <segment>
 <pinref part="C12" gate="G$1" pin="2"/>
 <pinref part="SUPPLY27" gate="1" pin="GND"/>
-<wire x1="165.1" y1="111.76" x2="165.1" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="165.1" y1="114.3" x2="165.1" y2="106.68" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="D25" gate="G$1" pin="A"/>
+<pinref part="D4" gate="G$1" pin="A"/>
 <wire x1="177.8" y1="111.76" x2="177.8" y2="106.68" width="0.1524" layer="91"/>
 <pinref part="SUPPLY29" gate="1" pin="GND"/>
 </segment>
@@ -24712,10 +25351,10 @@ and insulation.</text>
 <segment>
 <pinref part="C13" gate="G$1" pin="2"/>
 <pinref part="SUPPLY34" gate="1" pin="GND"/>
-<wire x1="167.64" y1="38.1" x2="167.64" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="40.64" x2="167.64" y2="33.02" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="D28" gate="G$1" pin="A"/>
+<pinref part="D3" gate="G$1" pin="A"/>
 <wire x1="180.34" y1="35.56" x2="180.34" y2="33.02" width="0.1524" layer="91"/>
 <pinref part="SUPPLY36" gate="1" pin="GND"/>
 </segment>
@@ -24785,16 +25424,16 @@ and insulation.</text>
 </net>
 <net name="AC_N1" class="0">
 <segment>
-<pinref part="D23" gate="G$1" pin="A"/>
+<pinref part="D16" gate="G$1" pin="A"/>
 <wire x1="142.24" y1="139.7" x2="134.62" y2="139.7" width="0.1524" layer="91"/>
 <pinref part="U16" gate="A" pin="Y"/>
 </segment>
 </net>
 <net name="AC_L_SENSE" class="0">
 <segment>
-<pinref part="D23" gate="G$1" pin="C"/>
+<pinref part="D16" gate="G$1" pin="C"/>
 <wire x1="147.32" y1="139.7" x2="165.1" y2="139.7" width="0.1524" layer="91"/>
-<pinref part="D24" gate="G$1" pin="A"/>
+<pinref part="D17" gate="G$1" pin="A"/>
 <wire x1="165.1" y1="139.7" x2="165.1" y2="137.16" width="0.1524" layer="91"/>
 <wire x1="165.1" y1="139.7" x2="203.2" y2="139.7" width="0.1524" layer="91"/>
 <junction x="165.1" y="139.7"/>
@@ -24803,20 +25442,20 @@ and insulation.</text>
 </net>
 <net name="N$44" class="0">
 <segment>
-<pinref part="R34" gate="G$1" pin="2"/>
-<pinref part="D24" gate="G$1" pin="C"/>
+<pinref part="R35" gate="G$1" pin="2"/>
+<pinref part="D17" gate="G$1" pin="C"/>
 <pinref part="C12" gate="G$1" pin="1"/>
 <wire x1="165.1" y1="132.08" x2="165.1" y2="129.54" width="0.1524" layer="91"/>
-<wire x1="165.1" y1="129.54" x2="165.1" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="165.1" y1="129.54" x2="165.1" y2="121.92" width="0.1524" layer="91"/>
 <wire x1="177.8" y1="129.54" x2="165.1" y2="129.54" width="0.1524" layer="91"/>
 <junction x="165.1" y="129.54"/>
 </segment>
 </net>
 <net name="TDR_L_DETECT" class="0">
 <segment>
-<pinref part="D25" gate="G$1" pin="C"/>
+<pinref part="D4" gate="G$1" pin="C"/>
 <wire x1="177.8" y1="116.84" x2="177.8" y2="119.38" width="0.1524" layer="91"/>
-<pinref part="R34" gate="G$1" pin="1"/>
+<pinref part="R35" gate="G$1" pin="1"/>
 <wire x1="177.8" y1="119.38" x2="177.8" y2="121.92" width="0.1524" layer="91"/>
 <pinref part="C6" gate="G$1" pin="1"/>
 <wire x1="198.12" y1="116.84" x2="198.12" y2="119.38" width="0.1524" layer="91"/>
@@ -24854,18 +25493,18 @@ and insulation.</text>
 </net>
 <net name="AC_N2" class="0">
 <segment>
-<pinref part="D26" gate="G$1" pin="A"/>
+<pinref part="D18" gate="G$1" pin="A"/>
 <wire x1="144.78" y1="66.04" x2="137.16" y2="66.04" width="0.1524" layer="91"/>
 <pinref part="U18" gate="A" pin="Y"/>
 </segment>
 </net>
 <net name="N$17" class="0">
 <segment>
-<pinref part="R35" gate="G$1" pin="2"/>
-<pinref part="D27" gate="G$1" pin="C"/>
+<pinref part="R36" gate="G$1" pin="2"/>
+<pinref part="D19" gate="G$1" pin="C"/>
 <pinref part="C13" gate="G$1" pin="1"/>
 <wire x1="167.64" y1="58.42" x2="167.64" y2="55.88" width="0.1524" layer="91"/>
-<wire x1="167.64" y1="55.88" x2="167.64" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="55.88" x2="167.64" y2="48.26" width="0.1524" layer="91"/>
 <wire x1="180.34" y1="55.88" x2="167.64" y2="55.88" width="0.1524" layer="91"/>
 <junction x="167.64" y="55.88"/>
 </segment>
@@ -24879,9 +25518,9 @@ and insulation.</text>
 </net>
 <net name="AC_N" class="0">
 <segment>
-<pinref part="D26" gate="G$1" pin="C"/>
+<pinref part="D18" gate="G$1" pin="C"/>
 <wire x1="149.86" y1="66.04" x2="167.64" y2="66.04" width="0.1524" layer="91"/>
-<pinref part="D27" gate="G$1" pin="A"/>
+<pinref part="D19" gate="G$1" pin="A"/>
 <wire x1="167.64" y1="66.04" x2="167.64" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="167.64" y1="66.04" x2="205.74" y2="66.04" width="0.1524" layer="91"/>
 <junction x="167.64" y="66.04"/>
@@ -24890,9 +25529,9 @@ and insulation.</text>
 </net>
 <net name="TDR_N_DETECT" class="0">
 <segment>
-<pinref part="D28" gate="G$1" pin="C"/>
+<pinref part="D3" gate="G$1" pin="C"/>
 <wire x1="180.34" y1="40.64" x2="180.34" y2="45.72" width="0.1524" layer="91"/>
-<pinref part="R35" gate="G$1" pin="1"/>
+<pinref part="R36" gate="G$1" pin="1"/>
 <wire x1="180.34" y1="45.72" x2="180.34" y2="48.26" width="0.1524" layer="91"/>
 <pinref part="C7" gate="G$1" pin="1"/>
 <wire x1="200.66" y1="43.18" x2="200.66" y2="45.72" width="0.1524" layer="91"/>
@@ -24952,13 +25591,13 @@ If we don't have VCC the particle won't be on anyways.</text>
 <instance part="GND13" gate="1" x="66.04" y="154.94" smashed="yes">
 <attribute name="VALUE" x="63.5" y="152.4" size="1.778" layer="96"/>
 </instance>
-<instance part="R36" gate="G$1" x="139.7" y="147.32" smashed="yes" rot="R270">
+<instance part="R37" gate="G$1" x="139.7" y="147.32" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" x="139.7" y="147.32" size="1.27" layer="96" rot="R270" display="off"/>
 <attribute name="DESCRIPTION" x="139.7" y="147.32" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="NAME" x="141.1986" y="151.13" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="136.398" y="151.13" size="1.778" layer="96" rot="R270"/>
 </instance>
-<instance part="R45" gate="G$1" x="139.7" y="124.46" smashed="yes" rot="R270">
+<instance part="R46" gate="G$1" x="139.7" y="124.46" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" x="139.7" y="124.46" size="1.27" layer="96" rot="R270" display="off"/>
 <attribute name="DESCRIPTION" x="139.7" y="124.46" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="NAME" x="141.1986" y="128.27" size="1.778" layer="95" rot="R270"/>
@@ -24979,6 +25618,7 @@ If we don't have VCC the particle won't be on anyways.</text>
 <attribute name="MPN" x="71.12" y="137.16" size="1.016" layer="96" align="bottom-center" display="off"/>
 <attribute name="NAME" x="69.85" y="135.89" size="1.778" layer="95" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="72.39" y="135.89" size="1.778" layer="96" ratio="12" rot="R270" align="bottom-center"/>
+<attribute name="DESCRIPTION" x="71.12" y="137.16" size="1.016" layer="96" align="bottom-center"/>
 </instance>
 <instance part="C28" gate="G$1" x="78.74" y="129.54" smashed="yes">
 <attribute name="DIGIKEY" x="78.74" y="129.54" size="1.016" layer="96" align="bottom-center" display="off"/>
@@ -25024,13 +25664,13 @@ If we don't have VCC the particle won't be on anyways.</text>
 <attribute name="NAME" x="76.2" y="66.04" size="1.27" layer="95" rot="R270"/>
 <attribute name="VALUE" x="73.66" y="66.04" size="1.27" layer="96" rot="R270"/>
 </instance>
-<instance part="R19" gate="G$1" x="160.02" y="53.34" smashed="yes" rot="R270">
+<instance part="R20" gate="G$1" x="160.02" y="53.34" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" x="160.02" y="53.34" size="1.27" layer="96" rot="R270" display="off"/>
 <attribute name="DESCRIPTION" x="160.02" y="53.34" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="NAME" x="161.5186" y="57.15" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="156.718" y="57.15" size="1.778" layer="96" rot="R270"/>
 </instance>
-<instance part="R30" gate="G$1" x="190.5" y="91.44" smashed="yes" rot="R270">
+<instance part="R31" gate="G$1" x="190.5" y="91.44" smashed="yes" rot="R270">
 <attribute name="MPN" x="190.5" y="91.44" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="DIGIKEY" x="190.5" y="91.44" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="MANUFACTURER" x="190.5" y="91.44" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
@@ -25038,7 +25678,7 @@ If we don't have VCC the particle won't be on anyways.</text>
 <attribute name="NAME" x="191.9986" y="95.25" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="187.198" y="95.25" size="1.778" layer="96" rot="R270"/>
 </instance>
-<instance part="R31" gate="G$1" x="190.5" y="71.12" smashed="yes" rot="R270">
+<instance part="R32" gate="G$1" x="190.5" y="71.12" smashed="yes" rot="R270">
 <attribute name="MPN" x="190.5" y="71.12" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="DIGIKEY" x="190.5" y="71.12" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="MANUFACTURER" x="190.5" y="71.12" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
@@ -25046,19 +25686,19 @@ If we don't have VCC the particle won't be on anyways.</text>
 <attribute name="NAME" x="191.9986" y="74.93" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="187.198" y="74.93" size="1.778" layer="96" rot="R270"/>
 </instance>
-<instance part="R20" gate="G$1" x="200.66" y="71.12" smashed="yes" rot="R270">
+<instance part="R21" gate="G$1" x="200.66" y="71.12" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" x="200.66" y="71.12" size="1.27" layer="96" rot="R270" display="off"/>
 <attribute name="DESCRIPTION" x="200.66" y="71.12" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="NAME" x="202.1586" y="74.93" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="197.358" y="74.93" size="1.778" layer="96" rot="R270"/>
 </instance>
-<instance part="R21" gate="G$1" x="99.06" y="53.34" smashed="yes" rot="R270">
+<instance part="R22" gate="G$1" x="99.06" y="53.34" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" x="99.06" y="53.34" size="1.27" layer="96" rot="R270" display="off"/>
 <attribute name="DESCRIPTION" x="99.06" y="53.34" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="NAME" x="100.5586" y="57.15" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="95.758" y="57.15" size="1.778" layer="96" rot="R270"/>
 </instance>
-<instance part="R22" gate="G$1" x="165.1" y="149.86" smashed="yes" rot="R270">
+<instance part="R23" gate="G$1" x="165.1" y="149.86" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" x="165.1" y="149.86" size="1.27" layer="96" rot="R270" display="off"/>
 <attribute name="DESCRIPTION" x="165.1" y="149.86" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="NAME" x="166.5986" y="153.67" size="1.778" layer="95" rot="R270"/>
@@ -25080,13 +25720,13 @@ If we don't have VCC the particle won't be on anyways.</text>
 <attribute name="VALUE" x="238.76" y="157.48" size="1.778" layer="96" rot="MR0"/>
 <attribute name="NAME" x="238.76" y="168.402" size="1.778" layer="95" rot="MR0"/>
 </instance>
-<instance part="R23" gate="G$1" x="91.44" y="53.34" smashed="yes" rot="R270">
+<instance part="R24" gate="G$1" x="91.44" y="53.34" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" x="91.44" y="53.34" size="1.27" layer="96" rot="R270" display="off"/>
 <attribute name="DESCRIPTION" x="91.44" y="53.34" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="NAME" x="92.9386" y="57.15" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="88.138" y="57.15" size="1.778" layer="96" rot="R270"/>
 </instance>
-<instance part="R46" gate="G$1" x="149.86" y="147.32" smashed="yes" rot="R270">
+<instance part="R47" gate="G$1" x="149.86" y="147.32" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" x="149.86" y="147.32" size="1.27" layer="96" rot="R270" display="off"/>
 <attribute name="MANUFACTURER" x="149.86" y="147.32" size="1.016" layer="96" rot="R180" align="bottom-center" display="off"/>
 <attribute name="MPN" x="149.86" y="147.32" size="1.016" layer="96" rot="R180" align="bottom-center" display="off"/>
@@ -25097,7 +25737,7 @@ If we don't have VCC the particle won't be on anyways.</text>
 <instance part="Q1" gate="G$1" x="149.86" y="123.19" smashed="yes" rot="MR0">
 <attribute name="NAME" x="148.59" y="125.73" size="1.778" layer="95" rot="MR0"/>
 </instance>
-<instance part="R47" gate="G$1" x="163.83" y="116.84" smashed="yes" rot="R270">
+<instance part="R48" gate="G$1" x="163.83" y="116.84" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" x="163.83" y="116.84" size="1.27" layer="96" rot="R270" display="off"/>
 <attribute name="DESCRIPTION" x="163.83" y="116.84" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="NAME" x="165.3286" y="120.65" size="1.778" layer="95" rot="R270"/>
@@ -25136,7 +25776,7 @@ If we don't have VCC the particle won't be on anyways.</text>
 <junction x="78.74" y="121.92"/>
 </segment>
 <segment>
-<pinref part="R45" gate="G$1" pin="2"/>
+<pinref part="R46" gate="G$1" pin="2"/>
 <pinref part="GND40" gate="1" pin="GND"/>
 <wire x1="139.7" y1="121.92" x2="139.7" y2="113.03" width="0.1524" layer="91"/>
 <pinref part="Q1" gate="G$1" pin="S"/>
@@ -25144,7 +25784,7 @@ If we don't have VCC the particle won't be on anyways.</text>
 <wire x1="139.7" y1="113.03" x2="149.86" y2="113.03" width="0.1524" layer="91"/>
 <wire x1="149.86" y1="113.03" x2="149.86" y2="118.11" width="0.1524" layer="91"/>
 <junction x="139.7" y="113.03"/>
-<pinref part="R47" gate="G$1" pin="2"/>
+<pinref part="R48" gate="G$1" pin="2"/>
 <wire x1="149.86" y1="113.03" x2="163.83" y2="113.03" width="0.1524" layer="91"/>
 <wire x1="163.83" y1="113.03" x2="163.83" y2="114.3" width="0.1524" layer="91"/>
 <junction x="149.86" y="113.03"/>
@@ -25174,11 +25814,11 @@ If we don't have VCC the particle won't be on anyways.</text>
 <wire x1="154.94" y1="50.8" x2="154.94" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="154.94" y1="40.64" x2="137.16" y2="40.64" width="0.1524" layer="91"/>
 <junction x="137.16" y="40.64"/>
-<pinref part="R19" gate="G$1" pin="2"/>
+<pinref part="R20" gate="G$1" pin="2"/>
 <wire x1="160.02" y1="50.8" x2="160.02" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="160.02" y1="40.64" x2="154.94" y2="40.64" width="0.1524" layer="91"/>
 <junction x="154.94" y="40.64"/>
-<pinref part="R31" gate="G$1" pin="2"/>
+<pinref part="R32" gate="G$1" pin="2"/>
 <wire x1="190.5" y1="68.58" x2="190.5" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="190.5" y1="40.64" x2="160.02" y2="40.64" width="0.1524" layer="91"/>
 <junction x="160.02" y="40.64"/>
@@ -25193,7 +25833,7 @@ If we don't have VCC the particle won't be on anyways.</text>
 <wire x1="124.46" y1="147.32" x2="132.08" y2="147.32" width="0.1524" layer="91"/>
 <wire x1="132.08" y1="147.32" x2="132.08" y2="157.48" width="0.1524" layer="91"/>
 <junction x="132.08" y="165.1"/>
-<pinref part="R36" gate="G$1" pin="1"/>
+<pinref part="R37" gate="G$1" pin="1"/>
 <wire x1="132.08" y1="157.48" x2="132.08" y2="165.1" width="0.1524" layer="91"/>
 <wire x1="139.7" y1="152.4" x2="139.7" y2="157.48" width="0.1524" layer="91"/>
 <wire x1="139.7" y1="157.48" x2="132.08" y2="157.48" width="0.1524" layer="91"/>
@@ -25202,7 +25842,7 @@ If we don't have VCC the particle won't be on anyways.</text>
 <wire x1="124.46" y1="127" x2="132.08" y2="127" width="0.1524" layer="91"/>
 <wire x1="132.08" y1="127" x2="132.08" y2="147.32" width="0.1524" layer="91"/>
 <junction x="132.08" y="147.32"/>
-<pinref part="R22" gate="G$1" pin="1"/>
+<pinref part="R23" gate="G$1" pin="1"/>
 <wire x1="165.1" y1="154.94" x2="165.1" y2="165.1" width="0.1524" layer="91"/>
 <junction x="165.1" y="165.1"/>
 <pinref part="JP1" gate="G$1" pin="2"/>
@@ -25214,7 +25854,7 @@ If we don't have VCC the particle won't be on anyways.</text>
 <wire x1="124.46" y1="139.7" x2="165.1" y2="139.7" width="0.1524" layer="91"/>
 <label x="220.98" y="139.7" size="1.778" layer="95" xref="yes"/>
 <pinref part="U9" gate="G$1" pin="!RESET"/>
-<pinref part="R22" gate="G$1" pin="2"/>
+<pinref part="R23" gate="G$1" pin="2"/>
 <wire x1="165.1" y1="139.7" x2="220.98" y2="139.7" width="0.1524" layer="91"/>
 <wire x1="165.1" y1="147.32" x2="165.1" y2="139.7" width="0.1524" layer="91"/>
 <junction x="165.1" y="139.7"/>
@@ -25222,14 +25862,14 @@ If we don't have VCC the particle won't be on anyways.</text>
 </net>
 <net name="N$31" class="0">
 <segment>
-<pinref part="R36" gate="G$1" pin="2"/>
-<pinref part="R45" gate="G$1" pin="1"/>
+<pinref part="R37" gate="G$1" pin="2"/>
+<pinref part="R46" gate="G$1" pin="1"/>
 <wire x1="139.7" y1="144.78" x2="139.7" y2="132.08" width="0.1524" layer="91"/>
 <pinref part="U9" gate="G$1" pin="!MR"/>
 <wire x1="139.7" y1="132.08" x2="139.7" y2="129.54" width="0.1524" layer="91"/>
 <wire x1="124.46" y1="132.08" x2="139.7" y2="132.08" width="0.1524" layer="91"/>
 <junction x="139.7" y="132.08"/>
-<pinref part="R46" gate="G$1" pin="2"/>
+<pinref part="R47" gate="G$1" pin="2"/>
 <wire x1="149.86" y1="144.78" x2="149.86" y2="132.08" width="0.1524" layer="91"/>
 <wire x1="149.86" y1="132.08" x2="139.7" y2="132.08" width="0.1524" layer="91"/>
 <pinref part="Q1" gate="G$1" pin="D"/>
@@ -25263,7 +25903,7 @@ If we don't have VCC the particle won't be on anyways.</text>
 <pinref part="U1" gate="G$1" pin="WDI"/>
 <wire x1="152.4" y1="73.66" x2="160.02" y2="73.66" width="0.1524" layer="91"/>
 <label x="175.26" y="73.66" size="1.016" layer="95" xref="yes"/>
-<pinref part="R19" gate="G$1" pin="1"/>
+<pinref part="R20" gate="G$1" pin="1"/>
 <wire x1="160.02" y1="73.66" x2="175.26" y2="73.66" width="0.1524" layer="91"/>
 <wire x1="160.02" y1="58.42" x2="160.02" y2="73.66" width="0.1524" layer="91"/>
 <junction x="160.02" y="73.66"/>
@@ -25285,12 +25925,12 @@ If we don't have VCC the particle won't be on anyways.</text>
 <wire x1="50.8" y1="86.36" x2="50.8" y2="88.9" width="0.1524" layer="91"/>
 <wire x1="33.02" y1="68.58" x2="33.02" y2="86.36" width="0.1524" layer="91"/>
 <wire x1="33.02" y1="86.36" x2="50.8" y2="86.36" width="0.1524" layer="91"/>
-<pinref part="R21" gate="G$1" pin="1"/>
+<pinref part="R22" gate="G$1" pin="1"/>
 <wire x1="99.06" y1="58.42" x2="99.06" y2="76.2" width="0.1524" layer="91"/>
 <junction x="99.06" y="76.2"/>
 </segment>
 <segment>
-<pinref part="R20" gate="G$1" pin="1"/>
+<pinref part="R21" gate="G$1" pin="1"/>
 <wire x1="200.66" y1="76.2" x2="200.66" y2="81.28" width="0.1524" layer="91"/>
 <label x="200.66" y="81.28" size="1.016" layer="95" rot="R90" xref="yes"/>
 </segment>
@@ -25304,7 +25944,7 @@ If we don't have VCC the particle won't be on anyways.</text>
 <pinref part="B1" gate="G$1" pin="+"/>
 <wire x1="50.8" y1="68.58" x2="50.8" y2="73.66" width="0.1524" layer="91"/>
 <wire x1="60.96" y1="73.66" x2="50.8" y2="73.66" width="0.1524" layer="91"/>
-<pinref part="R23" gate="G$1" pin="1"/>
+<pinref part="R24" gate="G$1" pin="1"/>
 <wire x1="91.44" y1="58.42" x2="91.44" y2="73.66" width="0.1524" layer="91"/>
 <junction x="91.44" y="73.66"/>
 </segment>
@@ -25314,13 +25954,13 @@ If we don't have VCC the particle won't be on anyways.</text>
 <pinref part="U1" gate="G$1" pin="!CS"/>
 <wire x1="119.38" y1="48.26" x2="99.06" y2="48.26" width="0.1524" layer="91"/>
 <label x="76.2" y="43.18" size="1.016" layer="95" rot="R180" xref="yes"/>
-<pinref part="R21" gate="G$1" pin="2"/>
+<pinref part="R22" gate="G$1" pin="2"/>
 <wire x1="99.06" y1="48.26" x2="99.06" y2="43.18" width="0.1524" layer="91"/>
 <wire x1="99.06" y1="43.18" x2="91.44" y2="43.18" width="0.1524" layer="91"/>
 <wire x1="91.44" y1="43.18" x2="76.2" y2="43.18" width="0.1524" layer="91"/>
 <wire x1="99.06" y1="50.8" x2="99.06" y2="48.26" width="0.1524" layer="91"/>
 <junction x="99.06" y="48.26"/>
-<pinref part="R23" gate="G$1" pin="2"/>
+<pinref part="R24" gate="G$1" pin="2"/>
 <wire x1="91.44" y1="50.8" x2="91.44" y2="43.18" width="0.1524" layer="91"/>
 <junction x="91.44" y="43.18"/>
 </segment>
@@ -25376,21 +26016,21 @@ If we don't have VCC the particle won't be on anyways.</text>
 <wire x1="152.4" y1="76.2" x2="167.64" y2="76.2" width="0.1524" layer="91"/>
 <wire x1="167.64" y1="76.2" x2="167.64" y2="78.74" width="0.1524" layer="91"/>
 <wire x1="167.64" y1="78.74" x2="190.5" y2="78.74" width="0.1524" layer="91"/>
-<pinref part="R30" gate="G$1" pin="2"/>
+<pinref part="R31" gate="G$1" pin="2"/>
 <wire x1="190.5" y1="78.74" x2="190.5" y2="88.9" width="0.1524" layer="91"/>
-<pinref part="R31" gate="G$1" pin="1"/>
+<pinref part="R32" gate="G$1" pin="1"/>
 <wire x1="190.5" y1="78.74" x2="190.5" y2="76.2" width="0.1524" layer="91"/>
 <junction x="190.5" y="78.74"/>
 </segment>
 </net>
 <net name="5V" class="0">
 <segment>
-<pinref part="R30" gate="G$1" pin="1"/>
+<pinref part="R31" gate="G$1" pin="1"/>
 <wire x1="190.5" y1="96.52" x2="190.5" y2="99.06" width="0.1524" layer="91"/>
 <label x="190.5" y="99.06" size="1.016" layer="95" rot="R90" xref="yes"/>
 </segment>
 <segment>
-<pinref part="R46" gate="G$1" pin="1"/>
+<pinref part="R47" gate="G$1" pin="1"/>
 <wire x1="149.86" y1="152.4" x2="149.86" y2="172.72" width="0.1524" layer="91"/>
 <label x="149.86" y="172.72" size="1.016" layer="95" rot="R90" xref="yes"/>
 </segment>
@@ -25399,7 +26039,7 @@ If we don't have VCC the particle won't be on anyways.</text>
 <segment>
 <pinref part="U1" gate="G$1" pin="FOUT/!IRQ1"/>
 <wire x1="152.4" y1="66.04" x2="200.66" y2="66.04" width="0.1524" layer="91"/>
-<pinref part="R20" gate="G$1" pin="2"/>
+<pinref part="R21" gate="G$1" pin="2"/>
 <wire x1="200.66" y1="66.04" x2="213.36" y2="66.04" width="0.1524" layer="91"/>
 <wire x1="200.66" y1="68.58" x2="200.66" y2="66.04" width="0.1524" layer="91"/>
 <junction x="200.66" y="66.04"/>
@@ -25417,7 +26057,7 @@ If we don't have VCC the particle won't be on anyways.</text>
 <segment>
 <pinref part="Q1" gate="G$1" pin="G"/>
 <wire x1="157.48" y1="123.19" x2="163.83" y2="123.19" width="0.1524" layer="91"/>
-<pinref part="R47" gate="G$1" pin="1"/>
+<pinref part="R48" gate="G$1" pin="1"/>
 <wire x1="163.83" y1="123.19" x2="163.83" y2="121.92" width="0.1524" layer="91"/>
 <wire x1="163.83" y1="123.19" x2="163.83" y2="129.54" width="0.1524" layer="91"/>
 <junction x="163.83" y="123.19"/>
@@ -25499,27 +26139,27 @@ be about 12mCd</text>
 <instance part="P+2" gate="VCC" x="17.78" y="43.18" smashed="yes">
 <attribute name="VALUE" x="15.24" y="40.64" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="R15" gate="G$1" x="81.28" y="45.72" smashed="yes" rot="R90">
+<instance part="R16" gate="G$1" x="81.28" y="45.72" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" x="81.28" y="45.72" size="1.27" layer="96" font="vector" rot="R90" display="off"/>
 <attribute name="NAME" x="79.7814" y="41.91" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="84.582" y="41.91" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="R16" gate="G$1" x="91.44" y="45.72" smashed="yes" rot="R90">
+<instance part="R17" gate="G$1" x="91.44" y="45.72" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" x="91.44" y="45.72" size="1.27" layer="96" font="vector" rot="R90" display="off"/>
 <attribute name="NAME" x="89.9414" y="41.91" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="94.742" y="41.91" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="R17" gate="G$1" x="104.14" y="45.72" smashed="yes" rot="R90">
+<instance part="R18" gate="G$1" x="104.14" y="45.72" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" x="104.14" y="45.72" size="1.27" layer="96" font="vector" rot="R90" display="off"/>
 <attribute name="NAME" x="102.6414" y="41.91" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="107.442" y="41.91" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="R27" gate="G$1" x="68.58" y="45.72" smashed="yes" rot="R90">
+<instance part="R28" gate="G$1" x="68.58" y="45.72" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" x="68.58" y="45.72" size="1.27" layer="96" font="vector" rot="R90" display="off"/>
 <attribute name="NAME" x="67.0814" y="41.91" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="71.882" y="41.91" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="R28" gate="G$1" x="33.02" y="25.4" smashed="yes" rot="R180">
+<instance part="R29" gate="G$1" x="33.02" y="25.4" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" x="33.02" y="25.4" size="1.27" layer="96" font="vector" rot="R180" display="off"/>
 <attribute name="NAME" x="36.83" y="23.9014" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="36.83" y="28.702" size="1.778" layer="96" rot="R180"/>
@@ -25535,7 +26175,7 @@ be about 12mCd</text>
 <instance part="P+4" gate="VCC" x="162.56" y="160.02" smashed="yes">
 <attribute name="VALUE" x="160.02" y="157.48" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="R13" gate="G$1" x="162.56" y="149.86" smashed="yes" rot="R270">
+<instance part="R14" gate="G$1" x="162.56" y="149.86" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" x="162.56" y="149.86" size="1.27" layer="96" rot="R270" display="off"/>
 <attribute name="NAME" x="164.0586" y="153.67" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="159.258" y="153.67" size="1.778" layer="96" rot="R270"/>
@@ -25543,12 +26183,12 @@ be about 12mCd</text>
 <instance part="GND41" gate="1" x="170.18" y="132.08" smashed="yes">
 <attribute name="VALUE" x="167.64" y="129.54" size="1.778" layer="96"/>
 </instance>
-<instance part="R26" gate="G$1" x="44.45" y="128.27" smashed="yes" rot="R270">
+<instance part="R27" gate="G$1" x="44.45" y="128.27" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" x="44.45" y="128.27" size="1.27" layer="96" rot="R270" display="off"/>
 <attribute name="NAME" x="45.9486" y="132.08" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="41.148" y="132.08" size="1.778" layer="96" rot="R270"/>
 </instance>
-<instance part="R25" gate="G$1" x="44.45" y="140.97" smashed="yes" rot="R270">
+<instance part="R26" gate="G$1" x="44.45" y="140.97" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" x="44.45" y="140.97" size="1.27" layer="96" rot="R270" display="off"/>
 <attribute name="NAME" x="45.9486" y="144.78" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="41.148" y="144.78" size="1.778" layer="96" rot="R270"/>
@@ -25560,7 +26200,7 @@ be about 12mCd</text>
 <instance part="P+5" gate="VCC" x="33.02" y="158.75" smashed="yes">
 <attribute name="VALUE" x="30.48" y="156.21" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="R33" gate="G$1" x="20.32" y="147.32" smashed="yes" rot="R270">
+<instance part="R34" gate="G$1" x="20.32" y="147.32" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" x="20.32" y="147.32" size="1.27" layer="96" rot="R270" display="off"/>
 <attribute name="NAME" x="21.8186" y="151.13" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="17.018" y="151.13" size="1.778" layer="96" rot="R270"/>
@@ -25604,7 +26244,7 @@ be about 12mCd</text>
 <net name="!SD_CS" class="0">
 <segment>
 <pinref part="J1" gate="G$1" pin="DATA3-CD/CS_N"/>
-<pinref part="R16" gate="G$1" pin="1"/>
+<pinref part="R17" gate="G$1" pin="1"/>
 <wire x1="91.44" y1="30.48" x2="91.44" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="111.76" y1="30.48" x2="91.44" y2="30.48" width="0.1524" layer="91"/>
 <label x="91.44" y="30.48" size="1.27" layer="95" font="vector" rot="R180" xref="yes"/>
@@ -25618,7 +26258,7 @@ be about 12mCd</text>
 <net name="!SD_DETECT" class="0">
 <segment>
 <pinref part="J1" gate="G$1" pin="A"/>
-<pinref part="R27" gate="G$1" pin="1"/>
+<pinref part="R28" gate="G$1" pin="1"/>
 <wire x1="111.76" y1="17.78" x2="68.58" y2="17.78" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="17.78" x2="68.58" y2="40.64" width="0.1524" layer="91"/>
 <label x="68.58" y="17.78" size="1.27" layer="95" font="vector" rot="R180" xref="yes"/>
@@ -25648,7 +26288,7 @@ be about 12mCd</text>
 <junction x="109.22" y="15.24"/>
 <junction x="48.26" y="15.24"/>
 <junction x="53.34" y="15.24"/>
-<pinref part="R28" gate="G$1" pin="1"/>
+<pinref part="R29" gate="G$1" pin="1"/>
 <wire x1="38.1" y1="25.4" x2="48.26" y2="25.4" width="0.1524" layer="91"/>
 <junction x="48.26" y="25.4"/>
 </segment>
@@ -25669,7 +26309,7 @@ be about 12mCd</text>
 <pinref part="ASSY1" gate="A1" pin="GND@2"/>
 <wire x1="52.07" y1="143.51" x2="52.07" y2="123.19" width="0.1524" layer="91"/>
 <wire x1="77.47" y1="143.51" x2="52.07" y2="143.51" width="0.1524" layer="91"/>
-<pinref part="R26" gate="G$1" pin="2"/>
+<pinref part="R27" gate="G$1" pin="2"/>
 <wire x1="44.45" y1="125.73" x2="44.45" y2="123.19" width="0.1524" layer="91"/>
 <wire x1="44.45" y1="123.19" x2="52.07" y2="123.19" width="0.1524" layer="91"/>
 <wire x1="44.45" y1="120.65" x2="44.45" y2="123.19" width="0.1524" layer="91"/>
@@ -25711,10 +26351,10 @@ be about 12mCd</text>
 <segment>
 <pinref part="C29" gate="G$1" pin="1"/>
 <pinref part="J1" gate="G$1" pin="VCC"/>
-<pinref part="R15" gate="G$1" pin="2"/>
 <pinref part="R16" gate="G$1" pin="2"/>
 <pinref part="R17" gate="G$1" pin="2"/>
-<pinref part="R27" gate="G$1" pin="2"/>
+<pinref part="R18" gate="G$1" pin="2"/>
+<pinref part="R28" gate="G$1" pin="2"/>
 <pinref part="U13" gate="G$1" pin="VLOAD"/>
 <wire x1="91.44" y1="48.26" x2="91.44" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="91.44" y1="50.8" x2="104.14" y2="50.8" width="0.1524" layer="91"/>
@@ -25743,7 +26383,7 @@ be about 12mCd</text>
 <wire x1="22.86" y1="25.4" x2="15.24" y2="25.4" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="35.56" x2="22.86" y2="25.4" width="0.1524" layer="91"/>
 <label x="15.24" y="25.4" size="1.27" layer="95" font="vector" rot="R180" xref="yes"/>
-<pinref part="R28" gate="G$1" pin="2"/>
+<pinref part="R29" gate="G$1" pin="2"/>
 <wire x1="22.86" y1="25.4" x2="30.48" y2="25.4" width="0.1524" layer="91"/>
 <junction x="22.86" y="25.4"/>
 </segment>
@@ -25756,7 +26396,7 @@ be about 12mCd</text>
 <net name="SD_MISO" class="0">
 <segment>
 <pinref part="J1" gate="G$1" pin="DATA0/MISO"/>
-<pinref part="R17" gate="G$1" pin="1"/>
+<pinref part="R18" gate="G$1" pin="1"/>
 <wire x1="104.14" y1="38.1" x2="104.14" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="111.76" y1="38.1" x2="104.14" y2="38.1" width="0.1524" layer="91"/>
 <label x="104.14" y="38.1" size="1.27" layer="95" font="vector" rot="R180" xref="yes"/>
@@ -25770,7 +26410,7 @@ be about 12mCd</text>
 <net name="SD_MOSI" class="0">
 <segment>
 <pinref part="J1" gate="G$1" pin="CMD/MOSI"/>
-<pinref part="R15" gate="G$1" pin="1"/>
+<pinref part="R16" gate="G$1" pin="1"/>
 <wire x1="111.76" y1="27.94" x2="81.28" y2="27.94" width="0.1524" layer="91"/>
 <wire x1="81.28" y1="27.94" x2="81.28" y2="40.64" width="0.1524" layer="91"/>
 <label x="81.28" y="27.94" size="1.27" layer="95" font="vector" rot="R180" xref="yes"/>
@@ -25831,7 +26471,7 @@ be about 12mCd</text>
 <wire x1="107.95" y1="146.05" x2="107.95" y2="148.59" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="R13" gate="G$1" pin="1"/>
+<pinref part="R14" gate="G$1" pin="1"/>
 <pinref part="P+4" gate="VCC" pin="VCC"/>
 <wire x1="162.56" y1="154.94" x2="162.56" y2="157.48" width="0.1524" layer="91"/>
 </segment>
@@ -25839,7 +26479,7 @@ be about 12mCd</text>
 <pinref part="P+5" gate="VCC" pin="VCC"/>
 <pinref part="Q2" gate="G$1" pin="S"/>
 <wire x1="33.02" y1="156.21" x2="33.02" y2="153.67" width="0.1524" layer="91"/>
-<pinref part="R33" gate="G$1" pin="1"/>
+<pinref part="R34" gate="G$1" pin="1"/>
 <wire x1="33.02" y1="153.67" x2="33.02" y2="147.32" width="0.1524" layer="91"/>
 <wire x1="20.32" y1="152.4" x2="20.32" y2="153.67" width="0.1524" layer="91"/>
 <wire x1="20.32" y1="153.67" x2="33.02" y2="153.67" width="0.1524" layer="91"/>
@@ -25880,7 +26520,7 @@ be about 12mCd</text>
 <segment>
 <pinref part="U4" gate="A" pin="DATA"/>
 <wire x1="175.26" y1="139.7" x2="162.56" y2="139.7" width="0.1524" layer="91"/>
-<pinref part="R13" gate="G$1" pin="2"/>
+<pinref part="R14" gate="G$1" pin="2"/>
 <wire x1="162.56" y1="139.7" x2="162.56" y2="147.32" width="0.1524" layer="91"/>
 <label x="162.56" y="139.7" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -25906,7 +26546,7 @@ be about 12mCd</text>
 <label x="67.31" y="146.05" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="R25" gate="G$1" pin="1"/>
+<pinref part="R26" gate="G$1" pin="1"/>
 <wire x1="44.45" y1="146.05" x2="44.45" y2="153.67" width="0.1524" layer="91"/>
 <label x="44.45" y="153.67" size="1.016" layer="95" rot="R90" xref="yes"/>
 </segment>
@@ -25915,9 +26555,9 @@ be about 12mCd</text>
 <segment>
 <pinref part="ASSY1" gate="A1" pin="WKP"/>
 <wire x1="77.47" y1="135.89" x2="44.45" y2="135.89" width="0.1524" layer="91"/>
-<pinref part="R26" gate="G$1" pin="1"/>
+<pinref part="R27" gate="G$1" pin="1"/>
 <wire x1="44.45" y1="133.35" x2="44.45" y2="134.62" width="0.1524" layer="91"/>
-<pinref part="R25" gate="G$1" pin="2"/>
+<pinref part="R26" gate="G$1" pin="2"/>
 <wire x1="44.45" y1="134.62" x2="44.45" y2="135.89" width="0.1524" layer="91"/>
 <wire x1="44.45" y1="135.89" x2="44.45" y2="138.43" width="0.1524" layer="91"/>
 <junction x="44.45" y="135.89"/>
@@ -25966,7 +26606,7 @@ be about 12mCd</text>
 <segment>
 <pinref part="Q2" gate="G$1" pin="G"/>
 <wire x1="25.4" y1="142.24" x2="20.32" y2="142.24" width="0.1524" layer="91"/>
-<pinref part="R33" gate="G$1" pin="2"/>
+<pinref part="R34" gate="G$1" pin="2"/>
 <wire x1="20.32" y1="142.24" x2="20.32" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="20.32" y1="142.24" x2="20.32" y2="138.43" width="0.1524" layer="91"/>
 <junction x="20.32" y="142.24"/>
@@ -26090,6 +26730,13 @@ be about 12mCd</text>
 <label x="74.93" y="105.41" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
+<net name="PARTICLE_RST" class="0">
+<segment>
+<pinref part="ASSY1" gate="A1" pin="D3"/>
+<wire x1="100.33" y1="125.73" x2="102.87" y2="125.73" width="0.1524" layer="91"/>
+<label x="102.87" y="125.73" size="1.016" layer="95" xref="yes"/>
+</segment>
+</net>
 </nets>
 </sheet>
 <sheet>
@@ -26154,7 +26801,7 @@ be about 12mCd</text>
 <instance part="P+1" gate="VCC" x="193.04" y="144.78" smashed="yes">
 <attribute name="VALUE" x="190.5" y="142.24" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="R29" gate="G$1" x="167.64" y="144.78" smashed="yes">
+<instance part="R30" gate="G$1" x="167.64" y="144.78" smashed="yes">
 <attribute name="DIGIKEY" x="167.64" y="144.78" size="1.27" layer="96" font="vector" display="off"/>
 <attribute name="NAME" x="163.83" y="146.2786" size="1.778" layer="95"/>
 <attribute name="VALUE" x="163.83" y="141.478" size="1.778" layer="96"/>
@@ -26272,7 +26919,7 @@ be about 12mCd</text>
 <junction x="127" y="121.92"/>
 <junction x="127" y="129.54"/>
 <junction x="127" y="137.16"/>
-<pinref part="R29" gate="G$1" pin="1"/>
+<pinref part="R30" gate="G$1" pin="1"/>
 <wire x1="162.56" y1="144.78" x2="152.4" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="152.4" y1="144.78" x2="152.4" y2="142.24" width="0.1524" layer="91"/>
 <wire x1="152.4" y1="142.24" x2="147.32" y2="142.24" width="0.1524" layer="91"/>
@@ -26287,7 +26934,7 @@ be about 12mCd</text>
 <wire x1="180.34" y1="144.78" x2="180.34" y2="149.86" width="0.1524" layer="91"/>
 <wire x1="180.34" y1="149.86" x2="177.8" y2="149.86" width="0.1524" layer="91"/>
 <label x="177.8" y="149.86" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="R29" gate="G$1" pin="2"/>
+<pinref part="R30" gate="G$1" pin="2"/>
 <wire x1="170.18" y1="144.78" x2="180.34" y2="144.78" width="0.1524" layer="91"/>
 <junction x="180.34" y="144.78"/>
 </segment>
@@ -26441,13 +27088,13 @@ Pull SA0 low to zero last address bit.</text>
 <instance part="GND8" gate="1" x="124.46" y="81.28" smashed="yes">
 <attribute name="VALUE" x="121.92" y="78.74" size="1.778" layer="96"/>
 </instance>
-<instance part="R14" gate="G$1" x="170.18" y="114.3" smashed="yes" rot="R90">
+<instance part="R15" gate="G$1" x="170.18" y="114.3" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" x="170.18" y="114.3" size="1.778" layer="96" rot="R90" display="off"/>
 <attribute name="DESCRIPTION" x="170.18" y="114.3" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="NAME" x="168.6814" y="110.49" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="173.482" y="110.49" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="R18" gate="G$1" x="162.56" y="114.3" smashed="yes" rot="R90">
+<instance part="R19" gate="G$1" x="162.56" y="114.3" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" x="162.56" y="114.3" size="1.778" layer="96" rot="R90" display="off"/>
 <attribute name="DESCRIPTION" x="162.56" y="114.3" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 <attribute name="NAME" x="161.0614" y="110.49" size="1.778" layer="95" rot="R90"/>
@@ -26509,10 +27156,10 @@ Pull SA0 low to zero last address bit.</text>
 <wire x1="180.34" y1="111.76" x2="175.26" y2="111.76" width="0.1524" layer="91"/>
 <wire x1="175.26" y1="111.76" x2="175.26" y2="114.3" width="0.1524" layer="91"/>
 <junction x="175.26" y="114.3"/>
-<pinref part="R18" gate="G$1" pin="2"/>
+<pinref part="R19" gate="G$1" pin="2"/>
 <wire x1="162.56" y1="116.84" x2="162.56" y2="129.54" width="0.1524" layer="91"/>
 <junction x="162.56" y="129.54"/>
-<pinref part="R14" gate="G$1" pin="2"/>
+<pinref part="R15" gate="G$1" pin="2"/>
 <wire x1="170.18" y1="116.84" x2="170.18" y2="129.54" width="0.1524" layer="91"/>
 <junction x="170.18" y="129.54"/>
 <pinref part="U7" gate="G$1" pin="CS"/>
@@ -26526,7 +27173,7 @@ Pull SA0 low to zero last address bit.</text>
 <pinref part="U7" gate="G$1" pin="SCL/SPC"/>
 <wire x1="180.34" y1="106.68" x2="162.56" y2="106.68" width="0.1524" layer="91"/>
 <label x="160.02" y="106.68" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="R18" gate="G$1" pin="1"/>
+<pinref part="R19" gate="G$1" pin="1"/>
 <wire x1="162.56" y1="106.68" x2="160.02" y2="106.68" width="0.1524" layer="91"/>
 <wire x1="162.56" y1="109.22" x2="162.56" y2="106.68" width="0.1524" layer="91"/>
 <junction x="162.56" y="106.68"/>
@@ -26537,7 +27184,7 @@ Pull SA0 low to zero last address bit.</text>
 <pinref part="U7" gate="G$1" pin="MOSI/SDA"/>
 <wire x1="180.34" y1="99.06" x2="170.18" y2="99.06" width="0.1524" layer="91"/>
 <label x="160.02" y="99.06" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="R14" gate="G$1" pin="1"/>
+<pinref part="R15" gate="G$1" pin="1"/>
 <wire x1="170.18" y1="99.06" x2="160.02" y2="99.06" width="0.1524" layer="91"/>
 <wire x1="170.18" y1="109.22" x2="170.18" y2="99.06" width="0.1524" layer="91"/>
 <junction x="170.18" y="99.06"/>
