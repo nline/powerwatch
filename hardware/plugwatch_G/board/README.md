@@ -36,6 +36,7 @@ The next major revision of plugwatch.
 - Communication
   - [  ] Can connect and comm to particle cloud
   - [  ] STM32 and particle can communicate
+  - [  ] Can read ID chip
 - Power
   - [  ] 5V supplied when plugged into wall
   - [  ] Battery charges in all states when wall powered
