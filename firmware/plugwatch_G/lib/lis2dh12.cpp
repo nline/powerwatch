@@ -41,6 +41,30 @@ int8_t  lis2dh12::get_temp() {
     return (int8_t)temp;
 }
 
+int16_t  lis2dh12::get_x() {
+    uint8_t h;
+    uint8_t l;
+    read_reg(LIS2DH12_X_OUTH, &h, 1);
+    read_reg(LIS2DH12_X_OUTL, &l, 1);
+    return (int16_t)(h << 8 | l);
+}
+
+int16_t  lis2dh12::get_y() {
+    uint8_t h;
+    uint8_t l;
+    read_reg(LIS2DH12_Y_OUTH, &h, 1);
+    read_reg(LIS2DH12_Y_OUTL, &l, 1);
+    return (int16_t)(h << 8 | l);
+}
+
+int16_t  lis2dh12::get_z() {
+    uint8_t h;
+    uint8_t l;
+    read_reg(LIS2DH12_Z_OUTH, &h, 1);
+    read_reg(LIS2DH12_Z_OUTL, &l, 1);
+    return (int16_t)(h << 8 | l);
+}
+
 void  lis2dh12::config_for_wake_on_motion(uint8_t motion_threshold) {
   // Turn on the accelerometer to 10Hz sampling
   on(2, 1);
