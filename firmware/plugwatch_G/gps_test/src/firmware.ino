@@ -8,11 +8,19 @@
 //***********************************
 auto gpsSubsystem = Gps();
 
+void pps_func(void) {
+  Serial.println("PPS!");
+}
+
 void setup() {
   // Set up debugging UART
   Serial.begin(9600);
 
   gpsSubsystem.setup();
+
+  //setup the PPS line as an input
+  pinMode(D4, INPUT);
+  attachInterrupt(D4, pps_func, RISING);
 
   // GPS
   Serial.println("Turning GPS ON");
