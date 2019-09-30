@@ -38,8 +38,8 @@ Plugwatch G Firmware
   - [  ] Can Program STM32 and STM32 boots
   - [  ] STM reset button works
 - Other
-  - [  ] Particle can control RGB LED
-  - [  ] Particle can set brightness of RGB LED through brightness IC
-  - [  ] LEDs are same brightness when powered on
+  - [  ] Particle can control RGB LED - led_test
+  - [  ] Particle can set brightness of RGB LED through brightness IC - led_test
+  - [  ] LEDs are same brightness when powered on - led_test
   - [  ] Particle can deterministically hard reset itself (not in a loop) - particle_rst_test
   - [  ] Watchdog triggers when not tickled
