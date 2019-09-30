@@ -44,3 +44,6 @@ Plugwatch G Firmware
   - [  ] ~Particle can deterministically hard reset itself (not in a loop) - particle_rst_test~
     - This does not WORK! Must switch to PIN D2 because there is a pull up on D3
   - [  ] Watchdog triggers when not tickled
+
+## Bugs and things to fix
+ - Switch pins D2 and D3
