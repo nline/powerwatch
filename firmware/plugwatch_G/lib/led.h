@@ -9,9 +9,9 @@ public:
         io.pinMode(0, OUTPUT);
         io.pinMode(1, OUTPUT);
         io.pinMode(2, OUTPUT);
-        io.digitalWrite(0, HIGH);
-        io.digitalWrite(1, HIGH);
-        io.digitalWrite(2, HIGH);
+        //io.digitalWrite(0, HIGH);
+        //io.digitalWrite(1, HIGH);
+        //io.digitalWrite(2, HIGH);
     };
 
     void setRed(uint8_t state);

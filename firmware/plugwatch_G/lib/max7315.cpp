@@ -5,7 +5,7 @@
 
 void read_reg(uint8_t reg, uint8_t* read_buf, size_t len){
   if (len > 256) return;
-  uint8_t readreg = reg | 0x80;
+  uint8_t readreg = reg;
 
   if(!Wire.isEnabled()) {
     Wire.begin();

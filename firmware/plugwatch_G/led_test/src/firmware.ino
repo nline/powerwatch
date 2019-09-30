@@ -20,6 +20,10 @@ void setup() {
   delay(10000);
   Serial.println("Starting LED test");
   Serial.println("All LEDs should be OFF");
+
+  rgbLED.setRed(LOW);
+  rgbLED.setGreen(LOW);
+  rgbLED.setBlue(LOW);
 }
 
 void loop() {
@@ -62,38 +66,21 @@ void loop() {
   delay(2000);
 
   Serial.println("Slowly decreasing brightness");
-  rgbLED.setBrightness(0xFF);
-  delay(1000);
-  rgbLED.setBrightness(0xF0);
-  delay(1000);
-  rgbLED.setBrightness(0xE0);
-  delay(1000);
-  rgbLED.setBrightness(0xD0);
-  delay(1000);
-  rgbLED.setBrightness(0xC0);
-  delay(1000);
-  rgbLED.setBrightness(0xB0);
-  delay(1000);
-  rgbLED.setBrightness(0xA0);
-  delay(1000);
-  rgbLED.setBrightness(0x90);
-  delay(1000);
-  rgbLED.setBrightness(0x80);
-  delay(1000);
-  rgbLED.setBrightness(0x70);
-  delay(1000);
-  rgbLED.setBrightness(0x60);
-  delay(1000);
-  rgbLED.setBrightness(0x50);
-  delay(1000);
-  rgbLED.setBrightness(0x40);
-  delay(1000);
-  rgbLED.setBrightness(0x30);
-  delay(1000);
-  rgbLED.setBrightness(0x20);
-  delay(1000);
-  rgbLED.setBrightness(0x10);
-  delay(1000);
+  for(uint8_t i = 0xF; i > 0x0; i--) {
+    uint8_t b = (i << 4 | i);
+    rgbLED.setBrightness(b);
+    delay(500);
+    b = (i << 4 | (i-1));
+    rgbLED.setBrightness(b);
+    delay(500);
+  }
+
   Serial.println("Back to full brightness");
   rgbLED.setBrightness(0xFF);
+
+  Serial.println("Turning off All");
+  rgbLED.setRed(LOW);
+  rgbLED.setGreen(LOW);
+  rgbLED.setBlue(LOW);
+  delay(2000);
 }

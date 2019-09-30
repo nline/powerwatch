@@ -27,7 +27,8 @@ void led::setBlue(uint8_t state) {
     }
 }
 
+//only let the user control the bottom four bits of brightness
 void led::setBrightness(uint8_t brightness) {
-    io.setGlobalIntensity(brightness);
+    io.setGlobalIntensity(brightness | 0xF0);
 }
 
