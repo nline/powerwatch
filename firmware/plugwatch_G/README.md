@@ -41,5 +41,5 @@ Plugwatch G Firmware
   - [  ] Particle can control RGB LED
   - [  ] Particle can set brightness of RGB LED through brightness IC
   - [  ] LEDs are same brightness when powered on
-  - [  ] Particle can deterministically hard reset itself (not in a loop)
+  - [  ] Particle can deterministically hard reset itself (not in a loop) - particle_rst_test
   - [  ] Watchdog triggers when not tickled
