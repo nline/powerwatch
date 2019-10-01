@@ -6,6 +6,7 @@ Plugwatch G Firmware
   - [ ] GPS can get fix - gps_test
   - [ ] GPS PPS line pulses and can be read by particle and STM32 - 1/2 gps_test
   - [ ] Can still set accel Interrupt and read accel angle of board - accel_test
+    - I think there is a soldering issue with current boards preventing this.
   - [ ] STM32 reads correct voltage out of HV amplifiers
   - [ ] STM32 reads correct voltage out of LV amplifiers
   - [ ] Particle reads correct voltage out of HV amplifiers
