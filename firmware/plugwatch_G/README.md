@@ -23,13 +23,13 @@ Plugwatch G Firmware
   - [ ] Battery charges in all states when wall powered
   - [ ] When battery drops below voltage thresh and no wall power particle in RST
   - [ ] When wall power particle never in reset (battery normal or low voltage)
-  - [ ] Particle can power on/off SD
+  - [x] Particle can power on/off SD
   - [ ] Particle can power on/off AC sensing + STM32
   - [ ] Particle can power on/off GPS - gps_test
   - [ ] Particle wakes up when wall power is applied
 - Storage
-  - [ ] Can write to SD Card
-  - [ ] Can read from SD Card
+  - [x] Can write to SD Card - sd_testh
+  - [x] Can read from SD Card - sd_test
 - Time
   - [ ] Write time to RTC
   - [ ] Read time from RTC
