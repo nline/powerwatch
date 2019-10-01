@@ -19,6 +19,7 @@ void setup() {
 }
 
 void loop() {
+  Serial.println("Calling loop");
   LoopStatus result = imuSubsystem.loop();
 
   if(result == FinishedError) {

@@ -24,6 +24,10 @@ void lis2dh12::read_reg(uint8_t reg, uint8_t* read_buf, size_t len){
 void lis2dh12::write_reg(uint8_t reg, uint8_t* write_buf, size_t len){
   if (len > 256) return;
 
+  if(!Wire.isEnabled()) {
+    Wire.begin();
+  }
+
   Wire.beginTransmission(LIS2DH12_I2C_ADDRESS);
   Wire.write(reg);
   for(size_t i = 0; i < len; i++) {
