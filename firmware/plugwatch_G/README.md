@@ -5,6 +5,7 @@ Plugwatch G Firmware
 - Sensing
   - [ ] GPS can get fix - gps_test
   - [ ] GPS PPS line pulses and can be read by particle and STM32 - 1/2 gps_test
+    - The above to require better GPS soldering
   - [ ] Can still set accel Interrupt and read accel angle of board - accel_test
     - I think there is a soldering issue with current boards preventing this.
   - [ ] STM32 reads correct voltage out of HV amplifiers
@@ -25,7 +26,7 @@ Plugwatch G Firmware
   - [ ] When wall power particle never in reset (battery normal or low voltage)
   - [x] Particle can power on/off SD
   - [ ] Particle can power on/off AC sensing + STM32
-  - [ ] Particle can power on/off GPS - gps_test
+  - [x] Particle can power on/off GPS - gps_test
   - [ ] Particle wakes up when wall power is applied
 - Storage
   - [x] Can write to SD Card - sd_testh
