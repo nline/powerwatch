@@ -4,6 +4,11 @@
 
 #define AB1815_CS C5
 #define AB1815_TIME_DATE_REG 0x00
+#define AB1815_ALARM_DATE_REG 0x08
+#define AB1815_CTRL_1 0x10
+#define AB1815_CTRL_2 0x11
+#define AB1815_INT_MASK 0x12
+#define AB1815_OSC_STATUS 0x1D
 #define AB1815_CFG_KEY_REG 0x1F
 #define AB1815_TRICKLE_REG 0x20
 
@@ -42,4 +47,6 @@ public:
    void     init();
    void     setTime(uint32_t unixTime);
    uint32_t getTime(void);
+   void     setTimer(uint32_t unixTime);
+   void     setTimerFuture(uint32_t seconds);
 };

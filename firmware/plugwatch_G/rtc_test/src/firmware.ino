@@ -20,7 +20,7 @@ void setup() {
   Serial.begin(9600);
 
   //Timesync
-/*  uint32_t time = rtc.getTime();
+  uint32_t time = rtc.getTime();
   Serial.printlnf("Current Time is: %d", time);
 
   Serial.print("Please set the unix time. Press enter to leave it unchanged:");
@@ -35,13 +35,21 @@ void setup() {
   }
 
   //convert the string to an integer
-  time = t.toInt();
-  if(time == 0) {
+  uint32_t p_time = t.toInt();
+  if(p_time == 0) {
     Serial.println("No time to set. Continuing.");
   } else {
-    rtc.setTime(time);
-    Serial.printlnf("Set time to %d. Continuing.", time);
-  }*/
+    rtc.setTime(p_time);
+    time = p_time;
+    Serial.printlnf("Set time to %d. Continuing.", p_time);
+  }
+
+  delay(5000);
+  Serial.println("Setting wakeup timer for 30 seconds in future. Unplug and run particle off battery power to check WKP Function.");
+  Serial.println("If the particle wakes up and 30s the test passes.");
+  Serial.println("If the particle wakes up and 60s the test failed and the RTC did not wake up the particle.");
+  rtc.setTimerFuture(30);
+  System.sleep(SLEEP_MODE_DEEP, 60);
 }
 
 void loop() {
