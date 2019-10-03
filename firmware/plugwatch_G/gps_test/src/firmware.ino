@@ -24,7 +24,7 @@ void setup() {
   // Set up debugging UART
   Serial.begin(9600);
 
-  gpsSubsystem.setup();
+  delay(10000);
 
   //setup the PPS line as an input
   pinMode(D4, INPUT);
@@ -42,6 +42,8 @@ void setup() {
   delay(10000);
   Serial.println("Turning GPS ON");
   digitalWrite(C0, HIGH);
+
+  gpsSubsystem.setup();
 }
 
 void loop() {
