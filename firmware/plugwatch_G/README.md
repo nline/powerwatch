@@ -8,8 +8,8 @@ Plugwatch G Firmware
     - The above to require better GPS soldering
   - [ ] Can still set accel Interrupt and read accel angle of board - accel_test
     - I think there is a soldering issue with current boards preventing this.
-  - [ ] STM32 reads correct voltage out of HV amplifiers
-  - [ ] STM32 reads correct voltage out of LV amplifiers
+  - [ ] STM32 reads correct voltage out of HV amplifiers - stm_voltage_test
+  - [ ] STM32 reads correct voltage out of LV amplifiers - stm_voltage_test
   - [ ] Particle reads correct voltage out of HV amplifiers - particle_voltage_test
   - [ ] Particle reads correct voltage out of LV amplifiers - particle_voltage_test
   - [ ] When HV is applied (i.e. 320VAC) HV amplifiers still work with resolution
