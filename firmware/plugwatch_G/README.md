@@ -17,7 +17,7 @@ Plugwatch G Firmware
   - [ ] STM32 can read voltage angle using PPS
 - Communication
   - [ ] Can connect and comm to particle cloud
-  - [ ] STM32 and particle can communicate
+  - [x] STM32 and particle can communicate - stm_i2c_test
   - [x] Can read ID chip - id_chip_test
 - Power
   - [ ] 5V supplied when plugged into wall
@@ -25,7 +25,7 @@ Plugwatch G Firmware
   - [ ] When battery drops below voltage thresh and no wall power particle in RST
   - [ ] When wall power particle never in reset (battery normal or low voltage)
   - [x] Particle can power on/off SD
-  - [ ] Particle can power on/off AC sensing + STM32
+  - [x] Particle can power on/off AC sensing + STM32 - stm_i2c_test
   - [x] Particle can power on/off GPS - gps_test
   - [x] Particle wakes up when wall power is applied - rtc_test
     - Currently only tested with USB, but should also be tested with actual wall power. Circuit is same though.
