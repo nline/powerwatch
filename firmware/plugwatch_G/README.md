@@ -27,15 +27,17 @@ Plugwatch G Firmware
   - [x] Particle can power on/off SD
   - [ ] Particle can power on/off AC sensing + STM32
   - [x] Particle can power on/off GPS - gps_test
-  - [ ] Particle wakes up when wall power is applied
+  - [x] Particle wakes up when wall power is applied - rtc_test
+    - Currently only tested with USB, but should also be tested with actual wall power. Circuit is same though.
 - Storage
   - [x] Can write to SD Card - sd_test
   - [x] Can read from SD Card - sd_test
 - Time
-  - [ ] Write time to RTC - rtc_test
-  - [ ] Read time from RTC - rtc_test
-  - [ ] RTC maintains time after power off and on - rtc_test
+  - [x] Write time to RTC - rtc_test
+  - [x] Read time from RTC - rtc_test
+  - [x] RTC maintains time after power off and on - rtc_test
   - [ ] Can set timer on RTC that wakes up Particle (using particle wakeup circuit) - rtc_test
+    - I think the timer driver has a bug?
 - Programming
   - [ ] Can Program STM32 and STM32 boots
   - [ ] STM reset button works

@@ -19,23 +19,29 @@ AB1815 rtc;
 void setup() {
   Serial.begin(9600);
 
+  delay(15000);
+
   //Timesync
   uint32_t time = rtc.getTime();
   Serial.printlnf("Current Time is: %d", time);
 
-  Serial.print("Please set the unix time. Press enter to leave it unchanged:");
-  String t;
+  Serial.print("Please set the unix time. Press enter to leave it unchanged: ");
   char last = '0';
+  char t[20] = {0};
+  uint8_t i = 0;
   while(last != '\n') {
     if(Serial.available() > 0) {
       last = Serial.read();
-      String l = (const char *)(&last);
-      t = t + l;
+      Serial.print("%c",last);
+      t[i] = last;
+      i++;
     }
   }
 
+  Serial.printlnf("%s",t);
+
   //convert the string to an integer
-  uint32_t p_time = t.toInt();
+  uint32_t p_time = atoi(t);
   if(p_time == 0) {
     Serial.println("No time to set. Continuing.");
   } else {
