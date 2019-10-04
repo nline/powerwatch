@@ -2,7 +2,7 @@
 #It sets up variables so that it can call the Linux-specific JLinkMakefile
 
 OUTPUT_PATH = $(APP_DIR)/build/$(TARGET)/$(TOOLCHAIN)/
-OUTPUT_BIN :=  libsignpost-mbed.bin
+OUTPUT_BIN :=  $(notdir $(APP_DIR:%/=%)).bin
 
 CURRENT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 

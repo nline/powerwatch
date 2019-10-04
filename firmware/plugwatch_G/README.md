@@ -39,8 +39,8 @@ Plugwatch G Firmware
   - [x] Can set timer on RTC that wakes up Particle (using particle wakeup circuit) - rtc_test
     - ~I think the timer driver has a bug?~ Fixed driver bug
 - Programming
-  - [ ] Can Program STM32 and STM32 boots
-  - [ ] STM reset button works
+  - [x] Can Program STM32 and STM32 boots - stm_blink_test
+  - [x] STM reset button works - stm_blink_test
 - Other
   - [x] Particle can control RGB LED - led_test
   - [x] Particle can set brightness of RGB LED through brightness IC - led_test
@@ -52,3 +52,5 @@ Plugwatch G Firmware
 
 ## Bugs and things to fix
  - Switch pins D2 and D3
+ - STM LED doesn't work? Maybe soldering? Probably should be active low anyways
+ - Possibly breakout UART from STM either to particle or just to somewhere for debugging.
