@@ -10,8 +10,8 @@ void PowerCheck::setup() {
 	attachInterrupt(LOW_BAT_UC, &PowerCheck::interruptHandler, this, FALLING);
 
 	//Drive the pin low
-	pinMode(C3, OUTPUT);
-	digitalWrite(C3, LOW);
+	pinMode(AC_PWR_EN, OUTPUT);
+	digitalWrite(AC_PWR_EN, LOW);
 
 	// Enable charging
 	pmic.begin();
@@ -58,7 +58,7 @@ int PowerCheck::getChargeCurrent() {
 
 int PowerCheck::getVoltage() {
     Serial.println("getting voltage");
-		digitalWrite(C3, HIGH);
+    digitalWrite(AC_PWR_EN, HIGH);
     int count = 0;
     int L_max = 0;
     int L_min = 4096;
@@ -68,8 +68,8 @@ int PowerCheck::getVoltage() {
     //Alright take the max and min so that we can get both the magnitude
     //and the average
     while(count < 4000) {
-        int L = analogRead(B4);
-        int N = analogRead(B2);
+        int L = analogRead(AC_L_LV_OUT);
+        int N = analogRead(AC_N_LV_OUT);
         if(L > L_max) {
             L_max = L;
             N_measure = N;
@@ -88,8 +88,8 @@ int PowerCheck::getVoltage() {
 	count = 0;
 	L_max = 0;
 	while(count < 2000) {
-    	    int L = analogRead(B4);
-    	    int N = analogRead(B2);
+    	    int L = analogRead(AC_L_LV_OUT);
+    	    int N = analogRead(AC_N_LV_OUT);
     	    if(L > L_max) {
     	        larray[i] = L;
     	        narray[i] = N;
@@ -106,7 +106,7 @@ int PowerCheck::getVoltage() {
     bool ready = false;
     int startMillis = millis();
     while(mcount < 3 && millis() - startMillis < 1000) {
-        int L = analogRead(B4);
+        int L = analogRead(AC_L_LV_OUT);
 	if(L > L_avg && ready) {
 	    m[mcount] = micros();
 	    mcount++;
@@ -135,7 +135,7 @@ int PowerCheck::getVoltage() {
     }
 
     int volt = (int)(vtotal/10.0);
-    digitalWrite(C3, LOW);
+    digitalWrite(AC_PWR_EN, LOW);
     Serial.printlnf("Calculated voltage: %d",volt);
     return volt;
 }

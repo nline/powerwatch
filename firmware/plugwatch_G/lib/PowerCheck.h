@@ -8,6 +8,14 @@
  * to initialize it. Then use the getHasPower(), getHasBattery() and getIsCharging()
  * methods as desired.
  */
+
+#define AC_PWR_EN C3
+#define AC_L_HV_OUT A0
+#define AC_N_LV_OUT B5
+#define AC_N_HV_OUT B4
+#define AC_L_LV_OUT B3
+
+
 class PowerCheck {
 public:
 	/**
@@ -40,10 +48,10 @@ public:
 	void setChargeCurrent();
 
 	int getChargeCurrent();
-    int getVoltage();
-    int getLCycles();
-    int getNCycles();
-    int getPeriod();
+	int getVoltage();
+	int getLCycles();
+	int getNCycles();
+	int getPeriod();
 
 	volatile unsigned long lastUnplugMillis = 0;
 	volatile int lastUnplugTime = 0;

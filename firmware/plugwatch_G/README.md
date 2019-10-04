@@ -10,8 +10,8 @@ Plugwatch G Firmware
     - I think there is a soldering issue with current boards preventing this.
   - [ ] STM32 reads correct voltage out of HV amplifiers
   - [ ] STM32 reads correct voltage out of LV amplifiers
-  - [ ] Particle reads correct voltage out of HV amplifiers
-  - [ ] Particle reads correct voltage out of LV amplifiers
+  - [ ] Particle reads correct voltage out of HV amplifiers - particle_voltage_test
+  - [ ] Particle reads correct voltage out of LV amplifiers - particle_voltage_test
   - [ ] When HV is applied (i.e. 320VAC) HV amplifiers still work with resolution
   - [ ] When 800V voltage transient is applied detector triggers
   - [ ] STM32 can read voltage angle using PPS
