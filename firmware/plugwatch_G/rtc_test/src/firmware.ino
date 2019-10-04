@@ -32,7 +32,7 @@ void setup() {
   while(last != '\n') {
     if(Serial.available() > 0) {
       last = Serial.read();
-      Serial.print("%c",last);
+      Serial.printf("%c",last);
       t[i] = last;
       i++;
     }
@@ -54,6 +54,9 @@ void setup() {
   Serial.println("Setting wakeup timer for 30 seconds in future. Unplug and run particle off battery power to check WKP Function.");
   Serial.println("If the particle wakes up and 30s the test passes.");
   Serial.println("If the particle wakes up and 60s the test failed and the RTC did not wake up the particle.");
+  pinMode(WKP, OUTPUT);
+  digitalWrite(WKP, LOW);
+  delay(5000);
   rtc.setTimerFuture(30);
   System.sleep(SLEEP_MODE_DEEP, 60);
 }

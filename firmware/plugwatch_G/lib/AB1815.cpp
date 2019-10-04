@@ -76,8 +76,12 @@ void AB1815::setTimer(uint32_t unixTime) {
 
     //Enable the alarm interrupt and make it stay high for 1/4second on match (driving nAIRQ low, triggering circuit)
     //set INTERRUPT_MASK to 0xE4
-    val = 0xE4;
+    val = 0x84;
     writeReg(AB1815_INT_MASK, &val, 1);
+
+    //Set the tiemr control register so that this interrupt occurs once per year
+    val = 0x27;
+    writeReg(AB1815_TIMER_CTRL, &val, 1);
 
     //write the alarm time to the alarm registers
     struct tm  * time;
@@ -104,6 +108,10 @@ void AB1815::setTimer(uint32_t unixTime) {
             (((time->tm_year - 100) % 10 << AB1815_YEAR_ONES_OFFSET) & AB1815_YEAR_ONES_MASK);
 
     writeReg(AB1815_ALARM_DATE_REG, tx, 7);
+
+    //clear the status bit so that it can fire
+    val = 0x00;
+    writeReg(AB1815_STATUS, &val, 1);
 }
 
 void AB1815::setTimerFuture(uint32_t seconds) {

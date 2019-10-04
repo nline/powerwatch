@@ -36,8 +36,8 @@ Plugwatch G Firmware
   - [x] Write time to RTC - rtc_test
   - [x] Read time from RTC - rtc_test
   - [x] RTC maintains time after power off and on - rtc_test
-  - [ ] Can set timer on RTC that wakes up Particle (using particle wakeup circuit) - rtc_test
-    - I think the timer driver has a bug?
+  - [x] Can set timer on RTC that wakes up Particle (using particle wakeup circuit) - rtc_test
+    - ~I think the timer driver has a bug?~ Fixed driver bug
 - Programming
   - [ ] Can Program STM32 and STM32 boots
   - [ ] STM reset button works
