@@ -48,7 +48,8 @@ Plugwatch G Firmware
     - They are at least close? Maybe blue could be brighter?
   - [ ] ~Particle can deterministically hard reset itself (not in a loop) - particle_rst_test~
     - This does not WORK! Must switch to PIN D2 because there is a pull up on D3
-  - [ ] Watchdog triggers when not tickled
+  - [ ] Watchdog triggers when not tickled - watchdog_test
+  - [ ] Watchdog doesn't trigger when tickled - watchdog_tickle_test
 
 ## Bugs and things to fix
  - Switch pins D2 and D3
