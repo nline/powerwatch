@@ -20,8 +20,8 @@ Plugwatch G Firmware
   - [x] STM32 and particle can communicate - stm_i2c_test
   - [x] Can read ID chip - id_chip_test
 - Power
-  - [ ] 5V supplied when plugged into wall
-  - [ ] Battery charges in all states when wall powered
+  - [x] 5V supplied when plugged into wall
+  - [x] Battery charges in all states when wall powered
   - [ ] When battery drops below voltage thresh and no wall power particle in RST
   - [ ] When wall power particle never in reset (battery normal or low voltage)
   - [x] Particle can power on/off SD
@@ -48,10 +48,11 @@ Plugwatch G Firmware
     - They are at least close? Maybe blue could be brighter?
   - [ ] ~Particle can deterministically hard reset itself (not in a loop) - particle_rst_test~
     - This does not WORK! Must switch to PIN D2 because there is a pull up on D3
-  - [ ] Watchdog triggers when not tickled - watchdog_test
-  - [ ] Watchdog doesn't trigger when tickled - watchdog_tickle_test
+  - [x] Watchdog triggers when not tickled - watchdog_test
+  - [x] Watchdog doesn't trigger when tickled - watchdog_tickle_test
 
 ## Bugs and things to fix
  - Switch pins D2 and D3
  - STM LED doesn't work? Maybe soldering? Probably should be active low anyways
  - Possibly breakout UART from STM either to particle or just to somewhere for debugging.
+ - Make AC wire holes bigger and further apart. Move big cap down towards GPS antenna so they have more room.
