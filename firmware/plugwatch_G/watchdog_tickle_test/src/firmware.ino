@@ -14,6 +14,8 @@ void setup() {
   
   pinMode(DAC, OUTPUT);
   digitalWrite(DAC, LOW);
+
+  reboot_cnt++;
 }
 
 void loop() {
