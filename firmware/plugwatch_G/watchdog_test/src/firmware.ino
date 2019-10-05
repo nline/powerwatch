@@ -12,6 +12,7 @@ retained unsigned long reboot_cnt = 0;
 void setup() {
   Serial.begin(9600);
   
+  reboot_cnt++;
 }
 
 void loop() {
