@@ -11,7 +11,9 @@ Plugwatch G Firmware
   - [ ] STM32 reads correct voltage out of HV amplifiers - stm_voltage_test
   - [ ] STM32 reads correct voltage out of LV amplifiers - stm_voltage_test
   - [ ] Particle reads correct voltage out of HV amplifiers - particle_voltage_test
-  - [ ] Particle reads correct voltage out of LV amplifiers - particle_voltage_test
+    - This is being weird. Specifically it works sometimes and doesn't work sometimes??
+    - I should ship back several full waveforms out of this amplifier to see what's up
+  - [x] Particle reads correct voltage out of LV amplifiers - particle_voltage_test
   - [ ] When HV is applied (i.e. 320VAC) HV amplifiers still work with resolution
   - [ ] When 800V voltage transient is applied detector triggers
   - [ ] STM32 can read voltage angle using PPS

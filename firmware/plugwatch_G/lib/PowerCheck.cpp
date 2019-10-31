@@ -56,7 +56,91 @@ int PowerCheck::getChargeCurrent() {
 	return pmic.getChargeCurrent();
 }
 
-int PowerCheck::getVoltage() {
+float PowerCheck::getHVVoltage() {
+    Serial.println("getting voltage");
+    digitalWrite(AC_PWR_EN, HIGH);
+    int count = 0;
+    int L_max = 0;
+    int L_min = 4096;
+    int N_measure = 0;
+    setADCSampleTime(ADC_SampleTime_84Cycles);
+
+    //Alright take the max and min so that we can get both the magnitude
+    //and the average
+    while(count < 4000) {
+        int L = analogRead(AC_L_HV_OUT);
+        int N = analogRead(AC_N_HV_OUT);
+        if(L > L_max) {
+            L_max = L;
+            N_measure = N;
+        }
+        if(L < L_min) {
+            L_min = L;
+        }
+        count++;
+    }
+
+    int L_avg = (L_max + L_min)/2;
+    
+    int larray[10];
+    int narray[10];
+    for(uint8_t i = 0; i < 10; i++) {
+	count = 0;
+	L_max = 0;
+	while(count < 2000) {
+    	    int L = analogRead(AC_L_HV_OUT);
+    	    int N = analogRead(AC_N_HV_OUT);
+    	    if(L > L_max) {
+    	        larray[i] = L;
+    	        narray[i] = N;
+		L_max = L;
+    	    }
+    	    count++;
+    	}
+    }
+
+    //Use the average as our "zero point" to calculate frequency
+    //Take 5 samples at the zero point - this should give use two periods to average
+    uint8_t mcount = 0;
+    int m[3];
+    bool ready = false;
+    int startMillis = millis();
+    while(mcount < 3 && millis() - startMillis < 1000) {
+        int L = analogRead(AC_L_HV_OUT);
+	if(L > L_avg && ready) {
+	    m[mcount] = micros();
+	    mcount++;
+	    ready = false;
+	} else if (L < L_avg){
+	    ready = true; 
+	}
+    }
+    if(millis() - startMillis >= 1000) {
+	periodMicros = 1;
+    } else {
+	//now calculate the microseconds for each period
+    	int p1 = m[2] - m[1];
+    	int p2 = m[1] - m[0];
+    	periodMicros = (p1 + p2)/2;
+    }
+    
+    Serial.printlnf("L voltage count: %d", L_max);
+    Serial.printlnf("N voltage count: %d", N_measure);
+
+    float vtotal = 0;
+    for(uint8_t i = 0; i < 10; i++) {
+	float l_volt = (larray[i]*(3.3/4096)*(953/1.00))-(1.5*(953/1.00));
+	float n_volt = (narray[i]*(3.3/4096)*(953/1.00))-(1.5*(953/1.00));
+	vtotal += (l_volt - n_volt);
+    }
+
+    float volt = (vtotal/10.0);
+    digitalWrite(AC_PWR_EN, LOW);
+    Serial.printlnf("Calculated voltage: %d",volt);
+    return volt;
+}
+
+float PowerCheck::getVoltage() {
     Serial.println("getting voltage");
     digitalWrite(AC_PWR_EN, HIGH);
     int count = 0;
@@ -127,14 +211,14 @@ int PowerCheck::getVoltage() {
     Serial.printlnf("L voltage count: %d", L_max);
     Serial.printlnf("N voltage count: %d", N_measure);
 
-    int vtotal = 0;
+    float vtotal = 0;
     for(uint8_t i = 0; i < 10; i++) {
-	float L_volt = ((larray[i]/4096.0 * 3.3) - (3.3/2))*(953/4.99);
-    	float N_volt = ((narray[i]/4096.0 * 3.3) - (3.3/2))*(953/4.99);
-	vtotal += (int)(L_volt - N_volt);
+	float l_volt = (larray[i]*(3.3/4096)*(953/3.74))-(1.5*(953/3.74));
+	float n_volt = (narray[i]*(3.3/4096)*(953/3.74))-(1.5*(953/3.74));
+	vtotal += (l_volt - n_volt);
     }
 
-    int volt = (int)(vtotal/10.0);
+    float volt = (vtotal/10.0);
     digitalWrite(AC_PWR_EN, LOW);
     Serial.printlnf("Calculated voltage: %d",volt);
     return volt;

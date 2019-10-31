@@ -48,7 +48,8 @@ public:
 	void setChargeCurrent();
 
 	int getChargeCurrent();
-	int getVoltage();
+	float getVoltage();
+	float getHVVoltage();
 	int getLCycles();
 	int getNCycles();
 	int getPeriod();
