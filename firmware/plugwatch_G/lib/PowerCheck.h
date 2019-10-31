@@ -10,10 +10,12 @@
  */
 
 #define AC_PWR_EN C3
+
 #define AC_L_HV_OUT A0
-#define AC_N_LV_OUT B5
 #define AC_N_HV_OUT B4
+
 #define AC_L_LV_OUT B3
+#define AC_N_LV_OUT B5
 
 
 class PowerCheck {
@@ -53,6 +55,7 @@ public:
 	int getLCycles();
 	int getNCycles();
 	int getPeriod();
+	uint16_t* getbuf();
 
 	volatile unsigned long lastUnplugMillis = 0;
 	volatile int lastUnplugTime = 0;
