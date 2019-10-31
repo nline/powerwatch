@@ -16,7 +16,7 @@ Plugwatch G Firmware
   - [ ] When 800V voltage transient is applied detector triggers
   - [ ] STM32 can read voltage angle using PPS
 - Communication
-  - [ ] Can connect and comm to particle cloud
+  - [x] Can connect and comm to particle cloud - any of the voltage tests
   - [x] STM32 and particle can communicate - stm_i2c_test
   - [x] Can read ID chip - id_chip_test
 - Power
