@@ -47,32 +47,19 @@ void sample_adc() {
 void average_waveform(float* lv_waveform, float* hv_waveform) {
     //find the voltage of the wave
     float max_lv_v = 0;
-    float min_lv_v = 0;
     float max_hv_v = 0;
-    float min_hv_v = 0;
     for(uint16_t i = 0; i < 200; i++) {
         if(l_lv_buf[i] - n_lv_buf[i] > max_lv_v) {
             max_lv_v = l_lv_buf[i] - n_lv_buf[i];
         }
 
-        if(l_lv_buf[i] - n_lv_buf[i] < min_lv_v) {
-            min_lv_v = l_lv_buf[i] - n_lv_buf[i];
-        }
-        
         if(l_hv_buf[i] - n_hv_buf[i] > max_hv_v) {
             max_hv_v = l_hv_buf[i] - n_hv_buf[i];
         }
-
-        if(l_hv_buf[i] - n_hv_buf[i] < min_hv_v) {
-            min_hv_v = l_hv_buf[i] - n_hv_buf[i];
-        }
     }
 
-    float lv_v = max_lv_v - min_lv_v;
-    float hv_v = max_hv_v - min_hv_v;
-
-    *lv_waveform = lv_v/764.438;
-    *hv_waveform = hv_v/2859; 
+    *lv_waveform = max_lv_v*(3/4096)*(953/3.74) - (1.5*(953/3.74));
+    *hv_waveform = max_hv_v*(3/4096)*(953/1.0) - (1.5*(953/1.0));
 }
 
 void average_second(float* lv_second, float* hv_second) {
@@ -112,14 +99,14 @@ int main(void) {
     //Set the i2c address
     i2c.address(0x1A);
 
-    sample.attach_us(&sample_adc, 100);
+    //sample.attach_us(&sample_adc, 100);
     
-    twowave.start();
-    comm.start();
-    second.start();
+    //twowave.start();
+    //comm.start();
+    //second.start();
     while(1) {
         // every ~two wave periods calculate the voltage and frequency
-        if(twowave.read_ms() > 20) {
+        /*if(twowave.read_ms() > 20) {
            
             //average the rolling waveform buffer
             float wave_lv_voltage = 0;
@@ -163,30 +150,32 @@ int main(void) {
             }
 
             second.reset();
-        }
+        }*/
 
-        int i = i2c.receive();
+        static int i = i2c.receive();
         float lv_wave;
         float hv_wave;
         float lv_s;
         float hv_s;
         float lv_m;
         float hv_m;
-        float vbuf[6];
+        //float vbuf[6] = {1.0,1.0,1.0,1.0,1.0,1.0};
+        static uint32_t vbuf[6] = {0x1A,0x1B,0x1C,0x1D,0x1E,0x1F};
+        uint8_t test = 0x19;
 
         switch (i) {
         case I2CSlave::ReadAddressed:
-            average_waveform(&lv_wave, &hv_wave);
-            average_second(&lv_s, &hv_s);
-            average_minute(&lv_m, &hv_m);
+            //average_waveform(&lv_wave, &hv_wave);
+            //average_second(&lv_s, &hv_s);
+            //average_minute(&lv_m, &hv_m);
 
-            vbuf[0] = lv_wave;
-            vbuf[1] = hv_wave;
-            vbuf[2] = lv_s;
-            vbuf[3] = hv_s;
-            vbuf[4] = lv_m;
-            vbuf[5] = hv_m;
-            i2c.write((char *)vbuf, 24);
+            //vbuf[0] = lv_wave;
+            //vbuf[1] = hv_wave;
+            //vbuf[2] = lv_s;
+            //vbuf[3] = hv_s;
+            //vbuf[4] = lv_m;
+            //vbuf[5] = hv_m;
+            i2c.write((char *)(&test), 1);
         break;
         case I2CSlave::WriteAddressed:
         break;
