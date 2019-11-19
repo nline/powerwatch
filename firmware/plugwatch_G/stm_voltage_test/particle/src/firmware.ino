@@ -19,24 +19,43 @@ void setup() {
   }
 }
 
-void loop() {
-  float vbuf[6];
-  Wire.requestFrom(0x0D, 24, true);
-  uint32_t temp = 0;
-  for(uint8_t i = 0; i < 24; i++) {
-    temp |= (Wire.read() << (i % 4));
+int32_t m = 0;
+int32_t temp = 0;
+int32_t l = 0;
+int32_t n = 0;
 
-    if(i % 4 == 3) {
-      vbuf[i/4] = (float)(temp);
-      temp = 0;
-    }
+void loop() {
+  temp = 0;
+  l = 0;
+  n = 0;
+
+  Wire.requestFrom(0x0D, 12, true);
+  for(uint8_t i = 0; i < 4; i++) {
+    uint8_t b = Wire.read();
+    temp |= (b << i*8);
+    Serial.printlnf("Byte %d: %02X",i,b);
+  }
+  if(abs(temp) > m) {
+    m = temp;
+  }
+
+  for(uint8_t i = 0; i < 4; i++) {
+    uint8_t b = Wire.read();
+    l |= (b << i*8);
+    Serial.printlnf("Byte %d: %02X",i,b);
+  }
+
+  for(uint8_t i = 0; i < 4; i++) {
+    uint8_t b = Wire.read();
+    n |= (b << i*8);
+    Serial.printlnf("Byte %d: %02X",i,b);
   }
   Wire.endTransmission(true);
-  Serial.printlnf("LV waveform %0.2f", vbuf[0]);
-  Serial.printlnf("HV waveform %0.2f", vbuf[1]);
-  Serial.printlnf("LV second %0.2f", vbuf[2]);
-  Serial.printlnf("HV second %0.2f", vbuf[3]);
-  Serial.printlnf("LV minute %0.2f", vbuf[4]);
-  Serial.printlnf("HV minute %0.2f", vbuf[5]);
-  delay(20000);
+
+
+  Serial.printlnf("LV waveform %ld", temp);
+  Serial.printlnf("Max LV waveform %ld", m);
+  Serial.printlnf("Max L %ld", l);
+  Serial.printlnf("Max N %ld", n);
+  delay(5000);
 }

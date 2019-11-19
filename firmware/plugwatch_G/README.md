@@ -8,8 +8,9 @@ Plugwatch G Firmware
     - The above to require better GPS soldering
   - [ ] Can still set accel Interrupt and read accel angle of board - accel_test
     - I think there is a soldering issue with current boards preventing this.
-  - [ ] STM32 reads correct voltage out of HV amplifiers - stm_voltage_test
-  - [ ] STM32 reads correct voltage out of LV amplifiers - stm_voltage_test
+  - [ ] ~STM32 reads correct voltage out of HV amplifiers - stm_voltage_test~
+        - Should work in theory, but in practice there is something wrong with MBED PA_2 and we should just use another pin
+  - [x] STM32 reads correct voltage out of LV amplifiers - stm_voltage_test
   - [x] Particle reads correct voltage out of HV amplifiers - particle_voltage_test
     - ~This is being weird. Specifically it works sometimes and doesn't work sometimes??~
     - ~I should ship back several full waveforms out of this amplifier to see what's up~
@@ -59,3 +60,5 @@ Plugwatch G Firmware
  - STM LED doesn't work? Maybe soldering? Probably should be active low anyways
  - Possibly breakout UART from STM either to particle or just to somewhere for debugging.
  - Make AC wire holes bigger and further apart. Move big cap down towards GPS antenna so they have more room.
+ - Move the HV input to the STM off of PA_2
+ - Add UART debug output to the STM either through the particle or just to breakout pins
