@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="14" fill="1" visible="no" active="no"/>
@@ -23891,6 +23891,10 @@ many sources of noise.</text>
 <plain>
 <text x="25.4" y="157.48" size="1.27" layer="98">REGULATE 3V3 to 3V so that VDDA
 can be powered by the reference.</text>
+<text x="54.61" y="60.96" size="0.762" layer="98">According to the datasheet
+these pins are 5.5V tolerant.
+
+Turn off when not debugging.</text>
 </plain>
 <instances>
 <instance part="FRAME2" gate="G$1" x="0" y="0" smashed="yes"/>
@@ -24367,9 +24371,9 @@ can be powered by the reference.</text>
 </net>
 <net name="AC_N_800V_DETECT" class="0">
 <segment>
-<pinref part="U15" gate="G$1" pin="PB6"/>
-<wire x1="81.28" y1="71.12" x2="73.66" y2="71.12" width="0.1524" layer="91"/>
-<label x="73.66" y="71.12" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="U15" gate="G$1" pin="PB5"/>
+<wire x1="81.28" y1="73.66" x2="73.66" y2="73.66" width="0.1524" layer="91"/>
+<label x="73.66" y="73.66" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="BOOT0" class="0">
@@ -24383,9 +24387,9 @@ can be powered by the reference.</text>
 </net>
 <net name="AC_N_HV_OUT" class="0">
 <segment>
-<pinref part="U15" gate="G$1" pin="PA2"/>
-<wire x1="127" y1="91.44" x2="132.08" y2="91.44" width="0.1524" layer="91"/>
-<label x="132.08" y="91.44" size="1.27" layer="95" xref="yes"/>
+<pinref part="U15" gate="G$1" pin="PA4"/>
+<wire x1="127" y1="86.36" x2="132.08" y2="86.36" width="0.1524" layer="91"/>
+<label x="132.08" y="86.36" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="N$7" class="0">
@@ -24402,6 +24406,20 @@ can be powered by the reference.</text>
 <pinref part="D5" gate="G$1" pin="ANODE"/>
 <pinref part="R9" gate="G$1" pin="1"/>
 <wire x1="43.18" y1="53.34" x2="43.18" y2="58.42" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="VOLTAGE_COPROC_TX" class="0">
+<segment>
+<pinref part="U15" gate="G$1" pin="PB6"/>
+<wire x1="81.28" y1="71.12" x2="73.66" y2="71.12" width="0.1524" layer="91"/>
+<label x="73.66" y="71.12" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="VOLTAGE_COPROC_RX" class="0">
+<segment>
+<pinref part="U15" gate="G$1" pin="PB7"/>
+<wire x1="81.28" y1="68.58" x2="73.66" y2="68.58" width="0.1524" layer="91"/>
+<label x="73.66" y="68.58" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 </nets>
@@ -25190,9 +25208,9 @@ be about 12mCd</text>
 </net>
 <net name="GPS_PWR_EN" class="0">
 <segment>
-<pinref part="ASSY1" gate="A1" pin="C0"/>
-<wire x1="100.33" y1="102.87" x2="102.87" y2="102.87" width="0.1524" layer="91"/>
-<label x="102.87" y="102.87" size="1.27" layer="95" xref="yes"/>
+<pinref part="ASSY1" gate="A1" pin="B2"/>
+<wire x1="77.47" y1="107.95" x2="74.93" y2="107.95" width="0.1524" layer="91"/>
+<label x="74.93" y="107.95" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="GPS_RXD" class="0">
@@ -25552,9 +25570,9 @@ be about 12mCd</text>
 </net>
 <net name="AC_N_800V_DETECT" class="0">
 <segment>
-<pinref part="ASSY1" gate="A1" pin="C1"/>
-<wire x1="100.33" y1="105.41" x2="102.87" y2="105.41" width="0.1524" layer="91"/>
-<label x="102.87" y="105.41" size="1.27" layer="95" xref="yes"/>
+<pinref part="ASSY1" gate="A1" pin="A1"/>
+<wire x1="77.47" y1="120.65" x2="74.93" y2="120.65" width="0.1524" layer="91"/>
+<label x="74.93" y="120.65" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="AC_L_800V_DETECT" class="0">
@@ -25583,6 +25601,20 @@ be about 12mCd</text>
 <pinref part="ASSY1" gate="A1" pin="D2"/>
 <wire x1="100.33" y1="123.19" x2="102.87" y2="123.19" width="0.1524" layer="91"/>
 <label x="102.87" y="123.19" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="VOLTAGE_COPROC_TX" class="0">
+<segment>
+<pinref part="ASSY1" gate="A1" pin="C0"/>
+<wire x1="100.33" y1="102.87" x2="102.87" y2="102.87" width="0.1524" layer="91"/>
+<label x="102.87" y="102.87" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="VOLTAGE_COPROC_RX" class="0">
+<segment>
+<pinref part="ASSY1" gate="A1" pin="C1"/>
+<wire x1="100.33" y1="105.41" x2="102.87" y2="105.41" width="0.1524" layer="91"/>
+<label x="102.87" y="105.41" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 </nets>
