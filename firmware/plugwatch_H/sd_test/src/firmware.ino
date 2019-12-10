@@ -40,6 +40,17 @@ void loop() {
   Serial.println("Logging to SD Card");
   DataLog.append("This is a data log 1");
   DataLog.append("This is a data log 2");
+
+  Serial.println("Powering off SD");
+  SD.PowerOff();
+  delay(1000);
+
+  DataLog.append("This is a data log 3");
+
+  Serial.println("Powering on SD");
+  SD.PowerOn();
+  delay(1000);
+
   Serial.println("Reading from SD Card");
   Serial.printlnf("%s",DataLog.getLastLine().c_str());
 }

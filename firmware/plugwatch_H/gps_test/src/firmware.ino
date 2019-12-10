@@ -32,16 +32,17 @@ void setup() {
 
   // GPS
   Serial.println("Turning GPS ON");
-  pinMode(C0, OUTPUT);
-  digitalWrite(C0, HIGH);
+  pinMode(B2, OUTPUT);
+  digitalWrite(B2, HIGH);
 
   delay(10000);
   Serial.println("Turning GPS OFF");
-  digitalWrite(C0, LOW);
+  digitalWrite(B2, LOW);
 
   delay(10000);
   Serial.println("Turning GPS ON");
-  digitalWrite(C0, HIGH);
+  digitalWrite(B2, HIGH);
+  delay(10000);
 
   gpsSubsystem.setup();
 }

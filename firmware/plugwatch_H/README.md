@@ -22,25 +22,27 @@ Plugwatch H Firmware
   - [ ] Battery charges in all states when wall powered
   - [ ] When battery drops below voltage thresh and no wall power particle in RST
   - [ ] When wall power particle never in reset (battery normal or low voltage)
-  - [ ] Particle can power on/off SD
-  - [ ] Particle can power on/off AC sensing + STM32 - stm_i2c_test
-  - [ ] Particle can power on/off GPS - gps_test
+  - [x] Particle can power on/off SD
+  - [x] Particle can power on/off AC sensing + STM32 - stm_i2c_test
+  - [x] Particle can power on/off GPS - gps_test
   - [x] Particle wakes up when wall power is applied - rtc_test
 - Storage
-  - [ ] Can write to SD Card - sd_test
-  - [ ] Can read from SD Card - sd_test
+  - [x] Can write to SD Card - sd_test
+  - [x] Can read from SD Card - sd_test
 - Time
   - [x] Write time to RTC - rtc_test
   - [x] Read time from RTC - rtc_test
   - [x] RTC maintains time after power off and on - rtc_test
   - [x] Can set timer on RTC that wakes up Particle (using particle wakeup circuit) - rtc_test
 - Programming
-  - [ ] Can Program STM32 and STM32 boots - stm_blink_test
+  - [x] Can Program STM32 and STM32 boots - stm_blink_test
+    - STM doesn't actually blink???
   - [ ] STM reset button works - stm_blink_test
+    - I'm having trouble verifying that this works
 - Other
-  - [ ] Particle can control RGB LED - led_test
-  - [ ] Particle can set brightness of RGB LED through brightness IC - led_test
-  - [ ] LEDs are same brightness when powered on - led_test
+  - [x] Particle can control RGB LED - led_test
+  - [x] Particle can set brightness of RGB LED through brightness IC - led_test
+  - [x] LEDs are same brightness when powered on - led_test
   - [x] Particle can deterministically hard reset itself (not in a loop) - particle_rst_test
   - [ ] Watchdog triggers when not tickled - watchdog_test
   - [ ] Watchdog doesn't trigger when tickled - watchdog_tickle_test
