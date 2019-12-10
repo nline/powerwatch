@@ -15,7 +15,8 @@ Plugwatch H Firmware
   - [ ] STM32 can read voltage angle using PPS
 - Communication
   - [ ] Can connect and comm to particle cloud - any of the voltage tests
-  - [ ] STM32 and particle can communicate - stm_i2c_test
+  - [x] STM32 and particle can communicate over i2c - stm_i2c_test
+  - [x] STM32 and particle can communicate over uart - stm_uart_test
   - [x] Can read ID chip - id_chip_test
 - Power
   - [ ] 5V supplied when plugged into wall
@@ -36,9 +37,7 @@ Plugwatch H Firmware
   - [x] Can set timer on RTC that wakes up Particle (using particle wakeup circuit) - rtc_test
 - Programming
   - [x] Can Program STM32 and STM32 boots - stm_blink_test
-    - STM doesn't actually blink???
-  - [ ] STM reset button works - stm_blink_test
-    - I'm having trouble verifying that this works
+  - [x] STM reset button works - stm_blink_test
 - Other
   - [x] Particle can control RGB LED - led_test
   - [x] Particle can set brightness of RGB LED through brightness IC - led_test
