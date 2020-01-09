@@ -6,7 +6,9 @@
 #include <CellularHelper.h>
 
 // Our code
+#include "board.h"
 #include "CellStatus.h"
+#include "PowerCheck.h"
 #include "AB1815.h"
 #include "ChargeState.h"
 #include "Cloud.h"
@@ -48,23 +50,28 @@ SYSTEM_THREAD(ENABLED);
 STARTUP(System.enableFeature(FEATURE_RESET_INFO));
 STARTUP(System.enableFeature(FEATURE_RETAINED_MEMORY));
 SYSTEM_MODE(MANUAL);
-bool handshake_flag = false;
-String id(void);
-String shield_id = "";
 
 //***********************************
-//* Watchdogs
+//* Watchdogs and reset functions
 //***********************************
-const int HARDWARE_WATCHDOG_TIMEOUT_MS = 1000 * 60;
-ApplicationWatchdog wd(HARDWARE_WATCHDOG_TIMEOUT_MS, soft_watchdog_reset);
-void soft_watchdog_reset() {
-  Serial.println("Resetting by sleeping temporarily");
-  System.sleep(SLEEP_MODE_DEEP, 60);
+const int HARDWARE_WATCHDOG_TIMEOUT_MS = 1000;
+ApplicationWatchdog wd(HARDWARE_WATCHDOG_TIMEOUT_MS, soft_reset);
+
+int soft_reset_helper(String cmd) {
+  soft_reset();
 }
 
-unsigned long system_cnt = 0;
-retained unsigned long reboot_cnt = 0;
-retained unsigned long sd_cnt = 0;
+void soft_reset() {
+  // Soft reset the particle using system sleep
+  Serial.println("Resetting by sleeping temporarily");
+  System.sleep(SLEEP_MODE_DEEP, 10);
+}
+
+int hard_reset(String cmd) {
+  // Hard reset the particle using the reset chip
+  pinMode(PARTICLE_RST, OUTPUT);
+  digitalWrite(PARTICLE_RST, HIGH);
+}
 
 //***********************************
 //* SD Card
@@ -83,6 +90,11 @@ AB1815 rtc;
 auto cellStatus = CellStatus();
 
 //***********************************
+//* PowerCheck
+//***********************************
+PowerCheck powerCheck;
+
+//***********************************
 //* Charge state
 //***********************************
 auto chargeStateSubsystem = ChargeState();
@@ -98,200 +110,8 @@ auto imuSubsystem = Imu();
 auto gpsSubsystem = Gps();
 
 //***********************************
-//* System Events
+//* APNs
 //***********************************
-auto EventLog = FileLog(SD, "event_log.txt");
-std::queue<String> EventQueue;
-std::queue<String> CloudQueue;
-std::queue<String> DataQueue;
-
-unsigned long last_cloud_event = 0;
-
-//***********************************
-//* System Data
-//***********************************
-retained char data_log_name[50];
-auto DataLog = FileLog(SD, "data_log.txt");
-auto DataDequeue = FileLog(SD, "data_dequeue.txt");
-unsigned long last_logging_event  = 0;
-
-
-// String SYSTEM_EVENT = "s";
-retained int system_event_count = 0;
-retained String last_system_event_time = "";
-retained int last_system_event_type = -999;
-retained int num_reboots = 0;
-retained int num_manual_reboots = 0;
-
-volatile int network_state = 0;
-volatile int cloud_state = 0;
-
-void handle_all_system_events(system_event_t event, int param) {
-  system_event_count++;
-  // cast as per BDub post here: https://community.particle.io/t/system-events-param-problem/32071/14
-  if((uint32_t)event == 64) {
-    cloud_state = param;
-  }
-
-  if((uint32_t)event == 32) {
-    network_state = param;
-  }
-
-  String event_type;
-  String event_param;
-
-  switch((uint32_t) event) {
-  case setup_begin:
-    event_type = "setup_begin";
-  break;
-  case setup_update:
-    event_type = "setup_update";
-  break;
-  case setup_end:
-    event_type = "setup_end";
-  break;
-  case network_credentials:
-    event_type = "network_credentials";
-    switch(param) {
-    case network_credentials_added:
-      event_param = "added";
-    break;
-    case network_credentials_cleared:
-      event_param = "cleared";
-    break;
-    }
-  break;
-  case network_status:
-    event_type = "network_status";
-    switch(param) {
-    case network_status_powering_on:
-      event_param = "network_status_powering_on";
-    break;
-    case network_status_on:
-      event_param = "on";
-    break;
-    case network_status_powering_off:
-      event_param = "powering_off";
-    break;
-    case network_status_off:
-      event_param = "off";
-    break;
-    case network_status_connecting:
-      event_param = "connecting";
-    break;
-    case network_status_connected: 
-      event_param = "connected";
-    break;
-    }
-  break;
-  case cloud_status:
-    event_type = "cloud_status";
-    switch(param) {
-    case cloud_status_disconnecting:
-      event_param = "disconnecting";
-    break;
-    case cloud_status_disconnected: 
-      event_param = "disconnected";
-    break;
-    case cloud_status_connecting:
-      event_param = "connecting";
-    break;
-    case cloud_status_connected: 
-      event_param = "connected";
-    break;
-    }
-  break;
-  case button_status:
-    event_type = "button_status";
-  break;
-  case firmware_update:
-    event_type = "firmware_update";
-    switch(param) {
-    case firmware_update_begin:
-      event_param = "begin";
-    break;
-    case firmware_update_progress: 
-      event_param = "progress";
-    break;
-    case firmware_update_complete:
-      event_param = "complete";
-    break;
-    case firmware_update_failed: 
-      event_param = "failed";
-    break;
-    }
-  break;
-  case firmware_update_pending:
-    event_type = "firmware_update_pending";
-  break;
-  case reset_pending:
-    event_type = "reset_pending";
-  break;
-  case reset:
-    event_type = "reset";
-  break;
-  case button_click:
-    event_type = "button_click";
-  break;
-  case button_final_click:
-    event_type = "button_final_click";
-  break;
-  case time_changed:
-    event_type = "time_changed";
-    switch(param) {
-    case time_changed_manually:
-      event_param = "manual";
-    break;
-    case time_changed_sync:
-      event_param = "sync";
-    break;
-    }
-  break;
-  case low_battery:
-    event_type = "low_battery";
-  break;
-  }
-
-
-  Serial.printlnf("got event %s with param %s", event_type.c_str(), event_param.c_str());
-  String system_event_str = String((int)event) + "|" + String(param);
-  String time_str = String(Time.format(Time.now(), TIME_FORMAT_ISO8601_FULL));
-  last_system_event_time = time_str;
-  last_system_event_type = param;
-
-  //Push this system event onto the queue to be logged in the error logging state
-  if(EventQueue.size() < 200) {
-    EventQueue.push(time_str + ": " + system_event_str);
-  }
-}
-
-void handle_error(String error, bool cloud) {
-  Serial.printlnf("Got error: %s", error.c_str());
-  String time_str = String(Time.format(Time.now(), TIME_FORMAT_ISO8601_FULL));
-  last_system_event_time = time_str;
-
-  //Push this system event onto the queue to be logged in the error logging state
-  if(cloud) {
-    if(CloudQueue.size() < 200) {
-      CloudQueue.push(time_str + ": " + error);
-    }
-  }
-
-  if(EventQueue.size() < 200) {
-    EventQueue.push(time_str + ": " + error);
-  }
-}
-
-int force_handshake(String cmd) {
-  handshake_flag = true;
-  return 0;
-}
-
-
-SystemState nextState(SystemState s) {
-    return static_cast<SystemState>(static_cast<int>(s) + 1);
-}
-
 const APNHelperAPN apns[7] = {
   {"8901260", "wireless.twilio.com"},
   {"8923301", "http://mtnplay.com.gh"},
@@ -303,30 +123,28 @@ const APNHelperAPN apns[7] = {
 };
 APNHelper apnHelper(apns, sizeof(apns)/sizeof(apns[0]));
 
-void reset_helper() {
-  reset_state("");
-}
-
-int reset_state(String cmd) {
-  state = CheckCloudEvent;
-  lastState = Wait;
-  System.reset();
-  return 0;
-}
-
 //***********************************
-//* ye-old Arduino
+//* System Data storage
 //***********************************
+// The SD queue is the queue for data t obe sent to the SD cardk
+std::queue<String> SDQueue;
+
+// The cloud queue is the queue for data to be send to the cloud
+// or put on the data backlog
+std::queue<String> CloudQueue;
+
+//The Data log writes data to the SD card
+auto DataLog = FileLog(SD, "data_log.txt");
+//The data dequeue is the backlog for sending to the cloud
+auto DataDequeue = FileLog(SD, "data_dequeue.txt");
+
 void setup() {
-  // Keep track of reboots
-  reboot_cnt++;
-
-  //setup the apns
+  //setup the APN credentials
   apnHelper.setCredentials();
 
-  //This function tells the particle to force a reconnect with the cloud
-  Particle.function("handshake", force_handshake);
-  Particle.function("reset_state", reset_state);
+  //Register reset functions with the particle cloud
+  Particle.function("hard_reset", hard_reset);
+  Particle.function("soft_reset", soft_reset_helper);
 
   // Set up debugging UART
   Serial.begin(9600);
@@ -334,10 +152,6 @@ void setup() {
 
   // Set up I2C
   Wire.begin();
-
-  // For now, just grab everything that happens and log about it
-  // https://docs.particle.io/reference/firmware/photon/#system-events
-  System.on(all_events, handle_all_system_events);
 
   // Setup SD card first so that other setups can log
   SD.setup();
@@ -348,41 +162,23 @@ void setup() {
   gpsSubsystem.setup();
   wifiSubsystem.setup();
   FuelGauge().quickStart();
-  shield_id = id();
 
   //Setup the watchdog toggle pin
-  pinMode(DAC, OUTPUT);
-  digitalWrite(DAC, LOW);
+  pinMode(WDI, OUTPUT);
 
-  // GPS
-  pinMode(D3, OUTPUT);
-  digitalWrite(D3, HIGH);
+  //Setup the GPS pin
+  pinMode(GPS_PWR_EN, OUTPUT);
 
-  //Timesync
+  //Setup the AC enable pin
+  pinMode(AC_PWR_EN, OUTPUT);
+
+  //Run initial timesync
   timeSyncSubsystem.setup();
 
+  //Setup the particle keepalive
   Particle.keepAlive(23*60); // send a ping every 30 seconds
 
   Serial.println("Setup complete.");
-}
-
-
-//State Timer is reused to make sure a state doesn't loop for too long.
-//If it loops for too long we just call a reset. This can get us out of
-//liveness bugs in a specific driver
-Timer stateTimer(60000,soft_watchdog_reset,true);
-
-//Before calling each state's loop function the state should call this
-//function with a period of the maximum time the state is allowed to take
-void manageStateTimer(unsigned long period) {
-  if(state != lastState) {
-    Serial.printlnf("Transitioning to state %d from %d", state, lastState);
-    stateTimer.stop();
-    stateTimer.changePeriod(period);
-    stateTimer.reset();
-    stateTimer.start();
-    lastState = state;
-  }
 }
 
 //This structure is what all of the drivers will return. It will
@@ -489,8 +285,6 @@ enum SleepState {
 };
 
 SleepState sleepState = SleepToAwakeCheck;
-
-
 /* END Loop delcaration variables*/
 
 /* Configration variables and times*/
@@ -499,9 +293,9 @@ retained uint32_t last_collection_time;
 const uint32_t  COLLECTION_INTERVAL_SECONDS = 3600;
 //twelve hours
 const uint32_t  SLEEP_COLLECTION_INTERVAL_SECONDS = 3600*12;
-
 /* END Configration variables and times*/
 
+/* Variables that track whether or not we should use the watchdog */
 
 
 void loop() {
@@ -520,22 +314,104 @@ void loop() {
       //Check if you should go to sleep. Manage waking up and sending periodic check ins
       switch(sleepState) {
         case SleepToAwakeCheck:
-          //This is the entry state to the state machine
-          //Everything is asleep/off
-          //We can either decide to wake up (to send a periodic packet, or we have power now)
-          //Or tickle the watchdog and go back to sleep
-          //Stays in macros state sleep
-          state = Sleep
+          // We are here either because 
+          //  1) the program just started
+          //        - If this is the case we are either powered or past our sleep collection interval
+          //  2) the RTC woke us up to collect and send data 
+          //        - this should be true if we are past our sleep collection interval
+          //  3) a power restoration woke us up and we now should be awake and send data
+          //        - If this is the case the power will be on
+          //  4) The particle woke us and we should just tickle the watchdog and go back to sleep
+          //        - This would be true if none of the above are true.
+
+          if(powerCheck.getHasPower()) {
+            //We should just be awake
+            state = Sleep
+            sleepState = PrepareForWake;
+          } else if (last_collection_time/SLEEP_COLLECTION_INTERVAL_SECONDS != rtc.get_time()/SLEEP_COLLECTION_INTERVAL_SECONDS) {
+            //have we rolled over to a new collection interval? truncating division shoul handle the modulus of the interval time.
+            state = Sleep
+            sleepState = PrepareForWake;
+          } else {
+            //We just woke up to tickle the watchdog and sleep again
+            state = Sleep
+            sleepState = PrepareForSleep;
+          }
         break;
         case PrepareForWake:
           //In this state we turn everything on then let the state machine progress
+          // Turn on the GPS
+          digitalWrite(GPS_PWR_EN, HIGH);
+          // Turn on the STM and voltage sensing
+          digitalWrite(AC_PWR_EN, HIGH);
+          // Turn on the SD card
+          SD.PowerOn();
+
+          //Proceed through both state machines
+          sleepState = AwakeToSleepCheck;
+          state = CheckPowerState;
         break;
         case AwakeToSleepCheck:
-          //Should we sleep? Are we unpowered? Have we cleared/tried to clear our recent queues?
+          //We should not sleep if
+          // - we have power
+          // - we are currently collecting data
+          // - Data has just been collected and needs to be sent/queued
+          if(powerCheck.getHasPower()) {
+            sleepState = AwakeToSleepCheck;
+            state = CheckPowerState;
+          } else if (collectionState != WaitForCollection) {
+            sleepState = AwakeToSleepCheck;
+            state = CheckPowerState;
+          } else if (CloudQueue.size() != 0 || SDQueue.size() != 0) {
+            sleepState = AwakeToSleepCheck;
+            state = CheckPowerState;
+          } else {
+            sleepState = PrepareForSleep;
+            state = Sleep;
+          }
         break;
         case PrepareForSleep:
           //In this state we turn everything off then go to sleep. Using sleep mode deep starts
           //Everything back from the beginning
+          // Turn off the GPS
+          digitalWrite(GPS_PWR_EN, LOW);
+          // Turn off the STM and voltage sensing
+          digitalWrite(AC_PWR_EN, LOW);
+          // Turn off the SD card
+          SD.powerOff();
+
+          // Toggle the watchdog to make sure that it doesn't trigger early
+          digitalWrite(WDI, HIGH);
+          delay(100);
+          digitalWrite(WDI, LOW);
+
+          //make sure the rtc interrupt is clear so that we wake up
+          //we can do this by reinitializing the RTC
+          timeSyncSubsystem.setup();
+          
+          Serial.flush();
+          Serial.end();
+
+          // Set two timers
+          // One timer on the RTC for the next time we want to collect data
+          // Another timer for the particle so that we can tickle the watchdog
+          
+          //calculate the next time we want to collect data
+          // Get the current time
+          uint32_t current_time = rtc.get_time();
+          // the division truncates this time to the last time we would have collected
+          uint32_t collection_number = current_time/SLEEP_COLLECTION_INTERVAL_SECONDS;
+          // calculate the next time we should collect
+          uint32_t new_collection_number = collection_number + 1;
+          uint32_t new_collection_time = new_collection_number*SLEEP_COLLECTION_INTERVAL_SECONDS;
+          rtc.setTimer(new_collection_time);
+
+          // Now go to sleep with the system sleep set to wakeup for the watchdog
+          System.sleep(SLEEP_MODE_DEEP, 600);
+
+          //If for some reason this fails try again?
+          state = Sleep;
+          sleepState = PrepareForSleep;
         break;
       }
     break;
