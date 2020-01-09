@@ -4,10 +4,10 @@
 // Third party libraries
 #include <APNHelperRK.h>
 #include <CellularHelper.h>
-#include <OneWire.h>
 
 // Our code
 #include "CellStatus.h"
+#include "AB1815.h"
 #include "ChargeState.h"
 #include "Cloud.h"
 #include "FileLog.h"
@@ -19,17 +19,8 @@
 #include "uCommand.h"
 #include "firmware.h"
 #include "BatteryCheck.h"
+#include "led.h"
 #include "product_id.h"
-
-//***********************************
-//* TODO's
-//***********************************
-
-// Default Heartbeat Packet
-// Heartbeat Stretch goals
-//  SMS Heartbeat
-//Tests
-//  Device comes back from dead battery
 
 //***********************************
 //* Critical System Config
@@ -58,7 +49,6 @@ STARTUP(System.enableFeature(FEATURE_RESET_INFO));
 STARTUP(System.enableFeature(FEATURE_RETAINED_MEMORY));
 SYSTEM_MODE(MANUAL);
 bool handshake_flag = false;
-OneWire ds(B0);
 String id(void);
 String shield_id = "";
 
@@ -67,6 +57,11 @@ String shield_id = "";
 //***********************************
 const int HARDWARE_WATCHDOG_TIMEOUT_MS = 1000 * 60;
 ApplicationWatchdog wd(HARDWARE_WATCHDOG_TIMEOUT_MS, soft_watchdog_reset);
+void soft_watchdog_reset() {
+  Serial.println("Resetting by sleeping temporarily");
+  System.sleep(SLEEP_MODE_DEEP, 60);
+}
+
 unsigned long system_cnt = 0;
 retained unsigned long reboot_cnt = 0;
 retained unsigned long sd_cnt = 0;
@@ -80,6 +75,7 @@ SDCard SD;
 //* Timesync
 //***********************************
 auto timeSyncSubsystem = Timesync();
+AB1815 rtc;
 
 //***********************************
 //* CellStatus
@@ -286,54 +282,15 @@ void handle_error(String error, bool cloud) {
   }
 }
 
-void system_reset_to_safemode() {
-  num_manual_reboots++;
-  // Commenting out this should be logged as a system event
-  // Cloud::Publish(SYSTEM_EVENT, "manual reboot"); //TODO test if this hangs
-  System.enterSafeMode();
-}
-
 int force_handshake(String cmd) {
   handshake_flag = true;
   return 0;
 }
 
-// The loop will act as a state machine. Certain particle calls are called every
-// loop then states are executed in order. The following enumeration defines
-// the states. Each state has a timeout. On timeout we reset the Particle
-// and log that state as an error, moving on to the next state.
-enum SystemState {
-  CheckCloudEvent,
-  CheckTimeSync,
-  SenseChargeState,
-  SenseIMU,
-  SenseWiFi,
-  SenseCell,
-  SenseSDPresent,
-  SenseGPS,
-  UpdateSystemStat,
-  LogPacket,
-  SendPacket,
-  LogError,
-  SendError,
-  Wait
-};
 
 SystemState nextState(SystemState s) {
     return static_cast<SystemState>(static_cast<int>(s) + 1);
 }
-
-enum ParticleCloudState {
-  ParticleConnectionCheck,
-  CellularConnectionCheck,
-  HandshakeCheck
-};
-
-ParticleCloudState cloudState = ParticleConnectionCheck;
-
-// Retained system states are used to diagnose restarts (error vs hard reset)
-retained SystemState state = CheckCloudEvent;
-retained SystemState lastState = Wait;
 
 const APNHelperAPN apns[7] = {
   {"8901260", "wireless.twilio.com"},
@@ -404,24 +361,6 @@ void setup() {
   //Timesync
   timeSyncSubsystem.setup();
 
-  LEDStatus status;
-  status.off();
-
-  // If our state and lastState is the same we got stuck in a
-  // state and didn't transtition
-  if(state == lastState) {
-    String err_str(state);
-    handle_error("Reset after stuck in state " + err_str, true);
-
-    // If we hung on the last iteration, move on to the next state
-    state = nextState(state);
-  } else {
-    // If we reset and the states aren't the same then we didn't get stuck
-    // I don't know what state we're in but go back to start
-    state = CheckCloudEvent;
-    lastState = Wait;
-  }
-
   Particle.keepAlive(23*60); // send a ping every 30 seconds
 
   Serial.println("Setup complete.");
@@ -452,7 +391,6 @@ void manageStateTimer(unsigned long period) {
 struct ResultStruct {
   char chargeStateResult[RESULT_LEN];
   char mpuResult[RESULT_LEN];
-  char wifiResult[RESULT_LEN];
   char cellResult[RESULT_LEN];
   char sdStatusResult[RESULT_LEN];
   char gpsResult[RESULT_LEN];
@@ -464,7 +402,6 @@ struct ResultStruct {
 void clearResults(ResultStruct* r) {
   r->chargeStateResult[0] = 0;
   r->mpuResult[0] = 0;
-  r->wifiResult[0] = 0;
   r->cellResult[0] = 0;
   r->sdStatusResult[0] = 0;
   r->gpsResult[0] = 0;
@@ -483,8 +420,6 @@ String stringifyResults(ResultStruct r) {
   result += MAJOR_DLIM;
   result += String(r.mpuResult);
   result += MAJOR_DLIM;
-  result += String(r.wifiResult);
-  result += MAJOR_DLIM;
   result += String(r.cellResult);
   result += MAJOR_DLIM;
   result += String(r.sdStatusResult);
@@ -500,13 +435,119 @@ String stringifyResults(ResultStruct r) {
 // retain this so that on the next iteration we still get results on hang
 retained ResultStruct sensingResults;
 
+/* LOOP State enums and their global delcarations*/
+enum SystemState {
+  Sleep,
+  CheckPowerState,
+  MaintainCellularConnection,
+  CheckTimeSync,
+  LogPacket,
+  SendPacket,
+  CollectPeriodicInformation,
+  ServiceWatchdog,
+};
+
+// When we wake up we always want to start in sleep 
+// Because we might just want to tickle the watchdog and sleep again
+SystemState state = Sleep;
+
+enum CellularState {
+  InitiateParticleConnection,
+  ParticleConnecting,
+  ParticleConnected,
+  InitiateCellularConnection,
+  CellularConnecting,
+  CellularConnected
+};
+
+CellularState cellularState = InitiateParticleConnection;
+
+enum WatchdogState {
+  WatchdogHigh,
+  WatchdogLow
+};
+
+WatchdogState watchdogState = WatchdogLow;
+
+enum CollectionState {
+  WaitForCollection,
+  ReadIMU,
+  ReadGPS,
+  ReadSDMetrics,
+  ReadPowerMetrics,
+  ReadSystemMetrics,
+  AddToQueues
+};
+
+CollectionState collectionState = WaitForCollection;
+
+enum SleepState {
+  SleepToAwakeCheck,
+  PrepareForWake,
+  AwakeToSleepCheck,
+  PrepareForSleep,
+};
+
+SleepState sleepState = SleepToAwakeCheck;
+
+
+/* END Loop delcaration variables*/
+
+/* Configration variables and times*/
+retained uint32_t last_collection_time;
+//one hour
+const uint32_t  COLLECTION_INTERVAL_SECONDS = 3600;
+//twelve hours
+const uint32_t  SLEEP_COLLECTION_INTERVAL_SECONDS = 3600*12;
+
+/* END Configration variables and times*/
+
+
+
 void loop() {
   // This is the only thing that will happen outside of the state machine!
   // Everything else, including reconnection attempts and cloud update Checks
   // Should happen in the cloud event state
   Particle.process();
 
+  //The software watchdog checks to make sure we are still making it around the loop
+  wd.checkin();
+
   switch(state) {
+
+    /*Initializes the state machine and board. Decides when to sleep or wake*/
+    case Sleep: {
+      //Check if you should go to sleep. Manage waking up and sending periodic check ins
+      switch(sleepState) {
+        case SleepToAwakeCheck:
+          //This is the entry state to the state machine
+          //Everything is asleep/off
+          //We can either decide to wake up (to send a periodic packet, or we have power now)
+          //Or tickle the watchdog and go back to sleep
+          //Stays in macros state sleep
+          state = Sleep
+        break;
+        case PrepareForWake:
+          //In this state we turn everything on then let the state machine progress
+        break;
+        case AwakeToSleepCheck:
+          //Should we sleep? Are we unpowered? Have we cleared/tried to clear our recent queues?
+        break;
+        case PrepareForSleep:
+          //In this state we turn everything off then go to sleep. Using sleep mode deep starts
+          //Everything back from the beginning
+        break;
+      }
+    break;
+    }
+
+    /*Checks for power state changes and generates events for them*/
+    case CheckPowerState: {
+      state = CollectPeriodicInformation;    
+    break;
+    }
+
+    /*Manages connection to the particle cloud or cellular network*/
     case MaintainCellularConnection: {
       static unsigned long connection_start_time;
       switch(cellularState) {
@@ -515,6 +556,8 @@ void loop() {
             Particle.connect();
             connection_start_time = millis();
             cellularState = ParticleConnecting;
+          } else {
+            cellularState = ParticleConnected;
           }
         break;
         case ParticleConnecting:
@@ -560,12 +603,15 @@ void loop() {
       }
       state = CheckTimeSync;
       break;
+
+    /*Keeps the device time up to date*/
     case CheckTimeSync: {
       timeSyncSubsystem.loop();
       state = LogData;
       break;
     }
 
+    /*Saves data to the SD card*/
     case LogPacket: {
       //just turn it on for good measure, although we should just leave it on
       SD.PowerOn();
@@ -582,6 +628,7 @@ void loop() {
       break;
     }
 
+    /*Sends data to the cloud either from the event queue or from the SD card based backlog*/
     case SendPacket: {
       SD.PowerOn();
       if(CloudQueue.size() > 0) {
@@ -624,16 +671,35 @@ void loop() {
       break;
     }
 
-    case CheckPowerState: {
-    
-    break;
-    }
-
+    /*Periodically collects summary metrics from the device and generates those events*/
     case CollectPeriodicInformation: {
-    
+      switch(collectionState) {
+        case WaitForCollection:
+          uint32_t current_time = rtc.get_time();
+          uint32_t last_collection_number = last_collection_time/COLLECTION_INTERVAL_SECONDS;
+          uint32_t current_collection_number = current_time/COLLECTION_INTERVAL_SECONDS;
+          if(last_collection_number != current_collection_number) {
+            collectionState = ReadIMU;
+          }
+        break;
+        case ReadIMU:
+        break;
+        case ReadGPS:
+        break;
+        case ReadSDMetrics:
+        break;
+        case ReadPowerMetrics:
+        break;
+        case ReadSystemMetrics:
+        break;
+        case AddToQueues:
+        break;
+      }
+      state = ServiceWatchdog;
     break;
     }
 
+    /*manages the watchdog and light on the device*/
     case ServiceWatchdog: {
       static unsigned int lastWatchdog;
       static bool service = false;
@@ -653,90 +719,17 @@ void loop() {
           }
         break;
       }
-
-      if(service) {
-          //service the breathing of the light
-      }
+      state = Sleep;
     break;
     }
+    
     default: {
-      state = CheckCloudEvent;
-      lastState = Wait;
+      state = Sleep;
       break;
     }
   }
 
-  //Call the automatic watchdog
-  wd.checkin();
 
 }
 
-void soft_watchdog_reset() {
-  //reset_flag = true; //let the reset subsystem shutdown gracefully
-  //TODO change to system reset after a certain number of times called
 
-  //This function won't work from an ISR??
-  //System.reset();
-  
-  //Rick suggests this one
-  Serial.println("Trying to reset");
-  System.sleep(SLEEP_MODE_DEEP, 60);
-}
-
-String id() {
-  byte i;
-  boolean present;
-  byte data[8];     // container for the data from device
-  char temp[4];
-  String id = "";
-  byte crc_calc;    //calculated CRC
-  byte crc_byte;    //actual CRC as sent by DS2401
-  //1-Wire bus reset, needed to start operation on the bus,
-  //returns a 1/TRUE if presence pulse detected
-  present = ds.reset();
-  if (present == TRUE)
-  {
-    ds.write(0x33);  //Send Read data command
-    data[0] = ds.read();
-    Serial.print("Family code: 0x");
-    PrintTwoDigitHex (data[0], 1);
-    snprintf(temp, 4, "%02X", data[0]);
-    id.concat(String(temp));
-    Serial.print("Hex ROM data: ");
-    for (i = 1; i <= 6; i++)
-    {
-      data[i] = ds.read(); //store each byte in different position in array
-      snprintf(temp, 4, "%02X", data[i]);
-      id.concat(String(temp));
-      PrintTwoDigitHex (data[i], 0);
-      Serial.print(" ");
-    }
-    Serial.println();
-    crc_byte = ds.read(); //read CRC, this is the last byte
-    crc_calc = OneWire::crc8(data, 7); //calculate CRC of the data
-
-    Serial.print("Calculated CRC: 0x");
-    PrintTwoDigitHex (crc_calc, 1);
-    Serial.print("Actual CRC: 0x");
-    PrintTwoDigitHex (crc_byte, 1);
-
-    if(crc_calc == crc_byte) {
-      return id;
-    } else {
-      return "ERR";
-    }
-  }
-  else //Nothing is connected in the bus
-  {
-    Serial.println("xxxxx Nothing connected xxxxx");
-    return "ERR";
-  }
-}
-
-
-void PrintTwoDigitHex (byte b, boolean newline)
-{
-  Serial.print(b/16, HEX);
-  Serial.print(b%16, HEX);
-  if (newline) Serial.println();
-}
