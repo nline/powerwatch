@@ -7,21 +7,18 @@
 
 // Our code
 #include "board.h"
-#include "CellStatus.h"
-#include "PowerCheck.h"
-#include "AB1815.h"
-#include "ChargeState.h"
-#include "Cloud.h"
-#include "FileLog.h"
-#include "Gps.h"
-#include "Imu.h"
-#include "SDCard.h"
-#include "Subsystem.h"
-#include "Timesync.h"
-#include "uCommand.h"
-#include "firmware.h"
-#include "BatteryCheck.h"
-#include "led.h"
+#include "lib/CellStatus.h"
+#include "lib/PowerCheck.h"
+#include "lib/AB1815.h"
+#include "lib/ChargeState.h"
+#include "lib/Cloud.h"
+#include "lib/FileLog.h"
+#include "lib/Gps.h"
+#include "lib/Imu.h"
+#include "lib/SDCard.h"
+#include "lib/Subsystem.h"
+#include "lib/Timesync.h"
+#include "lib/led.h"
 #include "product_id.h"
 
 //***********************************
@@ -59,6 +56,7 @@ ApplicationWatchdog wd(HARDWARE_WATCHDOG_TIMEOUT_MS, soft_reset);
 
 int soft_reset_helper(String cmd) {
   soft_reset();
+  return 0;
 }
 
 void soft_reset() {
@@ -71,6 +69,7 @@ int hard_reset(String cmd) {
   // Hard reset the particle using the reset chip
   pinMode(PARTICLE_RST, OUTPUT);
   digitalWrite(PARTICLE_RST, HIGH);
+  return 0;
 }
 
 //***********************************
@@ -92,7 +91,7 @@ auto cellStatus = CellStatus();
 //***********************************
 //* PowerCheck
 //***********************************
-PowerCheck powerCheck;
+PowerCheck powercheck;
 
 //***********************************
 //* Charge state
@@ -160,7 +159,6 @@ void setup() {
   chargeStateSubsystem.setup();
   imuSubsystem.setup();
   gpsSubsystem.setup();
-  wifiSubsystem.setup();
   FuelGauge().quickStart();
 
   //Setup the watchdog toggle pin
@@ -237,8 +235,8 @@ enum SystemState {
   CheckPowerState,
   MaintainCellularConnection,
   CheckTimeSync,
-  LogPacket,
-  SendPacket,
+  LogData,
+  SendData,
   CollectPeriodicInformation,
   ServiceWatchdog,
 };
@@ -324,17 +322,17 @@ void loop() {
           //  4) The particle woke us and we should just tickle the watchdog and go back to sleep
           //        - This would be true if none of the above are true.
 
-          if(powerCheck.getHasPower()) {
+          if(powercheck.getHasPower()) {
             //We should just be awake
-            state = Sleep
+            state = Sleep;
             sleepState = PrepareForWake;
-          } else if (last_collection_time/SLEEP_COLLECTION_INTERVAL_SECONDS != rtc.get_time()/SLEEP_COLLECTION_INTERVAL_SECONDS) {
+          } else if (last_collection_time/SLEEP_COLLECTION_INTERVAL_SECONDS != rtc.getTime()/SLEEP_COLLECTION_INTERVAL_SECONDS) {
             //have we rolled over to a new collection interval? truncating division shoul handle the modulus of the interval time.
-            state = Sleep
+            state = Sleep;
             sleepState = PrepareForWake;
           } else {
             //We just woke up to tickle the watchdog and sleep again
-            state = Sleep
+            state = Sleep;
             sleepState = PrepareForSleep;
           }
         break;
@@ -356,7 +354,7 @@ void loop() {
           // - we have power
           // - we are currently collecting data
           // - Data has just been collected and needs to be sent/queued
-          if(powerCheck.getHasPower()) {
+          if(powercheck.getHasPower()) {
             sleepState = AwakeToSleepCheck;
             state = CheckPowerState;
           } else if (collectionState != WaitForCollection) {
@@ -378,7 +376,7 @@ void loop() {
           // Turn off the STM and voltage sensing
           digitalWrite(AC_PWR_EN, LOW);
           // Turn off the SD card
-          SD.powerOff();
+          SD.PowerOff();
 
           // Toggle the watchdog to make sure that it doesn't trigger early
           digitalWrite(WDI, HIGH);
@@ -398,7 +396,7 @@ void loop() {
           
           //calculate the next time we want to collect data
           // Get the current time
-          uint32_t current_time = rtc.get_time();
+          uint32_t current_time = rtc.getTime();
           // the division truncates this time to the last time we would have collected
           uint32_t collection_number = current_time/SLEEP_COLLECTION_INTERVAL_SECONDS;
           // calculate the next time we should collect
@@ -439,7 +437,7 @@ void loop() {
         case ParticleConnecting:
           if(Particle.connected()) {
             cellularState = ParticleConnected;
-          } else if(millis() - connection_start_time > 600000)
+          } else if(millis() - connection_start_time > 600000) {
             //try to connect to cellular network as a backup to get time
             //stop trying to connect to particle
             Particle.disconnect();
@@ -456,13 +454,13 @@ void loop() {
         case InitiateCellularConnection:
             Cellular.connect();
             connection_start_time = millis();
-            cellularState = CellularConnecting
+            cellularState = CellularConnecting;
         break;
         case CellularConnecting:
           if(Cellular.ready()) {
             connection_start_time = millis();
             cellularState = CellularConnected;
-          } else if(millis() - connection_start_time > 600000)
+          } else if(millis() - connection_start_time > 600000) {
             //try to connect to particle again if we fail
             cellularState = InitiateParticleConnection;
           } else {
@@ -473,13 +471,13 @@ void loop() {
           //If we disconnect from the cellular network or if we just haven't
           //retried to connect with particle in a while, try to connect to particle again
           if(!Cellular.ready() || millis() - connection_start_time > 3600000) {
-            cellularState = InitiateParticleConnection
+            cellularState = InitiateParticleConnection;
           }
         break;
       }
       state = CheckTimeSync;
       break;
-
+    }
     /*Keeps the device time up to date*/
     case CheckTimeSync: {
       timeSyncSubsystem.loop();
@@ -488,24 +486,24 @@ void loop() {
     }
 
     /*Saves data to the SD card*/
-    case LogPacket: {
+    case LogData: {
       //just turn it on for good measure, although we should just leave it on
       SD.PowerOn();
       if(SDQueue.size() > 0) {
         if(DataLog.appendAndRotate(SDQueue.front(), Time.now())) {
           //Error writing data to the SD card - do something with it
-          Serial.println("Error writing data to the SD card")
+          Serial.println("Error writing data to the SD card");
         } else {
           SDQueue.pop();
         }
       }
 
-      state = SendPacket;
+      state = SendData;
       break;
     }
 
     /*Sends data to the cloud either from the event queue or from the SD card based backlog*/
-    case SendPacket: {
+    case SendData: {
       SD.PowerOn();
       if(CloudQueue.size() > 0) {
         if(Particle.connected()) {
@@ -550,26 +548,33 @@ void loop() {
     /*Periodically collects summary metrics from the device and generates those events*/
     case CollectPeriodicInformation: {
       switch(collectionState) {
-        case WaitForCollection:
-          uint32_t current_time = rtc.get_time();
+        case WaitForCollection: {
+          uint32_t current_time = rtc.getTime();
           uint32_t last_collection_number = last_collection_time/COLLECTION_INTERVAL_SECONDS;
           uint32_t current_collection_number = current_time/COLLECTION_INTERVAL_SECONDS;
           if(last_collection_number != current_collection_number) {
             collectionState = ReadIMU;
           }
-        break;
-        case ReadIMU:
-        break;
-        case ReadGPS:
-        break;
-        case ReadSDMetrics:
-        break;
-        case ReadPowerMetrics:
-        break;
-        case ReadSystemMetrics:
-        break;
-        case AddToQueues:
-        break;
+          break;
+        }
+        case ReadIMU: {
+          break;
+        }
+        case ReadGPS: {
+          break;
+        }
+        case ReadSDMetrics: {
+          break;
+        }
+        case ReadPowerMetrics: {
+          break;
+        }
+        case ReadSystemMetrics: {
+          break;
+        }
+        case AddToQueues: {
+          break;
+        }
       }
       state = ServiceWatchdog;
     break;
