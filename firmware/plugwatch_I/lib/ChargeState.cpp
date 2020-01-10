@@ -2,17 +2,14 @@
 
 #include "lib/ChargeState.h"
 #include "lib/PowerCheck.h"
-#include "lib/Subsystem.h"
 
 PowerCheck powerCheck;
 
 void ChargeState::setup() {
-  super::setup();
-
   powerCheck.setup();
 }
 
-LoopStatus ChargeState::loop() {
+String ChargeState::read() {
   char state_of_charge[4];
   snprintf(state_of_charge, 4, "%d", (int)FuelGauge().getSoC());
 
@@ -39,9 +36,5 @@ LoopStatus ChargeState::loop() {
   powerCheck.setChargeCurrent();
   powerCheck.lowerChargeVoltage();
 
-  return FinishedSuccess;
-}
-
-String ChargeState::getResult() {
   return result;
 }

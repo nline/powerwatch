@@ -1,14 +1,15 @@
 #include <lib/AB1815.h>
 #include <SPI.h>
 #include "time.h"
+#include "board.h"
 
 void writeReg(uint8_t reg, uint8_t* buf, uint8_t len) {
      uint8_t start_reg = reg | 0x80;
 
     //Start the SPI transaction
-    SPI.begin(AB1815_CS);
+    SPI.begin(RTC_CS);
     SPI.beginTransaction(__SPISettings(1*MHZ,MSBFIRST,SPI_MODE0));
-    digitalWrite(AB1815_CS, LOW);
+    digitalWrite(RTC_CS, LOW);
     SPI.transfer(start_reg);
 
     for(uint8_t i = 0; i < len; i++) {
@@ -16,7 +17,7 @@ void writeReg(uint8_t reg, uint8_t* buf, uint8_t len) {
     }
 
     SPI.endTransaction();
-    digitalWrite(AB1815_CS, HIGH);
+    digitalWrite(RTC_CS, HIGH);
     SPI.end();
 }
 
@@ -124,9 +125,9 @@ uint32_t AB1815::getTime(void) {
     uint8_t start_reg = AB1815_TIME_DATE_REG;
 
     //Start the SPI transaction
-    SPI.begin(AB1815_CS);
+    SPI.begin(RTC_CS);
     SPI.beginTransaction(__SPISettings(1*MHZ,MSBFIRST,SPI_MODE0));
-    digitalWrite(AB1815_CS, LOW);
+    digitalWrite(RTC_CS, LOW);
     SPI.transfer(start_reg);
 
     struct tm time;
@@ -137,7 +138,7 @@ uint32_t AB1815::getTime(void) {
     }
 
     SPI.endTransaction();
-    digitalWrite(AB1815_CS, HIGH);
+    digitalWrite(RTC_CS, HIGH);
     SPI.end();
     //digitalWrite(SCK, LOW);
     //digitalWrite(MISO, LOW);

@@ -2,7 +2,6 @@
 
 #include <Particle.h>
 
-#define AB1815_CS C5
 #define AB1815_TIME_DATE_REG 0x00
 #define AB1815_ALARM_DATE_REG 0x08
 #define AB1815_STATUS 0x0F

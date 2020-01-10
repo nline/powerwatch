@@ -2,7 +2,7 @@
 
 #include "lib/CellStatus.h"
 
-LoopStatus CellStatus::loop() {
+String CellStatus::read() {
 
   uint32_t freemem = System.freeMemory();
   CellularDevice dev;
@@ -32,10 +32,5 @@ LoopStatus CellStatus::loop() {
     result = result + String(MINOR_DLIM) + "!";
   }
 
-  return FinishedSuccess;
-}
-
-
-String CellStatus::getResult() {
-    return result;
+  return result;
 }

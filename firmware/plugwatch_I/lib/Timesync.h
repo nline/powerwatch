@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Particle.h>
-#include "lib/Subsystem.h"
 #include "lib/AB1815.h"
 
 //***********************************
@@ -11,8 +10,7 @@
 //* drift away from real time. This routine will re-sync local time.
 //***********************************
 
-class Timesync: public Subsystem {
-  typedef Subsystem super;
+class Timesync {
 
   const int TWELVE_HOURS = 1000 * 60 * 60 * 12;
 
@@ -34,5 +32,5 @@ class Timesync: public Subsystem {
 
 public:
   void setup();
-  LoopStatus loop();
+  void update();
 };

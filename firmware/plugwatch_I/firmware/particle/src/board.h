@@ -9,3 +9,4 @@
 #define ACCEL_INT C4
 #define SD_DETECT D6
 #define PARTICLE_RST D2
+#define RTC_CS C5

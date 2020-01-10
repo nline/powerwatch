@@ -1,15 +1,10 @@
 #pragma once
 
 #include <Particle.h>
-
-#include "lib/Subsystem.h"
 #include "lib/FileLog.h"
 
-class CellStatus: public Subsystem {
-  typedef Subsystem super;
-
+class CellStatus {
   String result;
 public:
-  LoopStatus loop();
-  String getResult();
+  String read();
 };

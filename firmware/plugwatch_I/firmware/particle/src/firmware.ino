@@ -11,12 +11,10 @@
 #include "lib/PowerCheck.h"
 #include "lib/AB1815.h"
 #include "lib/ChargeState.h"
-#include "lib/Cloud.h"
 #include "lib/FileLog.h"
 #include "lib/Gps.h"
 #include "lib/Imu.h"
 #include "lib/SDCard.h"
-#include "lib/Subsystem.h"
 #include "lib/Timesync.h"
 #include "lib/led.h"
 #include "product_id.h"
@@ -80,13 +78,13 @@ SDCard SD;
 //***********************************
 //* Timesync
 //***********************************
-auto timeSyncSubsystem = Timesync();
+Timesync timeSync;
 AB1815 rtc;
 
 //***********************************
 //* CellStatus
 //***********************************
-auto cellStatus = CellStatus();
+CellStatus cellStatus;
 
 //***********************************
 //* PowerCheck
@@ -96,17 +94,17 @@ PowerCheck powercheck;
 //***********************************
 //* Charge state
 //***********************************
-auto chargeStateSubsystem = ChargeState();
+ChargeState chargeState;
 
 //***********************************
 //* IMU
 //***********************************
-auto imuSubsystem = Imu();
+Imu imu; 
 
 //***********************************
 //* GPS
 //***********************************
-auto gpsSubsystem = Gps();
+Gps gps;
 
 //***********************************
 //* APNs
@@ -156,22 +154,20 @@ void setup() {
   SD.setup();
 
   //setup the other subsystems
-  chargeStateSubsystem.setup();
-  imuSubsystem.setup();
-  gpsSubsystem.setup();
+  chargeState.setup();
+  imu.setup();
   FuelGauge().quickStart();
 
   //Setup the watchdog toggle pin
   pinMode(WDI, OUTPUT);
 
-  //Setup the GPS pin
-  pinMode(GPS_PWR_EN, OUTPUT);
+  gps.setup();
 
   //Setup the AC enable pin
   pinMode(AC_PWR_EN, OUTPUT);
 
   //Run initial timesync
-  timeSyncSubsystem.setup();
+  timeSync.setup();
 
   //Setup the particle keepalive
   Particle.keepAlive(23*60); // send a ping every 30 seconds
@@ -185,6 +181,7 @@ void setup() {
 struct ResultStruct {
   char chargeStateResult[RESULT_LEN];
   char mpuResult[RESULT_LEN];
+  char wifiResult[RESULT_LEN];
   char cellResult[RESULT_LEN];
   char sdStatusResult[RESULT_LEN];
   char gpsResult[RESULT_LEN];
@@ -196,6 +193,7 @@ struct ResultStruct {
 void clearResults(ResultStruct* r) {
   r->chargeStateResult[0] = 0;
   r->mpuResult[0] = 0;
+  r->wifiResult[0] = 0;
   r->cellResult[0] = 0;
   r->sdStatusResult[0] = 0;
   r->gpsResult[0] = 0;
@@ -214,6 +212,8 @@ String stringifyResults(ResultStruct r) {
   result += MAJOR_DLIM;
   result += String(r.mpuResult);
   result += MAJOR_DLIM;
+  result += String(r.wifiResult);
+  result += MAJOR_DLIM;
   result += String(r.cellResult);
   result += MAJOR_DLIM;
   result += String(r.sdStatusResult);
@@ -227,7 +227,7 @@ String stringifyResults(ResultStruct r) {
 }
 
 // retain this so that on the next iteration we still get results on hang
-retained ResultStruct sensingResults;
+ResultStruct sensingResults;
 
 /* LOOP State enums and their global delcarations*/
 enum SystemState {
@@ -339,7 +339,7 @@ void loop() {
         case PrepareForWake:
           //In this state we turn everything on then let the state machine progress
           // Turn on the GPS
-          digitalWrite(GPS_PWR_EN, HIGH);
+          gps.powerOn();
           // Turn on the STM and voltage sensing
           digitalWrite(AC_PWR_EN, HIGH);
           // Turn on the SD card
@@ -385,7 +385,7 @@ void loop() {
 
           //make sure the rtc interrupt is clear so that we wake up
           //we can do this by reinitializing the RTC
-          timeSyncSubsystem.setup();
+          timeSync.setup();
           
           Serial.flush();
           Serial.end();
@@ -417,7 +417,7 @@ void loop() {
 
     /*Checks for power state changes and generates events for them*/
     case CheckPowerState: {
-      state = CollectPeriodicInformation;    
+      state = MaintainCellularConnection;    
     break;
     }
 
@@ -480,7 +480,7 @@ void loop() {
     }
     /*Keeps the device time up to date*/
     case CheckTimeSync: {
-      timeSyncSubsystem.loop();
+      timeSync.update();
       state = LogData;
       break;
     }
@@ -507,7 +507,7 @@ void loop() {
       SD.PowerOn();
       if(CloudQueue.size() > 0) {
         if(Particle.connected()) {
-            if(!Cloud::Publish("g",CloudQueue.front())) {
+            if(!Particle.publish("g",CloudQueue.front(), PRIVATE)) {
               //should handle this error
               Serial.println("Failed to send packet. Appending to dequeue.");
               if(DataDequeue.append(CloudQueue.front())) {
@@ -532,7 +532,7 @@ void loop() {
         }
       } else if(DataDequeue.getFileSize() > 0) {
         if(Particle.connected()) {
-          if(!Cloud::Publish("g",DataDequeue.getLastLine())) {
+          if(!Particle.publish("g",DataDequeue.getLastLine(),PRIVATE)) {
             //should handle this error
             Serial.println("Failed to send from dequeue");
           } else {
@@ -541,7 +541,7 @@ void loop() {
           }
         } 
       }
-      state = CheckPowerState;
+      state = CollectPeriodicInformation;
       break;
     }
 
@@ -549,12 +549,18 @@ void loop() {
     case CollectPeriodicInformation: {
       switch(collectionState) {
         case WaitForCollection: {
+          //Decide if we need to collect
           uint32_t current_time = rtc.getTime();
           uint32_t last_collection_number = last_collection_time/COLLECTION_INTERVAL_SECONDS;
           uint32_t current_collection_number = current_time/COLLECTION_INTERVAL_SECONDS;
           if(last_collection_number != current_collection_number) {
             collectionState = ReadIMU;
           }
+          
+          //Also service the things that need to be serviced when we aren't
+          //collectinga
+          gps.update();
+          imu.update();
           break;
         }
         case ReadIMU: {

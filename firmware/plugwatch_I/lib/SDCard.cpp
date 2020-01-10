@@ -1,21 +1,13 @@
 #include <SdFat.h>
 
-#include "lib/Cloud.h"
 #include "lib/SDCard.h"
+#include "board.h"
 
 void SDCard::setup() {
-  super::setup();
-
-  pinMode(SD_ENABLE_PIN, OUTPUT);
-  pinMode(SD_INT_PIN, INPUT);
+  pinMode(SD_ENABLE, OUTPUT);
+  pinMode(SD_DETECT, INPUT);
 
   PowerOn();
-}
-
-LoopStatus SDCard::loop() {
-  super::loop();
-
-  return FinishedSuccess;
 }
 
 String SDCard::getResult() {
@@ -23,7 +15,7 @@ String SDCard::getResult() {
 }
 
 void SDCard::PowerOn() {
-	digitalWrite(SD_ENABLE_PIN, HIGH);
+	digitalWrite(SD_ENABLE, HIGH);
 	delay(1000);
 }
 
@@ -33,14 +25,14 @@ void SDCard::PowerOff() {
 	digitalWrite(MISO, LOW);
 	digitalWrite(MOSI, LOW);
 	digitalWrite(SS, LOW);
-	digitalWrite(SD_ENABLE_PIN, LOW);
+	digitalWrite(SD_ENABLE, LOW);
 	delay(1000);
 }
 
 bool SDCard::Write(String filename, String to_write) {
 
   // Let's just make sure the SD card is plugged in
-  if(digitalRead(SD_INT_PIN)) {
+  if(digitalRead(SD_DETECT)) {
     // This means the card is not present
     Serial.println("SD Card Not Present");
     result = "0";
@@ -49,7 +41,7 @@ bool SDCard::Write(String filename, String to_write) {
     result = "1";
   }
 
-  if (!sd.begin(SD_CHIP_SELECT, SPI_HALF_SPEED)) {
+  if (!sd.begin(SD_CS, SPI_HALF_SPEED)) {
     Serial.println("CAN'T OPEN SD");
     return 1;
   }
@@ -81,13 +73,13 @@ bool SDCard::Write(String filename, String to_write) {
 
 int SDCard::getSize(String filename) {
 
-  if(digitalRead(SD_INT_PIN)) {
+  if(digitalRead(SD_DETECT)) {
     // This means the card is not present
     Serial.println("SD Card Not Present");
     return -1;
   }
 
-  if (!sd.begin(SD_CHIP_SELECT, SPI_HALF_SPEED)) {
+  if (!sd.begin(SD_CS, SPI_HALF_SPEED)) {
     Serial.println("CAN'T OPEN SD");
     return -1;
   }
@@ -109,7 +101,6 @@ String SDCard::ReadLine(String filename, uint32_t position) {
 	File myFile;
 	if (!myFile.open(filename, O_READ)) {
 		Serial.println(String("opening ") + String(filename) + String(" for read failed"));
-		Cloud::Publish(SD_ERROR_EVENT, String(filename) + String(" read"));
 		return "string err";
 	}
 	Serial.println(String(filename) + String(" content:"));
@@ -132,7 +123,7 @@ String SDCard::ReadLine(String filename, uint32_t position) {
 
 String SDCard::getLastLine(String filename) {
   // Let's just make sure the SD card is plugged in
-  if(digitalRead(SD_INT_PIN)) {
+  if(digitalRead(SD_DETECT)) {
     // This means the card is not present
     Serial.println("SD Card Not Present");
     result = "0";
@@ -141,7 +132,7 @@ String SDCard::getLastLine(String filename) {
     result = "1";
   }
 
-  if (!sd.begin(SD_CHIP_SELECT, SPI_HALF_SPEED)) {
+  if (!sd.begin(SD_CS, SPI_HALF_SPEED)) {
     Serial.println("CAN'T OPEN SD");
     return "";
   }
@@ -214,7 +205,7 @@ String SDCard::getLastLine(String filename) {
 
 bool SDCard::removeLastLine(String filename) {
   // Let's just make sure the SD card is plugged in
-  if(digitalRead(SD_INT_PIN)) {
+  if(digitalRead(SD_DETECT)) {
     // This means the card is not present
     Serial.println("SD Card Not Present");
     result = "0";
@@ -223,7 +214,7 @@ bool SDCard::removeLastLine(String filename) {
     result = "1";
   }
 
-  if (!sd.begin(SD_CHIP_SELECT, SPI_HALF_SPEED)) {
+  if (!sd.begin(SD_CS, SPI_HALF_SPEED)) {
     Serial.println("CAN'T OPEN SD");
     return 1;
   }
@@ -308,7 +299,6 @@ String SDCard::Read(String filename) {
   if (!myFile.open(filename, O_READ)) {
   	//sd.errorHalt(String("opening ") + String(filename) + String(" for read failed"));
   	Serial.println(String("opening ") + String(filename) + String(" for read failed"));
-  	Cloud::Publish(SD_ERROR_EVENT, String(filename) + String(" read"));
   	return "string err";
   }
   Serial.println(String(filename) + String(" content:"));

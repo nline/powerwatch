@@ -1,12 +1,11 @@
-#pragma once
 #include <OneWire.h>
+#include "board.h"
+#include "lib/Serialnumber.h"
 
-uint8_t getID(uint8_t* data) {
-  OneWire ds(B0);
+uint8_t* Serialnumber::readBytes() {
+  OneWire ds(SERIAL_NUM);
   byte i;
   boolean present;
-  byte data[8];     // container for the data from device
-  char temp[4];
   byte crc_calc;    //calculated CRC
   byte crc_byte;    //actual CRC as sent by DS2401
   //1-Wire bus reset, needed to start operation on the bus,
@@ -24,13 +23,27 @@ uint8_t getID(uint8_t* data) {
     crc_calc = OneWire::crc8(data, 7); //calculate CRC of the data
 
     if(crc_calc == crc_byte) {
-      return 0;
+        return data;
     } else {
-      return 1;
+        return NULL;
     }
+  } else {
+    return NULL;
   }
-  else //Nothing is connected in the bus
-  {
-    return 1;
-  }
+}
+
+String Serialnumber::read() {
+    uint8_t* r = this->readBytes();
+    if(!r) {
+        return "";
+    }
+
+    result = "";
+    for(uint8_t i = 0; i < 8; i++) {
+        char t[3];
+        snprintf(t,3,"%02X",data[i]);
+        result += String(t);
+    }
+
+    return result;
 }

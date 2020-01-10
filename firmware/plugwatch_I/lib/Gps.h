@@ -1,17 +1,17 @@
 #pragma once
 
+#include "AssetTrackerRK.h"
 #include <Particle.h>
 
-#include "lib/Subsystem.h"
-
-class Gps: public Subsystem {
-  typedef Subsystem super;
+class Gps {
 
   String result;
+  AssetTracker t;
 
 public:
-  // Arduino setup
   void setup();
-  LoopStatus loop();
-  String getResult();
+  void powerOn();
+  void powerOff();
+  void update();
+  String read();
 };

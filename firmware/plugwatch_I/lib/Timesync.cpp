@@ -11,7 +11,7 @@ void Timesync::setup() {
   Time.setTime(t);
 }
 
-LoopStatus Timesync::loop() {
+void Timesync::update() {
   switch(timesyncState) {
     case unsynced:
       if(Particle.connected()) {
@@ -113,6 +113,4 @@ LoopStatus Timesync::loop() {
       }
     break;
   }
-
-  return FinishedSuccess;
 }

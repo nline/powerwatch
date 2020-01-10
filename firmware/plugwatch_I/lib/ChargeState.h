@@ -3,12 +3,9 @@
 #include <Particle.h>
 
 #include "lib/FileLog.h"
-#include "lib/Subsystem.h"
 
 /* Checks charging state at `frequency`. Publishes every change. */
-class ChargeState: public Subsystem {
-  typedef Subsystem super;
-
+class ChargeState {
   String result;
 
 public:
@@ -16,6 +13,5 @@ public:
   const String CHARGE_STATE_WALL = "w";
 
   void setup();
-  LoopStatus loop();
-  String getResult();
+  String read();
 };

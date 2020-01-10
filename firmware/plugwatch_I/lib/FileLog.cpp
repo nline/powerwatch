@@ -4,7 +4,6 @@
 
 #include <Particle.h>
 
-#include "lib/Cloud.h"
 #include "lib/FileLog.h"
 #include "lib/SDCard.h"
 
@@ -73,7 +72,6 @@ bool FileLog::error(String str) {
   processIsrQueue();
 
   Serial.println("ERROR|" + filename + ": " + str);
-  Cloud::Publish(ERROR_EVENT, str);
   return sd.Write(filename, "ERROR|" + str + "\n");
 }
 
