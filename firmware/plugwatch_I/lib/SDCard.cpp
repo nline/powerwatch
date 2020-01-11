@@ -15,18 +15,18 @@ String SDCard::getResult() {
 }
 
 void SDCard::PowerOn() {
-	digitalWrite(SD_ENABLE, HIGH);
-	delay(1000);
+  digitalWrite(SD_ENABLE, HIGH);
+  delay(100);
 }
 
 void SDCard::PowerOff() {
-  SPI.end();
-	digitalWrite(SCK, LOW);
-	digitalWrite(MISO, LOW);
-	digitalWrite(MOSI, LOW);
-	digitalWrite(SS, LOW);
-	digitalWrite(SD_ENABLE, LOW);
-	delay(1000);
+    SPI.end();
+    digitalWrite(SCK, LOW);
+    digitalWrite(MISO, LOW);
+    digitalWrite(MOSI, LOW);
+    digitalWrite(SS, LOW);
+    digitalWrite(SD_ENABLE, LOW);
+    delay(100);
 }
 
 bool SDCard::Write(String filename, String to_write) {

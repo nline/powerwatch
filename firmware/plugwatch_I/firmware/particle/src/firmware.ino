@@ -16,6 +16,7 @@
 #include "lib/Imu.h"
 #include "lib/SDCard.h"
 #include "lib/Timesync.h"
+#include "lib/Serialnumber.h"
 #include "lib/led.h"
 #include "product_id.h"
 
@@ -49,7 +50,7 @@ SYSTEM_MODE(MANUAL);
 //***********************************
 //* Watchdogs and reset functions
 //***********************************
-const int HARDWARE_WATCHDOG_TIMEOUT_MS = 1000;
+const int HARDWARE_WATCHDOG_TIMEOUT_MS = 100000;
 ApplicationWatchdog wd(HARDWARE_WATCHDOG_TIMEOUT_MS, soft_reset);
 
 int soft_reset_helper(String cmd) {
@@ -105,6 +106,11 @@ Imu imu;
 //* GPS
 //***********************************
 Gps gps;
+
+//***********************************
+//* Serialnumber
+//***********************************
+Serialnumber serialNumber;
 
 //***********************************
 //* APNs
@@ -230,57 +236,15 @@ String stringifyResults(ResultStruct r) {
 ResultStruct sensingResults;
 
 /* LOOP State enums and their global delcarations*/
-enum SystemState {
-  Sleep,
-  CheckPowerState,
-  MaintainCellularConnection,
-  CheckTimeSync,
-  LogData,
-  SendData,
-  CollectPeriodicInformation,
-  ServiceWatchdog,
-};
-
 // When we wake up we always want to start in sleep 
 // Because we might just want to tickle the watchdog and sleep again
 SystemState state = Sleep;
 
-enum CellularState {
-  InitiateParticleConnection,
-  ParticleConnecting,
-  ParticleConnected,
-  InitiateCellularConnection,
-  CellularConnecting,
-  CellularConnected
-};
-
 CellularState cellularState = InitiateParticleConnection;
-
-enum WatchdogState {
-  WatchdogHigh,
-  WatchdogLow
-};
 
 WatchdogState watchdogState = WatchdogLow;
 
-enum CollectionState {
-  WaitForCollection,
-  ReadIMU,
-  ReadGPS,
-  ReadSDMetrics,
-  ReadPowerMetrics,
-  ReadSystemMetrics,
-  AddToQueues
-};
-
 CollectionState collectionState = WaitForCollection;
-
-enum SleepState {
-  SleepToAwakeCheck,
-  PrepareForWake,
-  AwakeToSleepCheck,
-  PrepareForSleep,
-};
 
 SleepState sleepState = SleepToAwakeCheck;
 /* END Loop delcaration variables*/
@@ -288,9 +252,9 @@ SleepState sleepState = SleepToAwakeCheck;
 /* Configration variables and times*/
 retained uint32_t last_collection_time;
 //one hour
-const uint32_t  COLLECTION_INTERVAL_SECONDS = 3600;
+const uint32_t  COLLECTION_INTERVAL_SECONDS = 120;
 //twelve hours
-const uint32_t  SLEEP_COLLECTION_INTERVAL_SECONDS = 3600*12;
+const uint32_t  SLEEP_COLLECTION_INTERVAL_SECONDS = 3600;
 /* END Configration variables and times*/
 
 /* Variables that track whether or not we should use the watchdog */
@@ -305,11 +269,13 @@ void loop() {
   //The software watchdog checks to make sure we are still making it around the loop
   wd.checkin();
 
+  Serial.printlnf("State: %d", state);
   switch(state) {
 
     /*Initializes the state machine and board. Decides when to sleep or wake*/
     case Sleep: {
       //Check if you should go to sleep. Manage waking up and sending periodic check ins
+      Serial.printlnf("Sleep State: %d", sleepState);
       switch(sleepState) {
         case SleepToAwakeCheck:
           // We are here either because 
@@ -326,6 +292,7 @@ void loop() {
             //We should just be awake
             state = Sleep;
             sleepState = PrepareForWake;
+            Serial.println("Transitioning to PrepareForWake");
           } else if (last_collection_time/SLEEP_COLLECTION_INTERVAL_SECONDS != rtc.getTime()/SLEEP_COLLECTION_INTERVAL_SECONDS) {
             //have we rolled over to a new collection interval? truncating division shoul handle the modulus of the interval time.
             state = Sleep;
@@ -339,13 +306,19 @@ void loop() {
         case PrepareForWake:
           //In this state we turn everything on then let the state machine progress
           // Turn on the GPS
+          Serial.println("Turning GPS on");
           gps.powerOn();
+
           // Turn on the STM and voltage sensing
+          Serial.println("Turning AC sense on");
           digitalWrite(AC_PWR_EN, HIGH);
+
           // Turn on the SD card
+          Serial.println("Turning SD card on");
           SD.PowerOn();
 
           //Proceed through both state machines
+          Serial.println("Transitioning to AwakeToSleepCheck");
           sleepState = AwakeToSleepCheck;
           state = CheckPowerState;
         break;
@@ -365,6 +338,7 @@ void loop() {
             state = CheckPowerState;
           } else {
             sleepState = PrepareForSleep;
+            Serial.println("Transitioning to PrepareForSleep");
             state = Sleep;
           }
         break;
@@ -386,6 +360,7 @@ void loop() {
           //make sure the rtc interrupt is clear so that we wake up
           //we can do this by reinitializing the RTC
           timeSync.setup();
+          Serial.println("Going to sleep");
           
           Serial.flush();
           Serial.end();
@@ -423,6 +398,7 @@ void loop() {
 
     /*Manages connection to the particle cloud or cellular network*/
     case MaintainCellularConnection: {
+      Serial.printlnf("Cellular State: %d", cellularState);
       static unsigned long connection_start_time;
       switch(cellularState) {
         case InitiateParticleConnection: 
@@ -480,7 +456,7 @@ void loop() {
     }
     /*Keeps the device time up to date*/
     case CheckTimeSync: {
-      timeSync.update();
+      timeSync.update(cellularState);
       state = LogData;
       break;
     }
@@ -547,14 +523,16 @@ void loop() {
 
     /*Periodically collects summary metrics from the device and generates those events*/
     case CollectPeriodicInformation: {
+      Serial.printlnf("Collection State: %d", collectionState);
       switch(collectionState) {
         case WaitForCollection: {
           //Decide if we need to collect
           uint32_t current_time = rtc.getTime();
           uint32_t last_collection_number = last_collection_time/COLLECTION_INTERVAL_SECONDS;
           uint32_t current_collection_number = current_time/COLLECTION_INTERVAL_SECONDS;
+          Serial.printlnf("Current time: %d, Last collection time: %d",current_time, last_collection_time);
           if(last_collection_number != current_collection_number) {
-            collectionState = ReadIMU;
+            collectionState = CollectResults;
           }
           
           //Also service the things that need to be serviced when we aren't
@@ -563,22 +541,19 @@ void loop() {
           imu.update();
           break;
         }
-        case ReadIMU: {
-          break;
-        }
-        case ReadGPS: {
-          break;
-        }
-        case ReadSDMetrics: {
-          break;
-        }
-        case ReadPowerMetrics: {
-          break;
-        }
-        case ReadSystemMetrics: {
-          break;
-        }
-        case AddToQueues: {
+        case CollectResults: {
+          strncpy(sensingResults.mpuResult,imu.read().c_str(), RESULT_LEN);
+          strncpy(sensingResults.gpsResult,gps.read().c_str(), RESULT_LEN);
+          strncpy(sensingResults.sdStatusResult,SD.getResult().c_str(), RESULT_LEN);
+          strncpy(sensingResults.chargeStateResult,chargeState.read().c_str(), RESULT_LEN);
+          strncpy(sensingResults.cellResult,cellStatus.read().c_str(), RESULT_LEN);
+          snprintf(sensingResults.systemStat, RESULT_LEN, "%lu|%s|%u", 0, serialNumber.read(),0);
+          snprintf(sensingResults.SDstat,RESULT_LEN, "%u|%d",0,DataLog.getRotatedFileSize(Time.now()));
+          String result = stringifyResults(sensingResults);
+          SDQueue.push(result);
+          CloudQueue.push(result);
+          last_collection_time = rtc.getTime();
+          collectionState = WaitForCollection;
           break;
         }
       }

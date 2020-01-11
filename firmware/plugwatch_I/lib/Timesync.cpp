@@ -1,4 +1,5 @@
 #include "lib/Timesync.h"
+#include "Particle.h"
 
 void Timesync::setup() {
   rtc.init();
@@ -11,7 +12,8 @@ void Timesync::setup() {
   Time.setTime(t);
 }
 
-void Timesync::update() {
+void Timesync::update(CellularState cellularState) {
+  Serial.printlnf("Timesync State: %d", timesyncState);
   switch(timesyncState) {
     case unsynced:
       if(Particle.connected()) {
@@ -20,7 +22,7 @@ void Timesync::update() {
         Particle.syncTime();
         sync_start_time = millis();
         timesyncState = syncingParticle;
-      } else if (Cellular.ready()) {
+      } else if (Cellular.ready() && cellularState != ParticleConnecting) {
         //try to get an update VIA NTP 
         sync_start_time = millis();
         timesyncState = sendNTP;
@@ -30,6 +32,7 @@ void Timesync::update() {
     break;
     case syncingParticle:
       if(!Particle.syncTimePending() && Particle.timeSyncedLast() > sync_start_time) {
+        last_sync = millis();
         timesyncState = updateRTC;
       } else if (millis() - sync_start_time > 60000) {
         //sync timed out, try to sync via NTP
@@ -85,6 +88,7 @@ void Timesync::update() {
         unsigned long t = NTPtime - 2208988800UL + 1;
         Serial.printlnf("Got time %lu from NTP", t);
         Time.setTime(t);
+        last_sync = millis();
         timesyncState = updateRTC;
       } else if (millis() - sync_start_time > 20000) {
         udp.stop();
@@ -108,7 +112,7 @@ void Timesync::update() {
       break;
     }
     case synced:
-      if ((millis() - Particle.timeSyncedLast()) > Timesync::TWELVE_HOURS) {
+      if ((millis() - last_sync) > Timesync::TWELVE_HOURS || last_sync == 0) {
         timesyncState = unsynced;
       }
     break;

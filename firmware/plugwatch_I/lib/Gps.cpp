@@ -9,7 +9,7 @@ void Gps::powerOn() {
   delay(100);
 
   // GPS-specifc setup here
-  t.begin();
+  //t.begin();
   t.gpsOn();
 }
 

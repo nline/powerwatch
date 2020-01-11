@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Particle.h>
+#include "firmware.h"
 #include "lib/AB1815.h"
 
 //***********************************
@@ -28,9 +29,10 @@ class Timesync {
 
   TimesyncState timesyncState = unsynced;
   unsigned long sync_start_time;
+  uint32_t last_sync = 0;
   UDP udp;
 
 public:
   void setup();
-  void update();
+  void update(CellularState cellularState);
 };
