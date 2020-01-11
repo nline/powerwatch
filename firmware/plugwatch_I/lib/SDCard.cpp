@@ -6,8 +6,6 @@
 void SDCard::setup() {
   pinMode(SD_ENABLE, OUTPUT);
   pinMode(SD_DETECT, INPUT);
-
-  PowerOn();
 }
 
 String SDCard::getResult() {
@@ -16,7 +14,6 @@ String SDCard::getResult() {
 
 void SDCard::PowerOn() {
   digitalWrite(SD_ENABLE, HIGH);
-  delay(100);
 }
 
 void SDCard::PowerOff() {
@@ -26,7 +23,6 @@ void SDCard::PowerOff() {
     digitalWrite(MOSI, LOW);
     digitalWrite(SS, LOW);
     digitalWrite(SD_ENABLE, LOW);
-    delay(100);
 }
 
 bool SDCard::Write(String filename, String to_write) {

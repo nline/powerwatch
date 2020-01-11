@@ -240,6 +240,8 @@ ResultStruct sensingResults;
 // Because we might just want to tickle the watchdog and sleep again
 SystemState state = Sleep;
 
+PowerState powerState = Unknown;
+
 CellularState cellularState = InitiateParticleConnection;
 
 WatchdogState watchdogState = WatchdogLow;
@@ -251,10 +253,12 @@ SleepState sleepState = SleepToAwakeCheck;
 
 /* Configration variables and times*/
 retained uint32_t last_collection_time;
+uint32_t power_off_millis;
+bool power_check_once = false;
 //one hour
 const uint32_t  COLLECTION_INTERVAL_SECONDS = 120;
 //twelve hours
-const uint32_t  SLEEP_COLLECTION_INTERVAL_SECONDS = 3600;
+const uint32_t  SLEEP_COLLECTION_INTERVAL_SECONDS = 120;
 /* END Configration variables and times*/
 
 /* Variables that track whether or not we should use the watchdog */
@@ -330,10 +334,17 @@ void loop() {
           if(powercheck.getHasPower()) {
             sleepState = AwakeToSleepCheck;
             state = CheckPowerState;
-          } else if (collectionState != WaitForCollection) {
+            power_check_once = false;
+          } else if (collectionState != WaitForCollection || cellularState == ParticleConnecting || cellularState == InitiateParticleConnection) {
             sleepState = AwakeToSleepCheck;
             state = CheckPowerState;
           } else if (CloudQueue.size() != 0 || SDQueue.size() != 0) {
+            sleepState = AwakeToSleepCheck;
+            state = CheckPowerState;
+          } else if (millis() - power_off_millis < 62000 || power_check_once == false) {
+            //we should wait a bit after the power goes off.
+            //we don't want to sleep for random power transients
+            power_check_once = true;
             sleepState = AwakeToSleepCheck;
             state = CheckPowerState;
           } else {
@@ -360,11 +371,7 @@ void loop() {
           //make sure the rtc interrupt is clear so that we wake up
           //we can do this by reinitializing the RTC
           timeSync.setup();
-          Serial.println("Going to sleep");
-          
-          Serial.flush();
-          Serial.end();
-
+        
           // Set two timers
           // One timer on the RTC for the next time we want to collect data
           // Another timer for the particle so that we can tickle the watchdog
@@ -377,10 +384,17 @@ void loop() {
           // calculate the next time we should collect
           uint32_t new_collection_number = collection_number + 1;
           uint32_t new_collection_time = new_collection_number*SLEEP_COLLECTION_INTERVAL_SECONDS;
+          Serial.printlnf("Current time: %d, waking up at %d for next collection.",current_time, new_collection_time);
           rtc.setTimer(new_collection_time);
 
+          Cellular.off();
+
+          Serial.println("Going to sleep");
+          Serial.flush();
+          Serial.end();
+
           // Now go to sleep with the system sleep set to wakeup for the watchdog
-          System.sleep(SLEEP_MODE_DEEP, 600);
+          System.sleep(SLEEP_MODE_DEEP, 10);
 
           //If for some reason this fails try again?
           state = Sleep;
@@ -392,6 +406,27 @@ void loop() {
 
     /*Checks for power state changes and generates events for them*/
     case CheckPowerState: {
+      switch(powerState) {
+        case Unknown:
+          if(powercheck.getHasPower()) {
+             powerState = Powered;
+          } else {
+             powerState = Unpowered;
+             power_off_millis = millis();
+          }
+        break;
+        case Powered:
+          if(!powercheck.getHasPower()) {
+             powerState = Unpowered;
+             power_off_millis = millis();
+          } 
+        break;
+        case Unpowered:
+          if(powercheck.getHasPower()) {
+             powerState = Powered;
+          } 
+        break;
+      }
       state = MaintainCellularConnection;    
     break;
     }
@@ -413,7 +448,7 @@ void loop() {
         case ParticleConnecting:
           if(Particle.connected()) {
             cellularState = ParticleConnected;
-          } else if(millis() - connection_start_time > 600000) {
+          } else if(millis() - connection_start_time > 60000) {
             //try to connect to cellular network as a backup to get time
             //stop trying to connect to particle
             Particle.disconnect();
@@ -494,7 +529,7 @@ void loop() {
                 CloudQueue.pop();
               }
             } else {
-              Serial.println("Appended to dequeue successfully");
+              Serial.println("Sent to particle cloud successfully");
               CloudQueue.pop();
             }
         } else {
@@ -547,7 +582,7 @@ void loop() {
           strncpy(sensingResults.sdStatusResult,SD.getResult().c_str(), RESULT_LEN);
           strncpy(sensingResults.chargeStateResult,chargeState.read().c_str(), RESULT_LEN);
           strncpy(sensingResults.cellResult,cellStatus.read().c_str(), RESULT_LEN);
-          snprintf(sensingResults.systemStat, RESULT_LEN, "%lu|%s|%u", 0, serialNumber.read(),0);
+          snprintf(sensingResults.systemStat, RESULT_LEN, "%lu|%s|%u", 0, serialNumber.read().c_str(),0);
           snprintf(sensingResults.SDstat,RESULT_LEN, "%u|%d",0,DataLog.getRotatedFileSize(Time.now()));
           String result = stringifyResults(sensingResults);
           SDQueue.push(result);

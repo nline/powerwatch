@@ -9,6 +9,12 @@ enum SystemState {
   ServiceWatchdog,
 };
 
+enum PowerState {
+  Unknown,
+  Powered,
+  Unpowered
+};
+
 enum CellularState {
   InitiateParticleConnection,
   ParticleConnecting,

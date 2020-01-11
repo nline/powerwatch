@@ -39,7 +39,7 @@ String Serialnumber::read() {
     }
 
     result = "";
-    for(uint8_t i = 0; i < 8; i++) {
+    for(uint8_t i = 1; i < 7; i++) {
         char t[3];
         snprintf(t,3,"%02X",data[i]);
         result += String(t);
