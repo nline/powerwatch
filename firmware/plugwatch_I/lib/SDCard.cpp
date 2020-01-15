@@ -142,8 +142,8 @@ String SDCard::getLastLine(String filename) {
   //get the length of the file
   int current_length = file_to_write.fileSize();
 
-  Serial.print("Current file size: ");
-  Serial.println(current_length);
+  //Serial.print("Current file size: ");
+  //Serial.println(current_length);
 
   //now seek from the end an appropriate amount
   //reading forward and recording the position of the last newline
@@ -223,8 +223,8 @@ bool SDCard::removeLastLine(String filename) {
 
   //get the length of the file
   int current_length = file_to_write.fileSize();
-  Serial.print("Current length: ");
-  Serial.println(current_length);
+  //Serial.print("Current length: ");
+  //Serial.println(current_length);
 
   //now seek from the end an appropriate amount
   //reading forward and recording the position of the last newline
@@ -232,7 +232,7 @@ bool SDCard::removeLastLine(String filename) {
   if(current_length > 0) {
     //seek backwards either 2KB or to the beginning of the file
     if(current_length > 2000) {
-      Serial.println("Setting seek to end minus 2000 chars");
+      //Serial.println("Setting seek to end minus 2000 chars");
       if(!file_to_write.seek(current_length - 2000)) {
 	Serial.println("Seek failed");
 	file_to_write.close();
@@ -252,13 +252,13 @@ bool SDCard::removeLastLine(String filename) {
     int last_newline_pos = 0;
 
     //okay now linearly scan recording the last newline before the end
-    Serial.println("Scanning file for newlines");
+    //Serial.println("Scanning file for newlines");
     while (file_to_write.available()) {
       char cur = file_to_write.read();
       if(cur == '\n') {
 	int pos = file_to_write.position();
-	Serial.print("Found newline at ");
-        Serial.println(pos);
+	//Serial.print("Found newline at ");
+        //Serial.println(pos);
 	if(last_newline_pos == 0) {
 	  last_newline_pos = pos;
 	} else {
@@ -268,8 +268,8 @@ bool SDCard::removeLastLine(String filename) {
       }
     }
 
-    Serial.print("truncating file at ");
-    Serial.println(newline_pos);
+    //Serial.print("truncating file at ");
+    //Serial.println(newline_pos);
 
     //okay truncate the file to the newline pos
     if(!file_to_write.truncate(newline_pos)) {

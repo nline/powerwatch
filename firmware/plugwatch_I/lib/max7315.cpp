@@ -68,6 +68,37 @@ bool max7315::digitalRead(uint8_t pin) {
   return (bool)(input & (0x01 << pin));
 }
 
+void max7315::setIndividualIntensity(uint8_t pin, uint8_t intensity) {
+  //Set global intensity to FF
+  uint8_t temp = 0xFF;
+  write_reg(MAX7315_MASTER, &temp, 1);
+
+  //clear the global intensity bit
+  uint8_t cfg;
+  read_reg(MAX7315_CFG, &cfg, 1);
+  cfg &= ~(1 << 2);
+  write_reg(MAX7315_CFG, &cfg, 1);
+
+  //calculate the pin to set
+  uint8_t reg = MAX7315_INTENSITY_0_1 + pin/2;
+  uint8_t offset;
+  //calculate the reg offset
+  if(pin % 2) {
+    offset = 4;
+  } else {
+    offset = 0;
+  }
+
+  intensity = intensity & 0X0F;
+
+  uint8_t current_intensity;
+  read_reg(reg, &current_intensity, 1);
+
+  current_intensity &= ~(0x0F << offset);
+  current_intensity |= (intensity << offset);
+  write_reg(reg, &current_intensity, 1);
+}
+
 void max7315::setGlobalIntensity(uint8_t intensity) {
   write_reg(MAX7315_MASTER, &intensity, 1);
 }

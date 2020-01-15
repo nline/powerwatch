@@ -21,4 +21,5 @@ public:
     void  digitalWrite(uint8_t pin, uint8_t direction);
     bool  digitalRead(uint8_t pin);
     void  setGlobalIntensity(uint8_t intensity);
+    void  setIndividualIntensity(uint8_t pin, uint8_t intensity);
 };

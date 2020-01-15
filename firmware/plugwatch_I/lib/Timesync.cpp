@@ -13,7 +13,7 @@ void Timesync::setup() {
 }
 
 void Timesync::update(CellularState cellularState) {
-  Serial.printlnf("Timesync State: %d", timesyncState);
+  //Serial.printlnf("Timesync State: %d", timesyncState);
   switch(timesyncState) {
     case unsynced:
       if(Particle.connected()) {

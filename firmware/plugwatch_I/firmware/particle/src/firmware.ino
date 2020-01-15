@@ -4,6 +4,7 @@
 // Third party libraries
 #include <APNHelperRK.h>
 #include <CellularHelper.h>
+#include <OneWire.h>
 
 // Our code
 #include "board.h"
@@ -74,6 +75,11 @@ int hard_reset(String cmd) {
 //***********************************
 //* SD Card
 //***********************************
+led statusLED;
+
+//***********************************
+//* SD Card
+//***********************************
 SDCard SD;
 
 //***********************************
@@ -129,12 +135,66 @@ APNHelper apnHelper(apns, sizeof(apns)/sizeof(apns[0]));
 //***********************************
 //* System Data storage
 //***********************************
+
+typedef struct {
+  String topic;
+  String data;
+  String dataCRC;
+} ParticleMessage;
+
+String serializeParticleMessage(ParticleMessage m) {
+  return m.topic + ";" + m.dataCRC + ";" + m.data;
+}
+
+ParticleMessage deserializeParticleMessage(String m) {
+  int index = m.indexOf(";");
+  ParticleMessage p;
+
+  if(index == -1) {
+    p.data = "";
+    p.topic = "";
+    p.dataCRC = "";
+  } else {
+    p.topic = m.substring(0,index);
+    p.dataCRC = m.substring(index+1,index+5);
+    p.data = m.substring(index+6);
+  }
+
+  return p;
+}
+
+String successHash = "";
+void responseHandler(const char *event, const char *data) {
+  Serial.println("Hook Success Response");
+  String response(data);
+  if(response.indexOf("OK") != -1) {
+    String s(event);
+    int index = s.lastIndexOf("/");
+    if(index > 4 ) {
+      successHash = s.substring(index-4,index);  
+      Serial.printlnf("Got success response with hash " + successHash);
+    } else {
+      Serial.printlnf("Got success response with malformed event: %s", event);
+    }
+  } else {
+    Serial.println("Did not get success response");
+  }
+}
+
+void errorHandler(const char *event, const char *data) {
+  Serial.println("Hook Error Response");
+  Serial.println(event);
+  Serial.println(data);
+  Serial.println();
+}
+
+
 // The SD queue is the queue for data t obe sent to the SD cardk
-std::queue<String> SDQueue;
+std::queue<ParticleMessage> SDQueue;
 
 // The cloud queue is the queue for data to be send to the cloud
 // or put on the data backlog
-std::queue<String> CloudQueue;
+std::queue<ParticleMessage> CloudQueue;
 
 //The Data log writes data to the SD card
 auto DataLog = FileLog(SD, "data_log.txt");
@@ -145,9 +205,6 @@ void setup() {
   //setup the APN credentials
   apnHelper.setCredentials();
 
-  //Register reset functions with the particle cloud
-  Particle.function("hard_reset", hard_reset);
-  Particle.function("soft_reset", soft_reset_helper);
 
   // Set up debugging UART
   Serial.begin(9600);
@@ -176,9 +233,19 @@ void setup() {
   timeSync.setup();
 
   //Setup the particle keepalive
-  Particle.keepAlive(23*60); // send a ping every 30 seconds
+  //The timeout in the Aeris network is 2 minutes
+  //But it takes too much data to send a keepalive every 2 minutes
+  //So we are just going to ignore that and only contact the device
+  //every hour. I will make a script that tries in a loop if I have to
+  Particle.keepAlive(60*60);
 
   Serial.println("Setup complete.");
+
+  //Register reset functions with the particle cloud
+  Particle.function("hard_reset", hard_reset);
+  Particle.function("soft_reset", soft_reset_helper);
+  Particle.subscribe(System.deviceID() + "/hook-response", responseHandler, MY_DEVICES);
+  Particle.subscribe(System.deviceID() + "/hook-error", errorHandler, MY_DEVICES);
 }
 
 //This structure is what all of the drivers will return. It will
@@ -249,19 +316,33 @@ WatchdogState watchdogState = WatchdogLow;
 CollectionState collectionState = WaitForCollection;
 
 SleepState sleepState = SleepToAwakeCheck;
+
+SendState sendState = ReadyToSend;
+
+LEDFlashingState ledFlashingState = Solid;
+LEDColorState ledColorState = Teal;
 /* END Loop delcaration variables*/
 
 /* Configration variables and times*/
 retained uint32_t last_collection_time;
+uint32_t last_send_time;
+String last_sent_from = "CloudQueue";
 uint32_t power_off_millis;
 bool power_check_once = false;
 //one hour
-const uint32_t  COLLECTION_INTERVAL_SECONDS = 120;
+const uint32_t  COLLECTION_INTERVAL_SECONDS = 30 * 60;
 //twelve hours
-const uint32_t  SLEEP_COLLECTION_INTERVAL_SECONDS = 120;
+const uint32_t  SLEEP_COLLECTION_INTERVAL_SECONDS = 4 * 60 * 60;
 /* END Configration variables and times*/
 
 /* Variables that track whether or not we should use the watchdog */
+
+//#define PRINT_STATE
+void printState(String name, int state) {
+  #ifdef PRINTSTATES
+  Serial.printlnf("%s: %d",name.c_str(),state);
+  #endif
+}
 
 
 void loop() {
@@ -273,13 +354,13 @@ void loop() {
   //The software watchdog checks to make sure we are still making it around the loop
   wd.checkin();
 
-  Serial.printlnf("State: %d", state);
+  printState("state", state);
   switch(state) {
 
     /*Initializes the state machine and board. Decides when to sleep or wake*/
     case Sleep: {
       //Check if you should go to sleep. Manage waking up and sending periodic check ins
-      Serial.printlnf("Sleep State: %d", sleepState);
+      printState("sleep state", sleepState);
       switch(sleepState) {
         case SleepToAwakeCheck:
           // We are here either because 
@@ -384,17 +465,23 @@ void loop() {
           // calculate the next time we should collect
           uint32_t new_collection_number = collection_number + 1;
           uint32_t new_collection_time = new_collection_number*SLEEP_COLLECTION_INTERVAL_SECONDS;
-          Serial.printlnf("Current time: %d, waking up at %d for next collection.",current_time, new_collection_time);
+          //Serial.printlnf("Current time: %d, waking up at %d for next collection.",current_time, new_collection_time);
           rtc.setTimer(new_collection_time);
 
+          //set the LED to red
+          ledColorState = Red;
+          statusLED.setBrightness(5);
+          statusLED.setColor(ledColorState);
+
           Cellular.off();
+          delay(2000);
 
           Serial.println("Going to sleep");
           Serial.flush();
           Serial.end();
 
           // Now go to sleep with the system sleep set to wakeup for the watchdog
-          System.sleep(SLEEP_MODE_DEEP, 10);
+          System.sleep(SLEEP_MODE_DEEP, 600);
 
           //If for some reason this fails try again?
           state = Sleep;
@@ -433,7 +520,7 @@ void loop() {
 
     /*Manages connection to the particle cloud or cellular network*/
     case MaintainCellularConnection: {
-      Serial.printlnf("Cellular State: %d", cellularState);
+      printState("cellular state", cellularState);
       static unsigned long connection_start_time;
       switch(cellularState) {
         case InitiateParticleConnection: 
@@ -501,7 +588,7 @@ void loop() {
       //just turn it on for good measure, although we should just leave it on
       SD.PowerOn();
       if(SDQueue.size() > 0) {
-        if(DataLog.appendAndRotate(SDQueue.front(), Time.now())) {
+        if(DataLog.appendAndRotate(serializeParticleMessage(SDQueue.front()), Time.now())) {
           //Error writing data to the SD card - do something with it
           Serial.println("Error writing data to the SD card");
         } else {
@@ -515,57 +602,105 @@ void loop() {
 
     /*Sends data to the cloud either from the event queue or from the SD card based backlog*/
     case SendData: {
-      SD.PowerOn();
-      if(CloudQueue.size() > 0) {
-        if(Particle.connected()) {
-            if(!Particle.publish("g",CloudQueue.front(), PRIVATE)) {
-              //should handle this error
-              Serial.println("Failed to send packet. Appending to dequeue.");
-              if(DataDequeue.append(CloudQueue.front())) {
+      switch(sendState) {
+        case ReadyToSend:
+          SD.PowerOn();
+          if(CloudQueue.size() > 0) {
+            if(Particle.connected()) {
+                last_send_time = millis();
+                sendState = SendPaused;
+                last_sent_from = "CloudQueue";
+                //generate the topic as a unique hash of the data
+                if(!Particle.publish(CloudQueue.front().topic + "/" + CloudQueue.front().dataCRC,CloudQueue.front().data, PRIVATE)) {
+                  //should handle this error
+                  Serial.println("Failed to send packet. Appending to dequeue.");
+                  if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
+                    //should handle this error
+                    Serial.println("Failed to append to dequeue");
+                  } else {
+                    Serial.println("Appended to dequeue successfully");
+                    CloudQueue.pop();
+                  }
+                } else {
+                  Serial.println("Sent message with CRC " + CloudQueue.front().dataCRC + " to particle cloud - waiting on webhook response");
+                  //CloudQueue.pop();
+                }
+            } else {
+              if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
                 //should handle this error
                 Serial.println("Failed to append to dequeue");
               } else {
                 Serial.println("Appended to dequeue successfully");
                 CloudQueue.pop();
               }
-            } else {
-              Serial.println("Sent to particle cloud successfully");
-              CloudQueue.pop();
             }
-        } else {
-          if(DataDequeue.append(CloudQueue.front())) {
-            //should handle this error
-            Serial.println("Failed to append to dequeue");
-          } else {
-            Serial.println("Appended to dequeue successfully");
-            CloudQueue.pop();
+          } else if(DataDequeue.getFileSize() > 0) {
+            if(Particle.connected()) {
+              ParticleMessage m = deserializeParticleMessage(DataDequeue.getLastLine());
+              last_send_time = millis();
+              sendState = SendPaused;
+              last_sent_from = "DataDequeue";
+              if(!Particle.publish(m.topic + "/" + m.dataCRC, m.data, PRIVATE)) {
+                //should handle this error
+                Serial.println("Failed to send from dequeue");
+              } else {
+                Serial.println("Sent message from dequeue with CRC " + m.dataCRC + " to particle cloud - waiting on webhook response");
+                //DataDequeue.removeLastLine();
+              }
+            }
           }
-        }
-      } else if(DataDequeue.getFileSize() > 0) {
-        if(Particle.connected()) {
-          if(!Particle.publish("g",DataDequeue.getLastLine(),PRIVATE)) {
-            //should handle this error
-            Serial.println("Failed to send from dequeue");
-          } else {
-            Serial.println("Sent from queue successfully");
-            DataDequeue.removeLastLine();
+          state = CollectPeriodicInformation;
+          break;
+        case SendPaused:
+          //Only send every 5s
+          if(millis() - last_send_time > 5000) {
+            /*check to see if the message made it to the cloud*/
+            if(last_sent_from == "CloudQueue") {
+              if(successHash == CloudQueue.front().dataCRC) {
+                //great it succeeded
+                Serial.println("Webhook success CRC " + successHash + " matched - popping from queue");
+                CloudQueue.pop();
+              } else {
+                //it did not succeeded - put it on the dequeue
+                Serial.println("Webhook success hash " + successHash + " did not match last sent CRC " + CloudQueue.front().dataCRC + ". Moving to data to dequeue");
+                if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
+                  //should handle this error
+                  Serial.println("Failed to append to dequeue");
+                } else {
+                  Serial.println("Appended to dequeue successfully");
+                  CloudQueue.pop();
+                }
+              }
+            } else {
+              ParticleMessage m = deserializeParticleMessage(DataDequeue.getLastLine());
+              if(successHash == m.dataCRC) {
+                //great it succeeded
+                Serial.println("Webhook success hash " + successHash + " matched - removing from dequeue");
+                DataDequeue.removeLastLine();
+              } else {
+                //it did not succeeded - just leave it in the dequeue
+                Serial.println("Webhook success hash " + successHash + " did not match last sent CRC " + m.dataCRC + ". Leaving on Dequeue");
+              }
+            }
+            sendState = ReadyToSend;
+            Serial.println();
           }
-        } 
+          state = CollectPeriodicInformation;
+        break;
       }
-      state = CollectPeriodicInformation;
       break;
     }
 
     /*Periodically collects summary metrics from the device and generates those events*/
     case CollectPeriodicInformation: {
-      Serial.printlnf("Collection State: %d", collectionState);
+      printState("collection state", collectionState);
       switch(collectionState) {
         case WaitForCollection: {
           //Decide if we need to collect
           uint32_t current_time = rtc.getTime();
           uint32_t last_collection_number = last_collection_time/COLLECTION_INTERVAL_SECONDS;
           uint32_t current_collection_number = current_time/COLLECTION_INTERVAL_SECONDS;
-          Serial.printlnf("Current time: %d, Last collection time: %d",current_time, last_collection_time);
+          //Serial.printlnf("Current time: %d, Last collection time: %d",current_time, last_collection_time);
           if(last_collection_number != current_collection_number) {
             collectionState = CollectResults;
           }
@@ -577,6 +712,7 @@ void loop() {
           break;
         }
         case CollectResults: {
+          Serial.println("Colleting");
           strncpy(sensingResults.mpuResult,imu.read().c_str(), RESULT_LEN);
           strncpy(sensingResults.gpsResult,gps.read().c_str(), RESULT_LEN);
           strncpy(sensingResults.sdStatusResult,SD.getResult().c_str(), RESULT_LEN);
@@ -585,8 +721,15 @@ void loop() {
           snprintf(sensingResults.systemStat, RESULT_LEN, "%lu|%s|%u", 0, serialNumber.read().c_str(),0);
           snprintf(sensingResults.SDstat,RESULT_LEN, "%u|%d",0,DataLog.getRotatedFileSize(Time.now()));
           String result = stringifyResults(sensingResults);
-          SDQueue.push(result);
-          CloudQueue.push(result);
+          ParticleMessage m;
+          m.topic = "g";
+          m.data = result;
+          char crc[5];
+          snprintf(crc,5,"%04X",OneWire::crc16((uint8_t*)result.c_str(),result.length()));
+          String crcString(crc);
+          m.dataCRC = crcString;
+          SDQueue.push(m);
+          CloudQueue.push(m);
           last_collection_time = rtc.getTime();
           collectionState = WaitForCollection;
           break;
@@ -616,8 +759,92 @@ void loop() {
           }
         break;
       }
-      state = Sleep;
+      state = ServiceLED;
     break;
+    }
+
+    case ServiceLED: {
+      static uint8_t current_led_brightness = 16;
+      static bool current_led_state = true;
+      static uint32_t last_switch_time = 0;
+      switch(ledFlashingState) {
+        case Solid:
+          //do nothing
+        break;
+        case Blinking:
+          if(millis() - last_switch_time > 150) {
+            if(current_led_state) {
+              statusLED.setColor(Off);
+              last_switch_time = millis();
+              current_led_state = false;
+            } else {
+              statusLED.setBrightness(4);
+              statusLED.setColor(ledColorState);
+              last_switch_time = millis();
+              current_led_state = true;
+            }
+          }
+        break;
+        case Breathing:
+          if(millis() - last_switch_time > 75) {
+            last_switch_time = millis();
+            if(current_led_state) {
+              current_led_brightness--;
+              statusLED.setBrightness(current_led_brightness);
+              statusLED.setColor(ledColorState);
+              if(current_led_brightness == 0) {
+                current_led_state = false;
+              }
+            } else {
+              current_led_brightness++;
+              statusLED.setBrightness(current_led_brightness);
+              statusLED.setColor(ledColorState);
+              if(current_led_brightness == 14) {
+                current_led_state = true;
+              }
+            }
+          }
+        break;
+      }
+
+      if(powercheck.getHasPower()) {
+        if(cellularState == ParticleConnecting) {
+          ledFlashingState = Blinking;
+          ledColorState = Teal;
+        } else if (cellularState == ParticleConnected) {
+          ledFlashingState = Breathing;
+          ledColorState = Teal;
+        } else if (cellularState == CellularConnecting) {
+          ledFlashingState = Blinking;
+          ledColorState = Green;
+        } else if (cellularState == CellularConnected) {
+          ledFlashingState = Breathing;
+          ledColorState = Green;
+        } else {
+          ledFlashingState = Breathing;
+          ledColorState = Blue;
+        }
+      } else {
+        if(cellularState == ParticleConnecting) {
+          ledFlashingState = Blinking;
+          ledColorState = Orange;
+        } else if (cellularState == ParticleConnected) {
+          ledFlashingState = Breathing;
+          ledColorState = Orange;
+        } else if (cellularState == CellularConnecting) {
+          ledFlashingState = Blinking;
+          ledColorState = Purple;
+        } else if (cellularState == CellularConnected) {
+          ledFlashingState = Breathing;
+          ledColorState = Purple;
+        } else {
+          ledFlashingState = Breathing;
+          ledColorState = Red;
+        }
+      }
+
+      state = Sleep;
+      break;
     }
     
     default: {

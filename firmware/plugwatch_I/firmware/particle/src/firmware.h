@@ -7,6 +7,7 @@ enum SystemState {
   SendData,
   CollectPeriodicInformation,
   ServiceWatchdog,
+  ServiceLED
 };
 
 enum PowerState {
@@ -39,4 +40,15 @@ enum SleepState {
   PrepareForWake,
   AwakeToSleepCheck,
   PrepareForSleep,
+};
+
+enum SendState {
+  ReadyToSend,
+  SendPaused
+};
+
+enum LEDFlashingState {
+  Solid,
+  Blinking,
+  Breathing
 };
