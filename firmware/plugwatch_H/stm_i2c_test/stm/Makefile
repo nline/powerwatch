@@ -10,4 +10,4 @@ TARGET = NUCLEO_L432KC
 #you must define a vliad ARM Mbed toolchain (GCC_ARM or IAR)
 TOOLCHAIN = GCC_ARM
 
-include ../../support/AppMakefileMbed.mk
+include ../../../support/AppMakefileMbed.mk

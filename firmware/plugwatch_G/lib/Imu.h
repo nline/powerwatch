@@ -2,8 +2,8 @@
 
 #include <Particle.h>
 
-#include "lib/lis2dh12.h"
-#include "lib/Subsystem.h"
+#include "lis2dh12.h"
+#include "Subsystem.h"
 
 #define IMU_INT C4
 
