@@ -324,14 +324,23 @@ LEDColorState ledColorState = Teal;
 /* END Loop delcaration variables*/
 
 /* Configration variables and times*/
+
+//This helps us calculate when the next collection interval is
 retained uint32_t last_collection_time;
-uint32_t last_send_time;
-String last_sent_from = "CloudQueue";
+
+//These are flags for the watchdog. It is only tickled when these are true.
+//They are changed to true and false depending on success or failure of tried events
+bool sendSuccess = true;
+bool logSuccess = true;
+bool service = true;
+
+//This sets a timer that keeps us from sleeping for a set period of time
 uint32_t power_off_millis;
-bool power_check_once = false;
+
 //one hour
 const uint32_t  COLLECTION_INTERVAL_SECONDS = 30 * 60;
-//twelve hours
+
+//four hours
 const uint32_t  SLEEP_COLLECTION_INTERVAL_SECONDS = 4 * 60 * 60;
 /* END Configration variables and times*/
 
@@ -407,7 +416,8 @@ void loop() {
           sleepState = AwakeToSleepCheck;
           state = CheckPowerState;
         break;
-        case AwakeToSleepCheck:
+        case AwakeToSleepCheck: {
+          static bool power_check_once = false;
           //We should not sleep if
           // - we have power
           // - we are currently collecting data
@@ -433,7 +443,8 @@ void loop() {
             Serial.println("Transitioning to PrepareForSleep");
             state = Sleep;
           }
-        break;
+          break;
+        }
         case PrepareForSleep:
           //In this state we turn everything off then go to sleep. Using sleep mode deep starts
           //Everything back from the beginning
@@ -591,7 +602,9 @@ void loop() {
         if(DataLog.appendAndRotate(serializeParticleMessage(SDQueue.front()), Time.now())) {
           //Error writing data to the SD card - do something with it
           Serial.println("Error writing data to the SD card");
+          logSuccess = false;
         } else {
+          logSuccess = true;
           SDQueue.pop();
         }
       }
@@ -602,6 +615,8 @@ void loop() {
 
     /*Sends data to the cloud either from the event queue or from the SD card based backlog*/
     case SendData: {
+      static uint32_t last_send_time;
+      static String last_sent_from = "CloudQueue";
       switch(sendState) {
         case ReadyToSend:
           SD.PowerOn();
@@ -614,6 +629,7 @@ void loop() {
                 if(!Particle.publish(CloudQueue.front().topic + "/" + CloudQueue.front().dataCRC,CloudQueue.front().data, PRIVATE)) {
                   //should handle this error
                   Serial.println("Failed to send packet. Appending to dequeue.");
+                  sendSuccess = false;
                   if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
                     //should handle this error
                     Serial.println("Failed to append to dequeue");
@@ -623,14 +639,17 @@ void loop() {
                   }
                 } else {
                   Serial.println("Sent message with CRC " + CloudQueue.front().dataCRC + " to particle cloud - waiting on webhook response");
+                  sendSuccess = true;
                   //CloudQueue.pop();
                 }
             } else {
               if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
                 //should handle this error
                 Serial.println("Failed to append to dequeue");
+                logSuccess = false;
               } else {
                 Serial.println("Appended to dequeue successfully");
+                logSuccess = true;
                 CloudQueue.pop();
               }
             }
@@ -643,12 +662,17 @@ void loop() {
               if(!Particle.publish(m.topic + "/" + m.dataCRC, m.data, PRIVATE)) {
                 //should handle this error
                 Serial.println("Failed to send from dequeue");
+                sendSuccess = false;
               } else {
                 Serial.println("Sent message from dequeue with CRC " + m.dataCRC + " to particle cloud - waiting on webhook response");
                 //DataDequeue.removeLastLine();
+                sendSuccess = true;
               }
             }
+          } else if(DataDequeue.getFileSize() == -1) {
+            logSuccess = false;
           }
+
           state = CollectPeriodicInformation;
           break;
         case SendPaused:
@@ -742,7 +766,17 @@ void loop() {
     /*manages the watchdog and light on the device*/
     case ServiceWatchdog: {
       static unsigned int lastWatchdog;
-      static bool service = false;
+      //Service the watchdog if
+      //we are getting log failures
+      //we are getting send failures
+      //we are not connecting to the cloud
+      if(cellularState == ParticleConnected && sendSuccess && logSuccess) {
+        service = true;
+      } else {
+        //Serial.printlnf("Not servicing watchdog. SendSuccess: %d, LogSuccess: %d", sendSuccess, logSuccess);
+        service = false;
+      }
+
       switch(watchdogState) {
         case WatchdogHigh:
           digitalWrite(DAC, HIGH);
@@ -753,7 +787,7 @@ void loop() {
         break;
         case WatchdogLow:
           digitalWrite(DAC, LOW);
-          if(millis() - lastWatchdog > 1000 && 1/*the watchdog conditions are met*/) {
+          if(millis() - lastWatchdog > 1000 && service) {
             lastWatchdog = millis();
             watchdogState = WatchdogHigh;
           }
@@ -786,7 +820,7 @@ void loop() {
           }
         break;
         case Breathing:
-          if(millis() - last_switch_time > 75) {
+          if(millis() - last_switch_time > 75 && service) {
             last_switch_time = millis();
             if(current_led_state) {
               current_led_brightness--;
@@ -799,10 +833,14 @@ void loop() {
               current_led_brightness++;
               statusLED.setBrightness(current_led_brightness);
               statusLED.setColor(ledColorState);
-              if(current_led_brightness == 14) {
+              if(current_led_brightness >= 14) {
                 current_led_state = true;
+                current_led_brightness = 14;
               }
             }
+          } else if (!service) {
+              statusLED.setBrightness(4);
+              statusLED.setColor(ledColorState);
           }
         break;
       }
