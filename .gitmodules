@@ -4,9 +4,6 @@
 [submodule "firmware/nrf/plugwatch_B/nrf5x-base"]
 	path = firmware/nrf/plugwatch_B/nrf5x-base
 	url = https://github.com/lab11/nrf5x-base
-[submodule "firmware/plugwatch_G/support/mbed-os"]
-	path = firmware/plugwatch_G/support/mbed-os
-	url = https://github.com/ARMmbed/mbed-os.git
-[submodule "firmware/plugwatch_H/support/mbed-os"]
-	path = firmware/plugwatch_H/support/mbed-os
+[submodule "firmware/support/mbed-os"]
+	path = firmware/support/mbed-os
 	url = https://github.com/ARMmbed/mbed-os.git
