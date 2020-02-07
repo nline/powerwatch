@@ -11,7 +11,7 @@ CURRENT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 BUILD_PROFILE = ./build_profile.json
 
 ifeq ($(TARGET),NUCLEO_L432KC)
-FLASH_START_ADDRESS = 0x08000000
+FLASH_START_ADDRESS ?= 0x08000000
 JLINK_DEVICE = STM32L432KC
 else
 $(error Platform not know. Please add flash start address to AppMakefileMbed.mk)

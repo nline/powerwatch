@@ -5,7 +5,7 @@
 
 Serial pc(PB_6, PB_7);
 DigitalIn i2c1(PA_9);
-DigitalIn i2c2(PA_10);
+DigitalOut i2c2(PA_10);
 DigitalOut LED(PB_1);
 
 Timer t;
@@ -16,10 +16,11 @@ int main(void) {
     //After boot if both I2C lines are low for one second then we are trying
     //to firmware update, otherwise jump to the main application
 
-    LED = 1;
+    LED = 0;
+    i2c2 = 1;
     t.start();
     while(t.read_ms() < 1000) {
-        if(i2c1 == 1 || i2c2 == 1) {
+        if(i2c1 == 1) {
             //start the application
             mbed_start_application(POST_APPLICATION_ADDR);
         }
@@ -27,8 +28,9 @@ int main(void) {
 
     //okay we should go into bootloader mode
     //Wait for serial bytes and write them to memory at the start location
-    LED = 0;
+    LED = 1;
 
+    pc.baud(115200);
     flash.init();
 
     const uint32_t page_size = flash.get_page_size();
@@ -43,6 +45,9 @@ int main(void) {
     //set the data for this page to zero
     memset(page_buffer, 0, sizeof(char) * page_size);
 
+    //indicate we are ready for bytes
+    i2c2 = 0;
+
     //read the program size
     uint8_t buf[4];
     for(uint8_t i = 0; i < 4; i++) {
@@ -50,19 +55,28 @@ int main(void) {
         buf[i] = pc.getc();
     }
 
+    LED = 0;
+    i2c2 = 1;
+
     memcpy(&program_size, buf, 4);
-    printf("Program size is %d", program_size);
+    pc.printf("Program size is %d", program_size);
+
 
     while (true) {
             //wait for serial bytes
+            i2c2 = 0;
             if(pc.readable()) {
                 char byte = pc.getc();
                 page_buffer[page_offset] = byte;
                 page_offset++;
                 total_bytes++;
 
+
                 //have we written the full page?
                 if(page_offset == page_size || total_bytes == program_size) {
+                    i2c2 = 1;
+
+                    pc.printf("%d",total_bytes);
 
                     //zero the page offset
                     page_offset = 0;
@@ -72,6 +86,7 @@ int main(void) {
                         flash.erase(addr, flash.get_sector_size(addr));
                         sector_erased = true;
                     }
+
 
                     // Program page
                     flash.program(page_buffer, addr, page_size);
@@ -90,11 +105,11 @@ int main(void) {
 
                         delete[] page_buffer;
                         flash.deinit();
-                        printf("Done flashing program");
+                        pc.printf("Done flashing program");
                         mbed_start_application(POST_APPLICATION_ADDR);
                     }
-                }
 
-        }
+                }
+            }
     }
 }
