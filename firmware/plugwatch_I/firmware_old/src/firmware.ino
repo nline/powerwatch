@@ -654,7 +654,7 @@ void loop() {
           first = false;
 
           //Try to connect for 60s
-          if(millis() - now < 60000) {
+          if(millis() - now < 600000) {
               if(Particle.connected()) {
                 Serial.println("Connected to particle cloud");
                 first = true;
@@ -692,7 +692,7 @@ void loop() {
           }
           first = false;
 
-          if(millis() - now < 60000) {
+          if(millis() - now < 600000) {
               if(Cellular.ready()) {
                 Serial.println("Connected to cellular network");
                 delay(5000);
