@@ -1,0 +1,7 @@
+{
+"target_overrides": {
+    "*": {
+        "target.mbed_app_start": "0x8010000"
+    }
+}
+}
