@@ -635,7 +635,7 @@ void loop() {
 
   switch(state) {
     case CheckCloudEvent: {
-      manageStateTimer(240000);
+      manageStateTimer(1200000);
 
 
       switch(cloudState) {
@@ -692,7 +692,7 @@ void loop() {
           }
           first = false;
 
-          if(millis() - now < 600000) {
+          if(millis() - now < 300000) {
               if(Cellular.ready()) {
                 Serial.println("Connected to cellular network");
                 delay(5000);
