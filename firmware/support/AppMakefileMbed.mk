@@ -58,6 +58,9 @@ clean:
 flash: all flash.jlink
 	$(JLINK) $(OUTPUT_PATH)flash.jlink
 
+only-flash: flash.jlink
+	$(JLINK) $(OUTPUT_PATH)flash.jlink
+
 flash.jlink:
 	$(MAKE_BUILD_FOLDER)
 	printf "r\n" > $(OUTPUT_PATH)flash.jlink
