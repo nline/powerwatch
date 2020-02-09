@@ -36,12 +36,12 @@
 int product_id = PRODUCT;
 PRODUCT_ID(PRODUCT);
 #else
-int product_id = 8379;
-PRODUCT_ID(8379);
+int product_id = 10804;
+PRODUCT_ID(10804);
 #endif
 
-int version_int = 112; 
-PRODUCT_VERSION(112);
+int version_int = 202; 
+PRODUCT_VERSION(202);
 
 SYSTEM_THREAD(ENABLED);
 STARTUP(System.enableFeature(FEATURE_RESET_INFO));
@@ -337,8 +337,8 @@ bool service = true;
 //This sets a timer that keeps us from sleeping for a set period of time
 uint32_t power_off_millis;
 
-//one hour
-const uint32_t  COLLECTION_INTERVAL_SECONDS = 30 * 60;
+//4 minutes
+const uint32_t  COLLECTION_INTERVAL_SECONDS = 4 * 60;
 
 //four hours
 const uint32_t  SLEEP_COLLECTION_INTERVAL_SECONDS = 4 * 60 * 60;
@@ -422,7 +422,9 @@ void loop() {
           // - we have power
           // - we are currently collecting data
           // - Data has just been collected and needs to be sent/queued
-          if(powercheck.getHasPower()) {
+          sleepState = AwakeToSleepCheck;
+          state = CheckPowerState;
+          /*if(powercheck.getHasPower()) {
             sleepState = AwakeToSleepCheck;
             state = CheckPowerState;
             power_check_once = false;
@@ -442,7 +444,7 @@ void loop() {
             sleepState = PrepareForSleep;
             Serial.println("Transitioning to PrepareForSleep");
             state = Sleep;
-          }
+          }*/
           break;
         }
         case PrepareForSleep:
@@ -482,9 +484,15 @@ void loop() {
           //set the LED to red
           ledColorState = Red;
           statusLED.setBrightness(5);
-          statusLED.setColor(ledColorState);
+          //statusLED.setColor(ledColorState);
+          statusLED.setColor(Off);
 
-          Cellular.off();
+          //Cellular.off();
+          pinMode(PWR_UC, OUTPUT);
+          digitalWrite(PWR_UC, LOW);
+          delay(1500);
+          digitalWrite(PWR_UC, HIGH);
+
           delay(2000);
 
           Serial.println("Going to sleep");
@@ -616,6 +624,7 @@ void loop() {
     /*Sends data to the cloud either from the event queue or from the SD card based backlog*/
     case SendData: {
       static uint32_t last_send_time;
+      static uint32_t send_backoff_time = 5000;
       static String last_sent_from = "CloudQueue";
       switch(sendState) {
         case ReadyToSend:
@@ -677,16 +686,24 @@ void loop() {
           break;
         case SendPaused:
           //Only send every 5s
-          if(millis() - last_send_time > 5000) {
+          if(millis() - last_send_time > send_backoff_time) {
             /*check to see if the message made it to the cloud*/
             if(last_sent_from == "CloudQueue") {
               if(successHash == CloudQueue.front().dataCRC) {
                 //great it succeeded
                 Serial.println("Webhook success CRC " + successHash + " matched - popping from queue");
+
                 CloudQueue.pop();
+
+                send_backoff_time = 5000;
               } else {
                 //it did not succeeded - put it on the dequeue
                 Serial.println("Webhook success hash " + successHash + " did not match last sent CRC " + CloudQueue.front().dataCRC + ". Moving to data to dequeue");
+
+                if(send_backoff_time < 1800000) {
+                  send_backoff_time = send_backoff_time * 2;
+                }
+
                 if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
                   //should handle this error
                   Serial.println("Failed to append to dequeue");
@@ -701,9 +718,14 @@ void loop() {
                 //great it succeeded
                 Serial.println("Webhook success hash " + successHash + " matched - removing from dequeue");
                 DataDequeue.removeLastLine();
+                send_backoff_time = 5000;
               } else {
                 //it did not succeeded - just leave it in the dequeue
                 Serial.println("Webhook success hash " + successHash + " did not match last sent CRC " + m.dataCRC + ". Leaving on Dequeue");
+
+                if(send_backoff_time < 1800000) {
+                  send_backoff_time = send_backoff_time * 2;
+                }
               }
             }
             sendState = ReadyToSend;

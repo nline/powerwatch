@@ -247,83 +247,11 @@ int PowerCheck::getPeriod() {
 }
 
 int PowerCheck::getLCycles() {
-    //Do NOT do this if the system has power
-    Serial.println("getting L cycles");
-    if(this->getHasPower()) {
-        return 0;
-    }
-
-    //set the perturb output to an output and low
-    pinMode(A0, OUTPUT);
-    digitalWrite(A0, LOW);
-    setADCSampleTime(ADC_SampleTime_3Cycles);
-
-    //let it go low
-    delay(50);
-
-    //we high and read in a loop counting cycles
-    digitalWrite(A0, HIGH);
-    /*int observe = analogRead(B5);
-    int count = 0;
-    while(observe < 1240 && count < 100000) {
-        observe = analogRead(B5);
-        //Serial.printlnf("Observe %d", observe);
-        count++;
-    }*/
-		delay(10);
-		int count = analogRead(B5);
-    digitalWrite(A0, LOW);
-    delay(10);
-    pinMode(A0, INPUT);
-
-    Serial.printlnf("Got %d cycles for L", count);
-
-    if(count == 1000000) {
-        return 0;
-    } else {
-        return count;
-    }
-
+    return 0;
 }
 
 int PowerCheck::getNCycles() {
-    //Do NOT do this if the system has power
-    Serial.println("getting N cycles");
-    if(this->getHasPower()) {
-        return 0;
-    }
-
-    //set the perturb output to an output and low
-    pinMode(A1, OUTPUT);
-    digitalWrite(A1, LOW);
-    setADCSampleTime(ADC_SampleTime_3Cycles);
-
-    //let it go low
-    delay(50);
-
-    //we high and read in a loop counting cycles
-    digitalWrite(A1, HIGH);
-    /*int observe = analogRead(B3);
-    int count = 0;
-    while(observe < 1240 && count < 100000) {
-        observe = analogRead(B3);
-        //Serial.printlnf("Observe %d", observe);
-        count++;
-    }*/
-		delay(10);
-		int count = analogRead(B3);
-
-    digitalWrite(A1, LOW);
-    delay(10);
-    pinMode(A1, INPUT);
-
-    Serial.printlnf("Got %d cycles for N", count);
-
-    if(count == 1000000) {
-        return 0;
-    } else {
-        return count;
-    }
+    return 0;
 }
 
 void PowerCheck::setChargeCurrent() {
