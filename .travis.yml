@@ -1,22 +1,37 @@
 sudo: false
-language: node_js
-
 addons:
   apt:
     packages:
-      - expect
+    - expect
 
-cache:
-  directories:
-    - "node_modules"
-    - "$HOME/bin"
+env:
+  global:
+  - GITHUB_EMAIL="josh@nline.io"
+  - GITHUB_USER="adkinsjd"
+  - secure: pegbtam9pDS3oj+/t6d+R2BhXrbkYNoLNUQk6tfG/8M3Aa77ORPyg8cBF/Ys+EGd538JVCDvrqQro7PR4h3uZVP/tJfDu36hDVvviZ3JbtO40AR6B2iYiBpllp532L7tCGMjbsWMmgebkkM7vYp7AVS+1nscqGqfdpUjUilhSb8J/RSIxXcG9twPBqGcQ1aSagGLU1m7f+T7l+0jPnYhobt4AZQ90aZ2Vy+5Fbi1V62U34TkN5pd5AS/7Lz+lKymGR+gv3/PgZXx+HkZALMQIp1fCrnSvn3jj2X+XYGkeuxlpm54/ikI1gihaYnlFSR+CbJyyRfQ381bzJwPLwlVlqBjqbSErYSAuzj24PqLeNK8tLKbtAmDlhuD3HzgVUPo6M5i4lsOLLvGRrXmuZuGtJGEEe1/bZ1tLNOfD7SHeH4MqyhAHIB6CZAB5tt3aFGH6SOE97A6okHiLiFQTR8TT5BU5oSzoXChn+SOTwcoHJDM/4EOM6a3xr1AU7hMPMnspiUUJdnKmyJnjdD/P6CvQqrGGXoEIUdmrdyp2SLabvw3/mUCtgbOtVftRTGdDlWNCgAqE8GOgv9X5o+WzG/ielFjE/Awyl2z9gys3PaFhjHrNMUUPQ7jdt4nsi0zVIpHIw2EWukuAlfCqH03Bt2dAKn7y6sFDxwNCJHx88ruIPk=
 
-before_script:
-  - true #npm install -g particle-cli
-  - bash <( curl -sL https://particle.io/install-cli )
-  - export PATH="$PATH:$HOME/bin"
+install:
+- bash <( curl -sL https://particle.io/install-cli )
+- export PATH="$PATH:$HOME/bin"
+
+jobs:
+  include:
+    - env: PATH=firmware/plugwatch_F/firmware
+    - env: PATH=firmware/plugwatch_I/firmware
 
 script:
-  - ./.particle-cli-login.expect "$particle_email" "$particle_password" "$(which particle)"
-  - (particle compile electron firmware/plugwatch_C/firmware --target 0.7.0)
-  - (particle compile electron firmware/plugwatch_F/firmware --target 0.7.0)
+- ./.particle-cli-login.expect "$particle_email" "$particle_password" "$(which particle)"
+- particle compile electron $(PATH) --target 0.7.0 --saveTo $(PATH)/target.bin
+
+before_deploy:
+  - git config --local user.name $(GITHUB_USER)
+  - git config --local user.email $(GITHUB_EMAIL)
+  - export BRANCHTAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "prod"; else echo
+    $TRAVIS_BRANCH ; fi`
+  - git tag $BRANCHTAG-${TRAVIS_COMMIT::8}
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_OAUTH
+  file: $(PATH)/target.bin
+  skip_cleanup: true
