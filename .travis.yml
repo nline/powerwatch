@@ -6,6 +6,12 @@ addons:
     packages:
     - expect
 
+
+cache:
+  directories:
+    - "node_modules"
+    - "$HOME/bin"
+
 env:
   global:
   - GITHUB_EMAIL=josh@nline.io
