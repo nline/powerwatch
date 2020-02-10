@@ -29,7 +29,7 @@ jobs:
 
 script:
 - ./.particle-cli-login.expect "$particle_email" "$particle_password" "$(which particle)"
-- particle compile electron ${BUILD_PATH} --target 0.7.0 --saveTo ${BUIlD_PATH}/target.bin
+- particle compile electron ${BUILD_PATH} --target 0.7.0 --saveTo ${BUILD_PATH}/target.bin
 
 before_deploy:
   - git config --local user.name ${GITHUB_USER}
