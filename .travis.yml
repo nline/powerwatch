@@ -6,17 +6,15 @@ addons:
     packages:
     - expect
 
-
 cache:
   directories:
-    - "node_modules"
-    - "$HOME/bin"
+  - node_modules
+  - "$HOME/bin"
 
 env:
   global:
   - GITHUB_EMAIL=josh@nline.io
   - GITHUB_USER=adkinsjd
-  - secure: pegbtam9pDS3oj+/t6d+R2BhXrbkYNoLNUQk6tfG/8M3Aa77ORPyg8cBF/Ys+EGd538JVCDvrqQro7PR4h3uZVP/tJfDu36hDVvviZ3JbtO40AR6B2iYiBpllp532L7tCGMjbsWMmgebkkM7vYp7AVS+1nscqGqfdpUjUilhSb8J/RSIxXcG9twPBqGcQ1aSagGLU1m7f+T7l+0jPnYhobt4AZQ90aZ2Vy+5Fbi1V62U34TkN5pd5AS/7Lz+lKymGR+gv3/PgZXx+HkZALMQIp1fCrnSvn3jj2X+XYGkeuxlpm54/ikI1gihaYnlFSR+CbJyyRfQ381bzJwPLwlVlqBjqbSErYSAuzj24PqLeNK8tLKbtAmDlhuD3HzgVUPo6M5i4lsOLLvGRrXmuZuGtJGEEe1/bZ1tLNOfD7SHeH4MqyhAHIB6CZAB5tt3aFGH6SOE97A6okHiLiFQTR8TT5BU5oSzoXChn+SOTwcoHJDM/4EOM6a3xr1AU7hMPMnspiUUJdnKmyJnjdD/P6CvQqrGGXoEIUdmrdyp2SLabvw3/mUCtgbOtVftRTGdDlWNCgAqE8GOgv9X5o+WzG/ielFjE/Awyl2z9gys3PaFhjHrNMUUPQ7jdt4nsi0zVIpHIw2EWukuAlfCqH03Bt2dAKn7y6sFDxwNCJHx88ruIPk=
 
 install:
 - bash <( curl -sL https://particle.io/install-cli )
@@ -24,23 +22,23 @@ install:
 
 jobs:
   include:
-    - env: BUILD_PATH=firmware/plugwatch_F/firmware
-    - env: BUILD_PATH=firmware/plugwatch_I/firmware
-
+  - env: BUILD_PATH=firmware/plugwatch_F/firmware
+  - env: BUILD_PATH=firmware/plugwatch_I/firmware
 script:
 - ./.particle-cli-login.expect "$particle_email" "$particle_password" "$(which particle)"
 - particle compile electron ${BUILD_PATH} --target 0.7.0 --saveTo ${BUILD_PATH}/target.bin
-- echo ${GITHUB_OAUTH}
 
 before_deploy:
-  - git config --local user.name ${GITHUB_USER}
-  - git config --local user.email ${GITHUB_EMAIL}
-  - export BRANCHTAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "prod"; else echo
-    $TRAVIS_BRANCH ; fi`
-  - git tag ${BRANCHTAG}-${TRAVIS_COMMIT::8}
+- git config --local user.name ${GITHUB_USER}
+- git config --local user.email ${GITHUB_EMAIL}
+- export BRANCHTAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "prod"; else echo
+  $TRAVIS_BRANCH ; fi`
+- git tag ${BRANCHTAG}-${TRAVIS_COMMIT::8}
 
 deploy:
   provider: releases
-  api_key: ${GITHUB_OAUTH}
-  file: ${BUILD_PATH}/target.bin
-  skip_cleanup: true
+  api_key:
+    secure: j1w0dozqge7spMf4z3LMrypU31mxaDl7cUKOvL9xb9NzQhZ2x3t+P+GE75gBCP84ex1lKbtae7unFsofSy0hj8ngDgVcqjlw0HUP7kWfw3Iy0AlRiXTGHKh2I0MeHLj3XRMvuwSHeNy94AHWQXEDjuylEMbR+8ZVdYs3eyX2+AQiD1j5kIrf+RoKWdUkdaW31QvTtgWU9x7LDf6bqk/EHmss4HNOiwIGEIa0unIl45XVZIRqsO+gQ034Ci01ZEByk3d6ooNsr92yc0SKo/yIHrTutREua68m5Mqz8LW81dYKd2dJca8mJ81HJn8qkHp7zIY8jFtgUQhHxQLkHehyVKAUinR/m13nmejDV0bBJjex8S9d2yusXGPqyQ7I5FfrBQ56Joy0Me3/8SryuF+Y7GgHryiZq3Xkd7TSlLJDvKBeg+WZPn7BR4ls7JDUbRG1dP9OHCaGQpE0ZXD+XttEc7zvuxadAGAN7uusmfRqKNFzlPo32l7g9xVKa7M4qQkNMZ0tfjq5ysquT7rPyH8NIzdblHt8pF1RO9VFOopWdMV4VmSzhdjyy76LyZJyOStfXytE6iuI6iU3/0gzw/hlQiSL0C0ITtN2qFmKQIUfRI2P8UmoN7E63xppFfOeEbNVYYtsMF3AT7gozur4tWKgsvnP9bNegB9ocqsELthE6Xw=
+  file: "${BUILD_PATH}/target.bin"
+  on:
+    repo: nline/powerwatch
