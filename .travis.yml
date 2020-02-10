@@ -1,4 +1,6 @@
 sudo: false
+language: node
+
 addons:
   apt:
     packages:
@@ -6,8 +8,8 @@ addons:
 
 env:
   global:
-  - GITHUB_EMAIL="josh@nline.io"
-  - GITHUB_USER="adkinsjd"
+  - GITHUB_EMAIL=josh@nline.io
+  - GITHUB_USER=adkinsjd
   - secure: pegbtam9pDS3oj+/t6d+R2BhXrbkYNoLNUQk6tfG/8M3Aa77ORPyg8cBF/Ys+EGd538JVCDvrqQro7PR4h3uZVP/tJfDu36hDVvviZ3JbtO40AR6B2iYiBpllp532L7tCGMjbsWMmgebkkM7vYp7AVS+1nscqGqfdpUjUilhSb8J/RSIxXcG9twPBqGcQ1aSagGLU1m7f+T7l+0jPnYhobt4AZQ90aZ2Vy+5Fbi1V62U34TkN5pd5AS/7Lz+lKymGR+gv3/PgZXx+HkZALMQIp1fCrnSvn3jj2X+XYGkeuxlpm54/ikI1gihaYnlFSR+CbJyyRfQ381bzJwPLwlVlqBjqbSErYSAuzj24PqLeNK8tLKbtAmDlhuD3HzgVUPo6M5i4lsOLLvGRrXmuZuGtJGEEe1/bZ1tLNOfD7SHeH4MqyhAHIB6CZAB5tt3aFGH6SOE97A6okHiLiFQTR8TT5BU5oSzoXChn+SOTwcoHJDM/4EOM6a3xr1AU7hMPMnspiUUJdnKmyJnjdD/P6CvQqrGGXoEIUdmrdyp2SLabvw3/mUCtgbOtVftRTGdDlWNCgAqE8GOgv9X5o+WzG/ielFjE/Awyl2z9gys3PaFhjHrNMUUPQ7jdt4nsi0zVIpHIw2EWukuAlfCqH03Bt2dAKn7y6sFDxwNCJHx88ruIPk=
 
 install:
