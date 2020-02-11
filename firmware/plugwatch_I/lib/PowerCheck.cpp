@@ -170,8 +170,8 @@ float PowerCheck::getVoltage() {
     //Alright take the max and min so that we can get both the magnitude
     //and the average
     while(count < 6000) {
-        int L = analogRead(AC_L_HV_OUT);
-        int N = analogRead(AC_N_HV_OUT);
+        int L = analogRead(AC_L_LV_OUT);
+        int N = analogRead(AC_N_LV_OUT);
         if(L > L_max) {
             L_max = L;
             N_measure = N;
@@ -190,8 +190,8 @@ float PowerCheck::getVoltage() {
 	count = 0;
 	L_max = 0;
 	while(count < 6000) {
-    	    int L = analogRead(AC_L_HV_OUT);
-    	    int N = analogRead(AC_N_HV_OUT);
+    	    int L = analogRead(AC_L_LV_OUT);
+    	    int N = analogRead(AC_N_LV_OUT);
     	    if(L > L_max) {
     	        larray[i] = L;
     	        narray[i] = N;
@@ -208,7 +208,7 @@ float PowerCheck::getVoltage() {
     bool ready = false;
     int startMillis = millis();
     while(mcount < 3 && millis() - startMillis < 1000) {
-        int L = analogRead(AC_L_HV_OUT);
+        int L = analogRead(AC_L_LV_OUT);
 	if(L > L_avg && ready) {
 	    m[mcount] = micros();
 	    mcount++;
