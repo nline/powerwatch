@@ -20,9 +20,6 @@ enum CellularState {
   InitiateParticleConnection,
   ParticleConnecting,
   ParticleConnected,
-  InitiateCellularConnection,
-  CellularConnecting,
-  CellularConnected
 };
 
 enum WatchdogState {

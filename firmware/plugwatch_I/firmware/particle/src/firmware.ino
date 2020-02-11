@@ -40,8 +40,8 @@ int product_id = 10804;
 PRODUCT_ID(10804);
 #endif
 
-int version_int = 202; 
-PRODUCT_VERSION(202);
+int version_int = 203; 
+PRODUCT_VERSION(203);
 
 SYSTEM_THREAD(ENABLED);
 STARTUP(System.enableFeature(FEATURE_RESET_INFO));
@@ -554,40 +554,17 @@ void loop() {
         case ParticleConnecting:
           if(Particle.connected()) {
             cellularState = ParticleConnected;
-          } else if(millis() - connection_start_time > 60000) {
+          } else if(millis() - connection_start_time > 600000) {
             //try to connect to cellular network as a backup to get time
             //stop trying to connect to particle
             Particle.disconnect();
-            cellularState = InitiateCellularConnection;
+            cellularState = InitiateParticleConnection;
           } else {
             //do nothing - let it try to connect
           }
         break;
         case ParticleConnected:
           if(!Particle.connected()) {
-            cellularState = InitiateParticleConnection;
-          }
-        break;
-        case InitiateCellularConnection:
-            Cellular.connect();
-            connection_start_time = millis();
-            cellularState = CellularConnecting;
-        break;
-        case CellularConnecting:
-          if(Cellular.ready()) {
-            connection_start_time = millis();
-            cellularState = CellularConnected;
-          } else if(millis() - connection_start_time > 600000) {
-            //try to connect to particle again if we fail
-            cellularState = InitiateParticleConnection;
-          } else {
-            //do nothing - let it try to connect
-          }
-        break;
-        case CellularConnected:
-          //If we disconnect from the cellular network or if we just haven't
-          //retried to connect with particle in a while, try to connect to particle again
-          if(!Cellular.ready() || millis() - connection_start_time > 3600000) {
             cellularState = InitiateParticleConnection;
           }
         break;
@@ -874,12 +851,6 @@ void loop() {
         } else if (cellularState == ParticleConnected) {
           ledFlashingState = Breathing;
           ledColorState = Teal;
-        } else if (cellularState == CellularConnecting) {
-          ledFlashingState = Blinking;
-          ledColorState = Green;
-        } else if (cellularState == CellularConnected) {
-          ledFlashingState = Breathing;
-          ledColorState = Green;
         } else {
           ledFlashingState = Breathing;
           ledColorState = Blue;
@@ -891,12 +862,6 @@ void loop() {
         } else if (cellularState == ParticleConnected) {
           ledFlashingState = Breathing;
           ledColorState = Orange;
-        } else if (cellularState == CellularConnecting) {
-          ledFlashingState = Blinking;
-          ledColorState = Purple;
-        } else if (cellularState == CellularConnected) {
-          ledFlashingState = Breathing;
-          ledColorState = Purple;
         } else {
           ledFlashingState = Breathing;
           ledColorState = Red;
