@@ -14,7 +14,12 @@
 #define LIS2DH12_TEMP_CFG     0x1F
 #define LIS2DH12_TEMP_OUTL     0x0C
 #define LIS2DH12_TEMP_OUTH     0x0D
-
+#define LIS2DH12_X_OUTL     0x28
+#define LIS2DH12_X_OUTH     0x29
+#define LIS2DH12_Y_OUTL     0x2A
+#define LIS2DH12_Y_OUTH     0x2B
+#define LIS2DH12_Z_OUTL     0x2C
+#define LIS2DH12_Z_OUTH     0x2D
 #define LIS2DH12_I2C_ADDRESS   0x18
 
 class lis2dh12 {
@@ -26,5 +31,8 @@ public:
     void  config_for_wake_on_motion(uint8_t motion_threshold);
     void  off();
     void  on(uint8_t data_rate, uint8_t power_mode);
-    int8_t get_temp();
+    int16_t get_temp();
+    int16_t get_X(); 
+    int16_t get_Y(); 
+    int16_t get_Z(); 
 };

@@ -24,8 +24,9 @@ void Imu::update() {
   if(millis() - last_reading > 20000) {
     moved_40s = moved_20s;
     moved_20s = digitalRead(ACCEL_INT);
+
     if(moved_20s) {
-      moved_since_last_read = moved_20s; 
+      moved_since_last_read = 1; 
     }
 
     accel.read_status();
@@ -35,13 +36,17 @@ void Imu::update() {
 
 String Imu::read() {
   // Sample the wake on Interrupt pin
-  result = String(digitalRead(ACCEL_INT)) + String(MINOR_DLIM) + 
-                  String(moved_since_last_read) + String(MINOR_DLIM) + 
+  result = String(moved_since_last_read) + String(MINOR_DLIM) + 
+                  String(accel.get_temp()) + String(MINOR_DLIM) +
+                  String(digitalRead(ACCEL_INT)) + String(MINOR_DLIM) + 
                   String(moved_20s) + String(MINOR_DLIM) + 
-                  String(moved_40s) + String(MINOR_DLIM) + 
-                  String(accel.get_temp());
+                  String(moved_40s) + String(MINOR_DLIM) +
+                  String(accel.get_X()) + String(MINOR_DLIM) + 
+                  String(accel.get_Y()) + String(MINOR_DLIM) + 
+                  String(accel.get_Z());
 
   accel.read_status();
+  moved_since_last_read = 0;
 
   return result;
 } 

@@ -53,6 +53,7 @@ SYSTEM_MODE(MANUAL);
 //***********************************
 const int HARDWARE_WATCHDOG_TIMEOUT_MS = 100000;
 ApplicationWatchdog wd(HARDWARE_WATCHDOG_TIMEOUT_MS, soft_reset);
+retained unsigned long reboot_cnt = 0;
 
 int soft_reset_helper(String cmd) {
   soft_reset();
@@ -210,6 +211,7 @@ void setup() {
   //setup the APN credentials
   apnHelper.setCredentials();
 
+  reboot_cnt++;
 
   // Set up debugging UART
   Serial.begin(9600);
@@ -800,8 +802,8 @@ void loop() {
           strncpy(sensingResults.sdStatusResult,SD.getResult().c_str(), RESULT_LEN);
           strncpy(sensingResults.chargeStateResult,chargeState.read().c_str(), RESULT_LEN);
           strncpy(sensingResults.cellResult,cellStatus.read().c_str(), RESULT_LEN);
-          snprintf(sensingResults.systemStat, RESULT_LEN, "%lu|%s|%u", 0, serialNumber.read().c_str(),0);
-          snprintf(sensingResults.SDstat,RESULT_LEN, "%u|%d",0,DataLog.getRotatedFileSize(Time.now()));
+          snprintf(sensingResults.systemStat, RESULT_LEN, "%lu|%s|%u", 0, serialNumber.read().c_str(),reboot_cnt);
+          snprintf(sensingResults.SDstat,RESULT_LEN, "%u|%d|%d",0,DataLog.getRotatedFileSize(Time.now()),DataDequeue.getFileSize());
           String result = stringifyResults(sensingResults);
           ParticleMessage m;
           m.topic = "g";

@@ -33,12 +33,13 @@ void lis2dh12::write_reg(uint8_t reg, uint8_t* write_buf, size_t len){
 }
 
 
-int8_t  lis2dh12::get_temp() {
-    uint8_t temp;
-    uint8_t dummy;
-    read_reg(LIS2DH12_TEMP_OUTH, &temp, 1);
-    read_reg(LIS2DH12_TEMP_OUTL, &dummy, 1);
-    return (int8_t)temp;
+int16_t  lis2dh12::get_temp() {
+    uint8_t temph;
+    uint8_t templ;
+    read_reg(LIS2DH12_TEMP_OUTH, &temph, 1);
+    read_reg(LIS2DH12_TEMP_OUTL, &templ, 1);
+    int16_t accel = (templ | (int16_t) temph << 8);
+    return accel;
 }
 
 void  lis2dh12::config_for_wake_on_motion(uint8_t motion_threshold) {
@@ -94,4 +95,31 @@ uint8_t lis2dh12::read_status(void) {
   read_reg(LIS2DH12_STATUS, &status_byte, 1);
   read_reg(LIS2DH12_INT1_SRC, &int1_src, 1);
   return status_byte;
+}
+
+int16_t lis2dh12::get_X(void) {
+    uint8_t h;
+    uint8_t l;
+    read_reg(LIS2DH12_X_OUTH, &h, 1);
+    read_reg(LIS2DH12_X_OUTL, &l, 1);
+    int16_t accel = (l | (int16_t) h << 8);
+    return accel;
+}
+
+int16_t lis2dh12::get_Y(void) {
+    uint8_t h;
+    uint8_t l;
+    read_reg(LIS2DH12_Y_OUTH, &h, 1);
+    read_reg(LIS2DH12_Y_OUTL, &l, 1);
+    int16_t accel = (l | (int16_t) h << 8);
+    return accel;
+}
+
+int16_t lis2dh12::get_Z(void) {
+    uint8_t h;
+    uint8_t l;
+    read_reg(LIS2DH12_Z_OUTH, &h, 1);
+    read_reg(LIS2DH12_Z_OUTL, &l, 1);
+    int16_t accel = (l | (int16_t) h << 8);
+    return accel;
 }
