@@ -707,6 +707,21 @@ void loop() {
             }
             sendState = ReadyToSend;
             Serial.println();
+          } else {
+            //If there is data in the cloud Queue we should append it to the dequeue
+            if(CloudQueue.size() > 0) {
+              Serial.printlnf("Send backoff currently set to %d seconds",send_backoff_time/1000);
+              Serial.println("Moving CloudQueue to Dequeue until send backoff expires")
+              if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
+                //should handle this error
+                Serial.println("Failed to append to dequeue");
+                logSuccess = false;
+              } else {
+                Serial.println("Appended to dequeue successfully");
+                logSuccess = true;
+                CloudQueue.pop();
+              }
+            }
           }
           state = CollectPeriodicInformation;
         break;
