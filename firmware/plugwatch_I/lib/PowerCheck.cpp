@@ -207,16 +207,24 @@ float PowerCheck::getVoltage() {
     int m[3];
     bool ready = false;
     int startMillis = millis();
+    
+    bool l_high = true;
+
     while(mcount < 3 && millis() - startMillis < 1000) {
         int L = analogRead(AC_L_LV_OUT);
-	if(L > L_avg && ready) {
-	    m[mcount] = micros();
-	    mcount++;
-	    ready = false;
-	} else if (L < L_avg){
-	    ready = true; 
+        int N = analogRead(AC_L_LV_OUT);
+	if(L >= N) {
+	    if(l_high == false) {
+		//set l_high to true
+		l_high = true;
+		m[mcount] = micros();
+		mcount++;
+	    }
+	} else {
+	    l_high = false;
 	}
     }
+
     if(millis() - startMillis >= 1000) {
 	periodMicros = 1;
     } else {
