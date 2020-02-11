@@ -18,7 +18,7 @@ install:
 jobs:
   include:
   - env: BUILD_PATH=firmware/plugwatch_F/firmware
-  - env: BUILD_PATH=firmware/plugwatch_I/firmware
+  - env: BUILD_PATH=firmware/plugwatch_I/firmware/particle
 script:
 - ./.particle-cli-login.expect "$particle_email" "$particle_password" "$(which particle)"
 - particle compile electron ${BUILD_PATH} --target 0.7.0 --saveTo ${BUILD_PATH}/target.bin
@@ -32,6 +32,6 @@ deploy:
   provider: releases
   api_key:
     secure: vfzXMO5+BeqxTpfc8oZez5Vqll/oXbHFBksmk1yYjsA41w/u2BM3YK+IKjsOFnTxjuwpIYNl/jagj5I6E23tF44htwiO6mmMmBwmjDDGpNf/c8RR2GnDbnAbE5yeHiv4fa/et6FdyVAHpBZdK78/XcfEM87oWXLxH6o87Db6lGAiAGxjbGcO4/t3DBKlYYaICZ31QKiGsPFGEzFGhzB9J6LC9HGUJqbVfHH5TXI5cJflxJOelrEI4DtX//Kcf4YPa2Oxou5G6gCLuw+38HLPxOSkWtzo2rygGpfXANx094ycE33JYQBZNwyXRmZOtj42VTCBGtJER/fq/xVi4+pJT5oytVfdqGecJd3zVM2N7W+sCopyD2jw8KtrxRSNG2HGtUb4IBx9on1uwePvlueE9fUoLJ7pZm07VDyzOam0rtgyy7R7eTkMIo6jo81HBRyvqA0WbXYrbEBZdZ6M5f+3V/C/finGi4ejMWk+Q8QTdGVEgcXjhk5sLvOFusOMzqUsEMBd7kZKdYyQhs5iWICdOtFZdapeX3WaLutEQeE56vAkV7+d5DViDOrsAPG3kuNAlw83follIHcFZwBZFrfW1NYCyMBz2Hy+Dv8Tul/uq/Zl5rrdXThv0Ow6U8+AtAH5XViH17fY9oXQ358bJ0BFbtwvts3OwAxFbPlxUTCXSQ0=
-  file: "${BUILD_PATH}/target.bin"
+  file: ${BUILD_PATH}/target.bin
   on:
     repo: nline/powerwatch
