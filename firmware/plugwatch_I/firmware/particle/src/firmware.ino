@@ -40,8 +40,8 @@ int product_id = 10804;
 PRODUCT_ID(10804);
 #endif
 
-int version_int = 203; 
-PRODUCT_VERSION(203);
+int version_int = 204; 
+PRODUCT_VERSION(204);
 
 SYSTEM_THREAD(ENABLED);
 STARTUP(System.enableFeature(FEATURE_RESET_INFO));
@@ -148,9 +148,10 @@ String serializeParticleMessage(ParticleMessage m) {
 
 ParticleMessage deserializeParticleMessage(String m) {
   int index = m.indexOf(";");
+  int second_index = m.indexOf(";",index + 1);
   ParticleMessage p;
 
-  if(index == -1) {
+  if(index == -1 || second_index == -1 || second_index - index != 5) {
     p.data = "";
     p.topic = "";
     p.dataCRC = "";
@@ -164,6 +165,8 @@ ParticleMessage deserializeParticleMessage(String m) {
 }
 
 String successHash = "";
+bool newSuccessResponse = false;
+bool newSuccessResponseProcessed = false;
 void responseHandler(const char *event, const char *data) {
   Serial.println("Hook Success Response");
   String response(data);
@@ -173,6 +176,8 @@ void responseHandler(const char *event, const char *data) {
     if(index > 4 ) {
       successHash = s.substring(index-4,index);  
       Serial.printlnf("Got success response with hash " + successHash);
+      newSuccessResponse = true;
+      newSuccessResponseProcessed = false;
     } else {
       Serial.printlnf("Got success response with malformed event: %s", event);
     }
@@ -602,7 +607,7 @@ void loop() {
     case SendData: {
       static uint32_t last_send_time;
       static uint32_t send_backoff_time = 5000;
-      static String last_sent_from = "CloudQueue";
+      static String last_sent_from = "";
       switch(sendState) {
         case ReadyToSend:
           SD.PowerOn();
@@ -610,7 +615,6 @@ void loop() {
             if(Particle.connected()) {
                 last_send_time = millis();
                 sendState = SendPaused;
-                last_sent_from = "CloudQueue";
                 //generate the topic as a unique hash of the data
                 if(!Particle.publish(CloudQueue.front().topic + "/" + CloudQueue.front().dataCRC,CloudQueue.front().data, PRIVATE)) {
                   //should handle this error
@@ -624,8 +628,10 @@ void loop() {
                     CloudQueue.pop();
                   }
                 } else {
+                  last_sent_from = "CloudQueue";
                   Serial.println("Sent message with CRC " + CloudQueue.front().dataCRC + " to particle cloud - waiting on webhook response");
                   sendSuccess = true;
+                  newSuccessResponse = false;
                   //CloudQueue.pop();
                 }
             } else {
@@ -640,19 +646,25 @@ void loop() {
               }
             }
           } else if(DataDequeue.getFileSize() > 0) {
+            //Serial.printlnf("DataDequeue file size: %d", DataDequeue.getFileSize());
             if(Particle.connected()) {
               ParticleMessage m = deserializeParticleMessage(DataDequeue.getLastLine());
               last_send_time = millis();
               sendState = SendPaused;
-              last_sent_from = "DataDequeue";
-              if(!Particle.publish(m.topic + "/" + m.dataCRC, m.data, PRIVATE)) {
+              if(m.topic == "") {
+                //This is an ill formatted message in the datadequeue(possible from an old version. Remove it
+                Serial.println("Removing bad message from data dequeue");
+                DataDequeue.removeLastLine();
+              } else if(!Particle.publish(m.topic + "/" + m.dataCRC, m.data, PRIVATE)) {
                 //should handle this error
                 Serial.println("Failed to send from dequeue");
                 sendSuccess = false;
               } else {
+                last_sent_from = "DataDequeue";
                 Serial.println("Sent message from dequeue with CRC " + m.dataCRC + " to particle cloud - waiting on webhook response");
                 //DataDequeue.removeLastLine();
                 sendSuccess = true;
+                newSuccessResponse = false;
               }
             }
           } else if(DataDequeue.getFileSize() == -1) {
@@ -662,24 +674,28 @@ void loop() {
           state = CollectPeriodicInformation;
           break;
         case SendPaused:
-          //Only send every 5s
-          if(millis() - last_send_time > send_backoff_time) {
-            /*check to see if the message made it to the cloud*/
+          if(newSuccessResponse == true && newSuccessResponseProcessed == false) {
+            
+            // clear the new response
+            newSuccessResponseProcessed = true;
+
+            // process the response
             if(last_sent_from == "CloudQueue") {
-              if(successHash == CloudQueue.front().dataCRC) {
+              if(successHash == CloudQueue.front().dataCRC && successHash != "") {
                 //great it succeeded
                 Serial.println("Webhook success CRC " + successHash + " matched - popping from queue");
-
                 CloudQueue.pop();
-
                 send_backoff_time = 5000;
+                Serial.println("Send backoff time reset");
               } else {
                 //it did not succeeded - put it on the dequeue
                 Serial.println("Webhook success hash " + successHash + " did not match last sent CRC " + CloudQueue.front().dataCRC + ". Moving to data to dequeue");
 
-                if(send_backoff_time < 1800000) {
+                if(send_backoff_time < 600000) {
                   send_backoff_time = send_backoff_time * 2;
                 }
+
+                Serial.printlnf("Send backoff time now %d", send_backoff_time/1000);
 
                 if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
                   //should handle this error
@@ -689,40 +705,68 @@ void loop() {
                   CloudQueue.pop();
                 }
               }
-            } else {
+            } else if (last_sent_from == "DataDequeue") {
               ParticleMessage m = deserializeParticleMessage(DataDequeue.getLastLine());
-              if(successHash == m.dataCRC) {
+              if(successHash == m.dataCRC && successHash != "") {
                 //great it succeeded
                 Serial.println("Webhook success hash " + successHash + " matched - removing from dequeue");
                 DataDequeue.removeLastLine();
                 send_backoff_time = 5000;
+                Serial.println("Send backoff time reset");
               } else {
                 //it did not succeeded - just leave it in the dequeue
                 Serial.println("Webhook success hash " + successHash + " did not match last sent CRC " + m.dataCRC + ". Leaving on Dequeue");
 
-                if(send_backoff_time < 1800000) {
+                if(send_backoff_time < 600000) {
                   send_backoff_time = send_backoff_time * 2;
                 }
+
+                Serial.printlnf("Send backoff time now %d", send_backoff_time/1000);
+              }
+            } else {
+              //Maybe we haven't sent anything yet - just leave it
+            }
+          } 
+
+          if(millis() - last_send_time > send_backoff_time) {
+            if(newSuccessResponse && newSuccessResponseProcessed) {
+              //We already cleared the messages - just transition to ready to send
+            } else {
+              //we didn't get and process success response
+              if(last_sent_from == "CloudQueue") {
+                  //We didn't receive a response in time - put it in the dequeue
+                  Serial.println("Did not receive webhook response in time. Moving to data to dequeue");
+
+                  if(send_backoff_time < 600000) {
+                    send_backoff_time = send_backoff_time * 2;
+                  }
+                  Serial.printlnf("Send backoff time now %d", send_backoff_time/1000);
+
+                  if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
+                    //should handle this error
+                    Serial.println("Failed to append to dequeue");
+                  } else {
+                    Serial.println("Appended to dequeue successfully");
+                    CloudQueue.pop();
+                  }
+              } else if (last_sent_from == "DataDequeue") {
+                  //it did not succeeded - just leave it in the dequeue
+                  Serial.println("Did not receive webhook response in time. Leaving data on dequeue");
+
+                  if(send_backoff_time < 600000) {
+                    send_backoff_time = send_backoff_time * 2;
+                  }
+
+                  Serial.printlnf("Send backoff time now %d", send_backoff_time/1000);
+              } else {
+                //Maybe we haven't sent anything yet - just leave it
               }
             }
+            
             sendState = ReadyToSend;
             Serial.println();
-          } else {
-            //If there is data in the cloud Queue we should append it to the dequeue
-            if(CloudQueue.size() > 0) {
-              Serial.printlnf("Send backoff currently set to %d seconds",send_backoff_time/1000);
-              Serial.println("Moving CloudQueue to Dequeue until send backoff expires");
-              if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
-                //should handle this error
-                Serial.println("Failed to append to dequeue");
-                logSuccess = false;
-              } else {
-                Serial.println("Appended to dequeue successfully");
-                logSuccess = true;
-                CloudQueue.pop();
-              }
-            }
           }
+
           state = CollectPeriodicInformation;
         break;
       }
