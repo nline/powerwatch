@@ -22,7 +22,43 @@ jobs:
         - BUILD_PATH=firmware/plugwatch_F/firmware
         - MCU=PARTICLE
         - HARDWARE_VERSION=F
-        - PRODUCT=8397
+        - PRODUCT=7010
+        - DRAFT=true
+    - env: 
+        - BUILD_PATH=firmware/plugwatch_F/firmware
+        - MCU=PARTICLE
+        - HARDWARE_VERSION=F
+        - PRODUCT=7011
+        - DRAFT=true
+    - env: 
+        - BUILD_PATH=firmware/plugwatch_F/firmware
+        - MCU=PARTICLE
+        - HARDWARE_VERSION=F
+        - PRODUCT=8462
+        - DRAFT=true
+    - env: 
+        - BUILD_PATH=firmware/plugwatch_F/firmware
+        - MCU=PARTICLE
+        - HARDWARE_VERSION=F
+        - PRODUCT=8797
+        - DRAFT=true
+    - env: 
+        - BUILD_PATH=firmware/plugwatch_F/firmware
+        - MCU=PARTICLE
+        - HARDWARE_VERSION=F
+        - PRODUCT=8379
+        - DRAFT=true
+    - env: 
+        - BUILD_PATH=firmware/plugwatch_F/firmware
+        - MCU=PARTICLE
+        - HARDWARE_VERSION=F
+        - PRODUCT=8605
+        - DRAFT=true
+    - env: 
+        - BUILD_PATH=firmware/plugwatch_F/firmware
+        - MCU=PARTICLE
+        - HARDWARE_VERSION=F
+        - PRODUCT=9393
         - DRAFT=true
     - stage: final #set draft to false in the last one so that we publish all the artifacts
       env: 
