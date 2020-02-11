@@ -18,17 +18,19 @@ install:
 jobs:
   include:
     - stage: build
-      env: BUILD_PATH=firmware/plugwatch_F/firmware
-      env: MCU=PARTICLE
-      env: HARDWARE_VERSION=F
-      env: PRODUCT=8397
-      env: DRAFT=true
+      env: 
+        - BUILD_PATH=firmware/plugwatch_F/firmware
+        - MCU=PARTICLE
+        - HARDWARE_VERSION=F
+        - PRODUCT=8397
+        - DRAFT=true
     - stage: final #set draft to false in the last one so that we publish all the artifacts
-      env: BUILD_PATH=firmware/plugwatch_I/firmware/particle
-      env: MCU=PARTICLE
-      env: HARDWARE_VERSION=I
-      env: PRODUCT=10804
-      env: DRAFT=false
+      env: 
+        - BUILD_PATH=firmware/plugwatch_I/firmware/particle
+        - MCU=PARTICLE
+        - HARDWARE_VERSION=I
+        - PRODUCT=10804
+        - DRAFT=false
 
 script:
 - ./.particle-cli-login.expect "$particle_email" "$particle_password" "$(which particle)"
