@@ -212,7 +212,7 @@ float PowerCheck::getVoltage() {
 
     while(mcount < 3 && millis() - startMillis < 1000) {
         int L = analogRead(AC_L_LV_OUT);
-        int N = analogRead(AC_L_LV_OUT);
+        int N = analogRead(AC_N_LV_OUT);
 	if(L >= N) {
 	    if(l_high == false) {
 		//set l_high to true
