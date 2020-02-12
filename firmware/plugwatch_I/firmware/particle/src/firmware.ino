@@ -40,8 +40,8 @@ int product_id = 10804;
 PRODUCT_ID(10804);
 #endif
 
-int version_int = 207; 
-PRODUCT_VERSION(207);
+int version_int = 208; 
+PRODUCT_VERSION(208);
 
 SYSTEM_THREAD(ENABLED);
 STARTUP(System.enableFeature(FEATURE_RESET_INFO));
@@ -390,7 +390,7 @@ void loop() {
           //  4) The particle woke us and we should just tickle the watchdog and go back to sleep
           //        - This would be true if none of the above are true.
 
-          if(powercheck.getHasPower()) {
+          if(/*powercheck.getHasPower()*/true) {
             //We should just be awake
             state = Sleep;
             sleepState = PrepareForWake;
