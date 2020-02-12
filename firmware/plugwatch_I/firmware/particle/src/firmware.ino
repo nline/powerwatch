@@ -252,7 +252,8 @@ void setup() {
   Particle.function("hard_reset", hard_reset);
   Particle.function("soft_reset", soft_reset_helper);
   Particle.subscribe(System.deviceID() + "/hook-response", responseHandler, MY_DEVICES);
-  Particle.subscribe(System.deviceID() + "/hook-error", errorHandler, MY_DEVICES);
+  //We aren't currently using the hook error response
+  //Particle.subscribe(System.deviceID() + "/hook-error", errorHandler, MY_DEVICES);
 }
 
 //This structure is what all of the drivers will return. It will
