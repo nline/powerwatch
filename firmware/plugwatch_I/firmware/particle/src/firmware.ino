@@ -40,8 +40,8 @@ int product_id = 10804;
 PRODUCT_ID(10804);
 #endif
 
-int version_int = 206; 
-PRODUCT_VERSION(206);
+int version_int = 207; 
+PRODUCT_VERSION(207);
 
 SYSTEM_THREAD(ENABLED);
 STARTUP(System.enableFeature(FEATURE_RESET_INFO));
