@@ -345,7 +345,7 @@ bool service = true;
 uint32_t power_off_millis;
 
 //4 minutes
-const uint32_t  COLLECTION_INTERVAL_SECONDS = 4 * 60;
+const uint32_t  COLLECTION_INTERVAL_SECONDS = 2 * 60;
 
 //four hours
 const uint32_t  SLEEP_COLLECTION_INTERVAL_SECONDS = 4 * 60 * 60;
