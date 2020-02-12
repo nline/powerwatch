@@ -858,7 +858,7 @@ void loop() {
     }
 
     case ServiceLED: {
-      static uint8_t current_led_brightness = 16;
+      static uint8_t current_led_brightness = 6;
       static bool current_led_state = true;
       static uint32_t last_switch_time = 0;
       switch(ledFlashingState) {
@@ -872,7 +872,7 @@ void loop() {
               last_switch_time = millis();
               current_led_state = false;
             } else {
-              statusLED.setBrightness(4);
+              statusLED.setBrightness(2);
               statusLED.setColor(ledColorState);
               last_switch_time = millis();
               current_led_state = true;
@@ -880,7 +880,7 @@ void loop() {
           }
         break;
         case Breathing:
-          if(millis() - last_switch_time > 75 && service) {
+          if(millis() - last_switch_time > 100 && service) {
             last_switch_time = millis();
             if(current_led_state) {
               current_led_brightness--;
@@ -893,13 +893,13 @@ void loop() {
               current_led_brightness++;
               statusLED.setBrightness(current_led_brightness);
               statusLED.setColor(ledColorState);
-              if(current_led_brightness >= 14) {
+              if(current_led_brightness >= 6) {
                 current_led_state = true;
-                current_led_brightness = 14;
+                current_led_brightness = 6;
               }
             }
           } else if (!service) {
-              statusLED.setBrightness(4);
+              statusLED.setBrightness(2);
               statusLED.setColor(ledColorState);
           }
         break;
