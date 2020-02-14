@@ -8,6 +8,8 @@ import argparse
 import json
 import yaml
 import psycopg2
+import math
+from datetime import datetime
 
 config_file = open('test-config.json','r')
 config = yaml.safe_load(config_file)
@@ -74,7 +76,7 @@ if __name__ == '__main__':
         #update the postgres devices table
         #check to see if the device already exists
         cursor.execute("SELECT time, core_id, is_powered, last_unplug_millis, last_plug_millis, sd_present, sd_log_size," + 
-                        "grid_voltage, grid_frequency, shield_id, state_of_charge, cell_voltage, die_temperature  from powerwatch where core_id = %s AND time < NOW() AND time > NOW() - INTERVAL '12 hours' ORDER BY time ASC",(device_id,))
+                        "grid_voltage, grid_frequency, shield_id, state_of_charge, cell_voltage, die_temperature, x_acceleration, y_acceleration, z_acceleration, dequeue_size  from powerwatch where core_id = %s AND time < NOW() AND time > NOW() - INTERVAL '12 hours' ORDER BY time ASC",(device_id,))
         result = cursor.fetchall()
 
         print()
@@ -101,15 +103,18 @@ if __name__ == '__main__':
             print("Cell Status: {}{}{}".format(bg.li_red,sim['deviceAttributes'][0]['deviceStatus'],bg.rs))
 
         print()
-        print("Data returned in last 12 hours:")
-        print("###############################")
 
         if len(result) > 350:
-            print("Packets received: {}{}/360{} expected".format(bg.li_green,len(result),bg.rs))
+            print("Packets received last 12h: {}{}/360{} expected".format(bg.li_green,len(result),bg.rs))
         else:
-            print("Packets received: {}{}/360{} expected".format(bg.li_red,len(result),bg.rs))
-        print()
+            print("Packets received last 12h: {}{}/360{} expected".format(bg.li_red,len(result),bg.rs))
 
+        dequeue_size = int(result[-1][16]/170)
+        if dequeue_size + len(result) > 350:
+            print("Current dequeue size: {}{}/{}{} expected".format(bg.li_green,dequeue_size,360-len(result),bg.rs))
+        else:
+            print("Current dequeue size: {}{}/{}{} expected".format(bg.li_red,dequeue_size,360-len(result),bg.rs))
+        print()
        
         sd_present = True
         for r in result:
@@ -192,6 +197,20 @@ if __name__ == '__main__':
             print("{}Accelerometer Temp{} \taverage: {:.2f} \tmin: {:.2f} \tmax: {:.2f}".format(bg.li_green,bg.rs,avg_dt/len(result), minimum_dt, maximum_dt))
         else:
             print("{}Accelerometer Temp{} \taverage: {:.2f} \tmin: {:.2f} \tmax: {:.2f}".format(bg.li_red,bg.rs,avg_dt/len(result), minimum_dt, maximum_dt))
+
+        x = result[-1][13]
+        y = result[-1][14]
+        z = result[-1][15]
+        pitch = (math.atan2(-1*x,math.sqrt(y**2 + z**2)) * 180/math.pi)
+        sign = 1
+        if z <= 0:
+            sign = -1
+        roll = (math.atan2(y, sign * math.sqrt(z**2 + 0.001*x**2)) * 180/math.pi) 
+
+        if(pitch > -5 and pitch < 5 and roll < -5 and roll > -35):
+            print("{}Last accel orientation{}\tpitch: {:.2f}\troll: {:.2f}".format(bg.li_green,bg.rs,pitch,roll))
+        else:
+            print("{}Last accel orientation{}\tpitch: {:.2f}\troll: {:.2f}".format(bg.li_red,bg.rs,pitch,roll))
 
         print()
         if(avg_soc/len(result) < 100 and avg_soc/len(result) > 50 and avg_cv/len(result) > 3.7 and avg_cv/len(result) < 4.15):
