@@ -40,8 +40,8 @@ int product_id = 10804;
 PRODUCT_ID(10804);
 #endif
 
-int version_int = 208; 
-PRODUCT_VERSION(208);
+int version_int = 209; 
+PRODUCT_VERSION(209);
 
 SYSTEM_THREAD(ENABLED);
 STARTUP(System.enableFeature(FEATURE_RESET_INFO));
@@ -402,7 +402,7 @@ void loop() {
           } else {
             //We just woke up to tickle the watchdog and sleep again
             state = Sleep;
-            sleepState = PrepareForSleep;
+            //sleepState = PrepareForSleep;
           }
         break;
         case PrepareForWake:
@@ -512,7 +512,7 @@ void loop() {
 
           //If for some reason this fails try again?
           state = Sleep;
-          sleepState = PrepareForSleep;
+          //sleepState = PrepareForSleep;
         break;
       }
     break;
@@ -679,6 +679,8 @@ void loop() {
         case SendPaused:
           if(newSuccessResponse == true && newSuccessResponseProcessed == false) {
             
+            Serial.println("Processing success response");
+
             // clear the new response
             newSuccessResponseProcessed = true;
 
@@ -700,12 +702,19 @@ void loop() {
 
                 Serial.printlnf("Send backoff time now %d", send_backoff_time/1000);
 
-                if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
-                  //should handle this error
-                  Serial.println("Failed to append to dequeue");
-                } else {
-                  Serial.println("Appended to dequeue successfully");
-                  CloudQueue.pop();
+                Serial.println("Clearing cloud queue");
+                while(CloudQueue.size() != 0) {
+                  if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
+                    //should handle this error
+                    Serial.println("Failed to append to dequeue");
+
+                    //break from the loop and leave them on the Cloud Queue
+                    //We don't want to loop forever
+                    break;
+                  } else {
+                    Serial.println("Appended to dequeue successfully");
+                    CloudQueue.pop();
+                  }
                 }
               }
             } else if (last_sent_from == "DataDequeue") {
@@ -745,12 +754,20 @@ void loop() {
                   }
                   Serial.printlnf("Send backoff time now %d", send_backoff_time/1000);
 
-                  if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
-                    //should handle this error
-                    Serial.println("Failed to append to dequeue");
-                  } else {
-                    Serial.println("Appended to dequeue successfully");
-                    CloudQueue.pop();
+                  //In a loop empty the cloud Queue to the DataDequeue
+                  while(CloudQueue.size() != 0) {
+                    if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
+                      //should handle this error
+                      Serial.println("Failed to append to dequeue");
+
+                      //break from the loop and leave them on the Cloud Queue
+                      //We don't want to loop forever
+                      break;
+
+                    } else {
+                      Serial.println("Appended to dequeue successfully");
+                      CloudQueue.pop();
+                    }
                   }
               } else if (last_sent_from == "DataDequeue") {
                   //it did not succeeded - just leave it in the dequeue
@@ -797,7 +814,7 @@ void loop() {
           break;
         }
         case CollectResults: {
-          Serial.println("Colleting");
+          Serial.println("Collecting");
           strncpy(sensingResults.mpuResult,imu.read().c_str(), RESULT_LEN);
           strncpy(sensingResults.gpsResult,gps.read().c_str(), RESULT_LEN);
           strncpy(sensingResults.sdStatusResult,SD.getResult().c_str(), RESULT_LEN);
@@ -833,8 +850,10 @@ void loop() {
       //we are not connecting to the cloud
       if(cellularState == ParticleConnected && sendSuccess && logSuccess) {
         service = true;
+      } else if (service) {
+        Serial.printlnf("Not servicing watchdog. SendSuccess: %d, LogSuccess: %d", sendSuccess, logSuccess);
+        service = false;
       } else {
-        //Serial.printlnf("Not servicing watchdog. SendSuccess: %d, LogSuccess: %d", sendSuccess, logSuccess);
         service = false;
       }
 
@@ -851,7 +870,7 @@ void loop() {
           if(millis() - lastWatchdog > 1000 && service) {
             lastWatchdog = millis();
             watchdogState = WatchdogHigh;
-          }
+          } 
         break;
       }
       state = ServiceLED;
