@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 
 from sty import fg, bg, ef, rs
 import os
@@ -9,11 +9,9 @@ import json
 import yaml
 import psycopg2
 import math
-from datetime import datetime
 
 config_file = open('test-config.json','r')
 config = yaml.safe_load(config_file)
-
 
 def print_intro(config):
     print()
@@ -38,18 +36,20 @@ if __name__ == '__main__':
         print("Install particle CLI and login with 'particle login' to generate a key file. Exiting.")
         sys.exit(1)
 
-    print_intro(config)
 
-    state = "WAIT_FOR_ID"
     while True:
+        print_intro(config)
         device_id = input("Enter the device ID to test: ").strip()
+        if device_id.find(':') != -1:
+            device_id = device_id.split(':')[1]
+
+        print(device_id)
 
         r = requests.get("https://api.particle.io/v1/devices/" + device_id +"?access_token=" + particle_key)
         resp = json.loads(r.text)
-        if 'ok' in resp:
-            if(resp['ok'] is False):
-                print('Getting devices failed: ' + resp['error'])
-                continue
+        if 'error' in resp:
+            print("{}Error getting device information - maybe it hasn't connected to the cloud?{}".format(bg.li_red,bg.rs))
+            continue
 
         r = requests.get("https://api.particle.io/v1/products/" + str(resp['product_id']) + "/devices?access_token=" + particle_key + '&perPage=10000&sortAttr=firmwareVersion&sortDir=desc')
         devices = json.loads(r.text)
@@ -85,7 +85,7 @@ if __name__ == '__main__':
         else:
             print("Product ID: {}{}{}".format(bg.li_red,resp['product_id'],bg.rs))
 
-        if final_device['firmware_version'] == 208:
+        if final_device['firmware_version'] == 209:
             print("Firmware: {}{}{}".format(bg.li_green,final_device['firmware_version'],bg.rs))
         else:
             print("Firmware: {}{}{}".format(bg.li_red,final_device['firmware_version'],bg.rs))
@@ -104,10 +104,18 @@ if __name__ == '__main__':
 
         print()
 
+        if len(result) == 0 or len(result) == 1:
+            print("{}No recent packets{}".format(bg.li_red,bg.rs))
+            continue
+
         if len(result) > 350:
             print("Packets received last 12h: {}{}/360{} expected".format(bg.li_green,len(result),bg.rs))
         else:
             print("Packets received last 12h: {}{}/360{} expected".format(bg.li_red,len(result),bg.rs))
+       
+        if result[-1][16] is None:
+            print("{}Error reading dequeque size. No recent packets{}".format(bg.li_red,bg.rs))
+            continue
 
         dequeue_size = int(result[-1][16]/170)
         if dequeue_size + len(result) > 350:
@@ -223,15 +231,17 @@ if __name__ == '__main__':
         print()
         print("Powered: " + str(powered) + "/" + str(len(result)) + " packets")
 
-        if(avg_v/powered/1.414 < 250 and avg_v/powered/1.414 > 200 and maximum_v/1.414 < 260 and minimum_v/1.414 >180):
-            print("{}Voltage{} \taverage: {:.2f} \tmin: {:.2f} \tmax: {:.2f}".format(bg.li_green,bg.rs,avg_v/powered/1.414, minimum_v/1.414, maximum_v/1.414))
+        if(powered == 0):
+            print("{}Insufficient messages in powered state to check voltage sensing circuit{}".format(bg.li_red,bg.rs))
         else:
-            print("{}Voltage{} \taverage: {:.2f} \tmin: {:.2f} \tmax: {:.2f}".format(bg.li_red,bg.rs,avg_v/powered/1.414, minimum_v/1.414, maximum_v/1.414))
+            if(avg_v/powered/1.414 < 250 and avg_v/powered/1.414 > 200 and maximum_v/1.414 < 260 and minimum_v/1.414 >180):
+                print("{}Voltage{} \taverage: {:.2f} \tmin: {:.2f} \tmax: {:.2f}".format(bg.li_green,bg.rs,avg_v/powered/1.414, minimum_v/1.414, maximum_v/1.414))
+            else:
+                print("{}Voltage{} \taverage: {:.2f} \tmin: {:.2f} \tmax: {:.2f}".format(bg.li_red,bg.rs,avg_v/powered/1.414, minimum_v/1.414, maximum_v/1.414))
 
-        if(avg_f/powered > 49 and avg_f/powered < 51 and maximum_f < 55 and minimum_f > 45):
-            print("{}Frequency{} \taverage: {:.2f} \t\tmin: {:.2f} \tmax: {:.2f}".format(bg.li_green,bg.rs,avg_f/powered, minimum_f, maximum_f))
-        else:
-            print("{}Frequency{} \taverage: {:.2f} \t\tmin: {:.2f} \tmax: {:.2f}".format(bg.li_red,bg.rs,avg_f/powered, minimum_f, maximum_f))
+            if(avg_f/powered > 49 and avg_f/powered < 51 and maximum_f < 55 and minimum_f > 45):
+                print("{}Frequency{} \taverage: {:.2f} \t\tmin: {:.2f} \tmax: {:.2f}".format(bg.li_green,bg.rs,avg_f/powered, minimum_f, maximum_f))
+            else:
+                print("{}Frequency{} \taverage: {:.2f} \t\tmin: {:.2f} \tmax: {:.2f}".format(bg.li_red,bg.rs,avg_f/powered, minimum_f, maximum_f))
 
-        print_intro(config)
 
