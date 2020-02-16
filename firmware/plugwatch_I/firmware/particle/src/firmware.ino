@@ -40,8 +40,8 @@ int product_id = 10804;
 PRODUCT_ID(10804);
 #endif
 
-int version_int = 209; 
-PRODUCT_VERSION(209);
+int version_int = 210; 
+PRODUCT_VERSION(210);
 
 SYSTEM_THREAD(ENABLED);
 STARTUP(System.enableFeature(FEATURE_RESET_INFO));
@@ -345,8 +345,11 @@ bool service = true;
 //This sets a timer that keeps us from sleeping for a set period of time
 uint32_t power_off_millis;
 
-//4 minutes
+//2 minutes
 const uint32_t  COLLECTION_INTERVAL_SECONDS = 2 * 60;
+
+//2 minutes
+const uint32_t SEND_BACKOFF_MAX_MS = 2 * 60 * 1000;
 
 //four hours
 const uint32_t  SLEEP_COLLECTION_INTERVAL_SECONDS = 4 * 60 * 60;
@@ -633,7 +636,6 @@ void loop() {
                 } else {
                   last_sent_from = "CloudQueue";
                   Serial.println("Sent message with CRC " + CloudQueue.front().dataCRC + " to particle cloud - waiting on webhook response");
-                  sendSuccess = true;
                   newSuccessResponse = false;
                   //CloudQueue.pop();
                 }
@@ -666,7 +668,6 @@ void loop() {
                 last_sent_from = "DataDequeue";
                 Serial.println("Sent message from dequeue with CRC " + m.dataCRC + " to particle cloud - waiting on webhook response");
                 //DataDequeue.removeLastLine();
-                sendSuccess = true;
                 newSuccessResponse = false;
               }
             }
@@ -689,6 +690,7 @@ void loop() {
               if(successHash == CloudQueue.front().dataCRC && successHash != "") {
                 //great it succeeded
                 Serial.println("Webhook success CRC " + successHash + " matched - popping from queue");
+                sendSuccess = true;
                 CloudQueue.pop();
                 send_backoff_time = 5000;
                 Serial.println("Send backoff time reset");
@@ -696,11 +698,15 @@ void loop() {
                 //it did not succeeded - put it on the dequeue
                 Serial.println("Webhook success hash " + successHash + " did not match last sent CRC " + CloudQueue.front().dataCRC + ". Moving to data to dequeue");
 
-                if(send_backoff_time < 600000) {
+                if(send_backoff_time < SEND_BACKOFF_MAX_MS) {
                   send_backoff_time = send_backoff_time * 2;
+                  if(send_backoff_time > SEND_BACKOFF_MAX_MS) {
+                    send_backoff_time = SEND_BACKOFF_MAX_MS; 
+                  }
                 }
-
                 Serial.printlnf("Send backoff time now %d", send_backoff_time/1000);
+
+                sendSuccess = false;
 
                 Serial.println("Clearing cloud queue");
                 while(CloudQueue.size() != 0) {
@@ -723,15 +729,21 @@ void loop() {
                 //great it succeeded
                 Serial.println("Webhook success hash " + successHash + " matched - removing from dequeue");
                 DataDequeue.removeLastLine();
+                sendSuccess = true;
                 send_backoff_time = 5000;
                 Serial.println("Send backoff time reset");
               } else {
                 //it did not succeeded - just leave it in the dequeue
                 Serial.println("Webhook success hash " + successHash + " did not match last sent CRC " + m.dataCRC + ". Leaving on Dequeue");
 
-                if(send_backoff_time < 600000) {
+                if(send_backoff_time < SEND_BACKOFF_MAX_MS) {
                   send_backoff_time = send_backoff_time * 2;
+                  if(send_backoff_time > SEND_BACKOFF_MAX_MS) {
+                    send_backoff_time = SEND_BACKOFF_MAX_MS;
+                  }
                 }
+
+                sendSuccess = false;
 
                 Serial.printlnf("Send backoff time now %d", send_backoff_time/1000);
               }
@@ -749,9 +761,15 @@ void loop() {
                   //We didn't receive a response in time - put it in the dequeue
                   Serial.println("Did not receive webhook response in time. Moving to data to dequeue");
 
-                  if(send_backoff_time < 600000) {
+                  if(send_backoff_time < SEND_BACKOFF_MAX_MS) {
                     send_backoff_time = send_backoff_time * 2;
+                    if(send_backoff_time > SEND_BACKOFF_MAX_MS) {
+                      send_backoff_time = SEND_BACKOFF_MAX_MS;
+                    }
                   }
+
+                  sendSuccess = false;
+
                   Serial.printlnf("Send backoff time now %d", send_backoff_time/1000);
 
                   //In a loop empty the cloud Queue to the DataDequeue
@@ -773,9 +791,14 @@ void loop() {
                   //it did not succeeded - just leave it in the dequeue
                   Serial.println("Did not receive webhook response in time. Leaving data on dequeue");
 
-                  if(send_backoff_time < 600000) {
+                  if(send_backoff_time < SEND_BACKOFF_MAX_MS) {
                     send_backoff_time = send_backoff_time * 2;
+                    if(send_backoff_time > SEND_BACKOFF_MAX_MS) {
+                      send_backoff_time = SEND_BACKOFF_MAX_MS;
+                    }
                   }
+                  
+                  sendSuccess = false;
 
                   Serial.printlnf("Send backoff time now %d", send_backoff_time/1000);
               } else {

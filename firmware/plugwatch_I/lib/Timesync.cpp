@@ -99,6 +99,7 @@ void Timesync::update(CellularState cellularState) {
       break;
     }
     case updateRTC:
+        Serial.printlnf("Synced. Setting RTC time to %d",Time.now());
         rtc.setTime(Time.now());
         timesyncState = synced;
     break;
