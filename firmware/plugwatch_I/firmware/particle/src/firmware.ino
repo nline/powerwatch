@@ -40,8 +40,8 @@ int product_id = 10804;
 PRODUCT_ID(10804);
 #endif
 
-int version_int = 210; 
-PRODUCT_VERSION(210);
+int version_int = 211; 
+PRODUCT_VERSION(211);
 
 SYSTEM_THREAD(ENABLED);
 STARTUP(System.enableFeature(FEATURE_RESET_INFO));
@@ -233,9 +233,6 @@ void setup() {
 
   gps.setup();
 
-  //Setup the AC enable pin
-  pinMode(AC_PWR_EN, OUTPUT);
-
   //Run initial timesync
   timeSync.setup();
 
@@ -398,7 +395,7 @@ void loop() {
             state = Sleep;
             sleepState = PrepareForWake;
             Serial.println("Transitioning to PrepareForWake");
-          } else if (last_collection_time/SLEEP_COLLECTION_INTERVAL_SECONDS != rtc.getTime()/SLEEP_COLLECTION_INTERVAL_SECONDS) {
+          } else if (last_collection_time/SLEEP_COLLECTION_INTERVAL_SECONDS != Time.now()/SLEEP_COLLECTION_INTERVAL_SECONDS) {
             //have we rolled over to a new collection interval? truncating division shoul handle the modulus of the interval time.
             state = Sleep;
             sleepState = PrepareForWake;
@@ -415,8 +412,8 @@ void loop() {
           gps.powerOn();
 
           // Turn on the STM and voltage sensing
-          Serial.println("Turning AC sense on");
-          digitalWrite(AC_PWR_EN, HIGH);
+          //Serial.println("Turning AC sense on");
+          //digitalWrite(AC_PWR_EN, HIGH);
 
           // Turn on the SD card
           Serial.println("Turning SD card on");
@@ -483,7 +480,7 @@ void loop() {
           
           //calculate the next time we want to collect data
           // Get the current time
-          uint32_t current_time = rtc.getTime();
+          uint32_t current_time = Time.now();
           // the division truncates this time to the last time we would have collected
           uint32_t collection_number = current_time/SLEEP_COLLECTION_INTERVAL_SECONDS;
           // calculate the next time we should collect
@@ -598,7 +595,6 @@ void loop() {
         if(DataLog.appendAndRotate(serializeParticleMessage(SDQueue.front()), Time.now())) {
           //Error writing data to the SD card - do something with it
           Serial.println("Error writing data to the SD card");
-          logSuccess = false;
         } else {
           logSuccess = true;
           SDQueue.pop();
@@ -625,7 +621,6 @@ void loop() {
                 if(!Particle.publish(CloudQueue.front().topic + "/" + CloudQueue.front().dataCRC,CloudQueue.front().data, PRIVATE)) {
                   //should handle this error
                   Serial.println("Failed to send packet. Appending to dequeue.");
-                  sendSuccess = false;
                   if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
                     //should handle this error
                     Serial.println("Failed to append to dequeue");
@@ -643,7 +638,6 @@ void loop() {
               if(DataDequeue.append(serializeParticleMessage(CloudQueue.front()))) {
                 //should handle this error
                 Serial.println("Failed to append to dequeue");
-                logSuccess = false;
               } else {
                 Serial.println("Appended to dequeue successfully");
                 logSuccess = true;
@@ -663,7 +657,6 @@ void loop() {
               } else if(!Particle.publish(m.topic + "/" + m.dataCRC, m.data, PRIVATE)) {
                 //should handle this error
                 Serial.println("Failed to send from dequeue");
-                sendSuccess = false;
               } else {
                 last_sent_from = "DataDequeue";
                 Serial.println("Sent message from dequeue with CRC " + m.dataCRC + " to particle cloud - waiting on webhook response");
@@ -672,7 +665,6 @@ void loop() {
               }
             }
           } else if(DataDequeue.getFileSize() == -1) {
-            logSuccess = false;
           }
 
           state = CollectPeriodicInformation;
@@ -690,7 +682,6 @@ void loop() {
               if(successHash == CloudQueue.front().dataCRC && successHash != "") {
                 //great it succeeded
                 Serial.println("Webhook success CRC " + successHash + " matched - popping from queue");
-                sendSuccess = true;
                 CloudQueue.pop();
                 send_backoff_time = 5000;
                 Serial.println("Send backoff time reset");
@@ -706,7 +697,6 @@ void loop() {
                 }
                 Serial.printlnf("Send backoff time now %d", send_backoff_time/1000);
 
-                sendSuccess = false;
 
                 Serial.println("Clearing cloud queue");
                 while(CloudQueue.size() != 0) {
@@ -743,7 +733,6 @@ void loop() {
                   }
                 }
 
-                sendSuccess = false;
 
                 Serial.printlnf("Send backoff time now %d", send_backoff_time/1000);
               }
@@ -768,7 +757,6 @@ void loop() {
                     }
                   }
 
-                  sendSuccess = false;
 
                   Serial.printlnf("Send backoff time now %d", send_backoff_time/1000);
 
@@ -798,7 +786,6 @@ void loop() {
                     }
                   }
                   
-                  sendSuccess = false;
 
                   Serial.printlnf("Send backoff time now %d", send_backoff_time/1000);
               } else {
@@ -822,7 +809,7 @@ void loop() {
       switch(collectionState) {
         case WaitForCollection: {
           //Decide if we need to collect
-          uint32_t current_time = rtc.getTime();
+          uint32_t current_time = Time.now();
           uint32_t last_collection_number = last_collection_time/COLLECTION_INTERVAL_SECONDS;
           uint32_t current_collection_number = current_time/COLLECTION_INTERVAL_SECONDS;
           //Serial.printlnf("Current time: %d, Last collection time: %d",current_time, last_collection_time);
@@ -855,7 +842,7 @@ void loop() {
           m.dataCRC = crcString;
           SDQueue.push(m);
           CloudQueue.push(m);
-          last_collection_time = rtc.getTime();
+          last_collection_time = Time.now();
           collectionState = WaitForCollection;
           break;
         }
@@ -873,12 +860,10 @@ void loop() {
       //we are not connecting to the cloud
       if(cellularState == ParticleConnected && sendSuccess && logSuccess) {
         service = true;
-      } else if (service) {
-        Serial.printlnf("Not servicing watchdog. SendSuccess: %d, LogSuccess: %d", sendSuccess, logSuccess);
-        service = false;
-      } else {
-        service = false;
-      }
+        sendSuccess = false;
+        logSuccess = false;
+        Serial.println("Servicing watchdog now - both variables are true");
+      } 
 
       switch(watchdogState) {
         case WatchdogHigh:
@@ -893,6 +878,7 @@ void loop() {
           if(millis() - lastWatchdog > 1000 && service) {
             lastWatchdog = millis();
             watchdogState = WatchdogHigh;
+            service = false;
           } 
         break;
       }
@@ -923,7 +909,7 @@ void loop() {
           }
         break;
         case Breathing:
-          if(millis() - last_switch_time > 100 && service) {
+          if(millis() - last_switch_time > 100) {
             last_switch_time = millis();
             if(current_led_state) {
               current_led_brightness--;
