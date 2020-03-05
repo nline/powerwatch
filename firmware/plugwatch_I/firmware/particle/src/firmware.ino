@@ -40,8 +40,8 @@ int product_id = 10804;
 PRODUCT_ID(10804);
 #endif
 
-int version_int = 211; 
-PRODUCT_VERSION(211);
+int version_int = 212;
+PRODUCT_VERSION(212);
 
 SYSTEM_THREAD(ENABLED);
 STARTUP(System.enableFeature(FEATURE_RESET_INFO));
@@ -337,7 +337,7 @@ retained uint32_t last_collection_time;
 //They are changed to true and false depending on success or failure of tried events
 bool sendSuccess = true;
 bool logSuccess = true;
-bool service = true;
+bool service = false;
 
 //This sets a timer that keeps us from sleeping for a set period of time
 uint32_t power_off_millis;
@@ -927,9 +927,6 @@ void loop() {
                 current_led_brightness = 6;
               }
             }
-          } else if (!service) {
-              statusLED.setBrightness(2);
-              statusLED.setColor(ledColorState);
           }
         break;
       }
