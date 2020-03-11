@@ -13,6 +13,11 @@ import math
 config_file = open('test-config.json','r')
 config = yaml.safe_load(config_file)
 
+
+#now query the database
+connection = psycopg2.connect(dbname=config['postgresDatabase'], user=config['postgresUser'], host=config['postgresHost'], password=config['postgresPassword'])
+cursor = connection.cursor();
+
 def print_intro(config):
     print()
     print()
@@ -69,26 +74,29 @@ if __name__ == '__main__':
                     })
         sim = json.loads(r.text)
 
-        #now query the database
-        connection = psycopg2.connect(dbname=config['postgresDatabase'], user=config['postgresUser'], host=config['postgresHost'], password=config['postgresPassword'])
-        cursor = connection.cursor();
 
         #update the postgres devices table
         #check to see if the device already exists
-        cursor.execute("SELECT time, core_id, is_powered, last_unplug_millis, last_plug_millis, sd_present, sd_log_size," + 
-                        "grid_voltage, grid_frequency, shield_id, state_of_charge, cell_voltage, die_temperature, x_acceleration, y_acceleration, z_acceleration, dequeue_size  from powerwatch where core_id = %s AND time < NOW() AND time > NOW() - INTERVAL '12 hours' ORDER BY time ASC",(device_id,))
+        cursor.execute("SELECT DISTINCT time, core_id, is_powered, last_unplug_millis, last_plug_millis, sd_present, sd_log_size," + 
+                        "grid_voltage, grid_frequency, shield_id, state_of_charge, cell_voltage, die_temperature, x_acceleration, y_acceleration, z_acceleration, dequeue_size  from powerwatch where core_id = %s AND time < NOW() AND time > NOW() - INTERVAL '2 hours' ORDER BY time ASC",(device_id,))
         result = cursor.fetchall()
 
         print()
-        if resp['product_id'] == 10804:
+        if resp['product_id'] == config['productID']:
             print("Product ID: {}{}{}".format(bg.li_green,resp['product_id'],bg.rs))
         else:
             print("Product ID: {}{}{}".format(bg.li_red,resp['product_id'],bg.rs))
 
-        if final_device['firmware_version'] == 209:
+        if final_device['firmware_version'] == config['firmwareVersion']:
             print("Firmware: {}{}{}".format(bg.li_green,final_device['firmware_version'],bg.rs))
         else:
             print("Firmware: {}{}{}".format(bg.li_red,final_device['firmware_version'],bg.rs))
+
+        if final_device['owner'] == "nklugman@berkeley.edu":
+            print("Owner: {}{}{}".format(bg.li_green,final_device['owner'],bg.rs))
+        else:
+            print("Owner: {}{}{}".format(bg.li_red,final_device['owner'],bg.rs))
+
 
         print("ICCID: " + resp['iccid'])
 
@@ -108,20 +116,20 @@ if __name__ == '__main__':
             print("{}No recent packets{}".format(bg.li_red,bg.rs))
             continue
 
-        if len(result) > 350:
-            print("Packets received last 12h: {}{}/360{} expected".format(bg.li_green,len(result),bg.rs))
+        if len(result) > 50:
+            print("Packets received last 12h: {}{}/60{} expected".format(bg.li_green,len(result),bg.rs))
         else:
-            print("Packets received last 12h: {}{}/360{} expected".format(bg.li_red,len(result),bg.rs))
+            print("Packets received last 12h: {}{}/60{} expected".format(bg.li_red,len(result),bg.rs))
        
         if result[-1][16] is None:
             print("{}Error reading dequeque size. No recent packets{}".format(bg.li_red,bg.rs))
             continue
 
         dequeue_size = int(result[-1][16]/170)
-        if dequeue_size + len(result) > 350:
-            print("Current dequeue size: {}{}/{}{} expected".format(bg.li_green,dequeue_size,360-len(result),bg.rs))
+        if dequeue_size + len(result) > 50:
+            print("Current dequeue size: {}{}/{}{} expected".format(bg.li_green,dequeue_size,60-len(result),bg.rs))
         else:
-            print("Current dequeue size: {}{}/{}{} expected".format(bg.li_red,dequeue_size,360-len(result),bg.rs))
+            print("Current dequeue size: {}{}/{}{} expected".format(bg.li_red,dequeue_size,60-len(result),bg.rs))
         print()
        
         sd_present = True
@@ -234,12 +242,12 @@ if __name__ == '__main__':
         if(powered == 0):
             print("{}Insufficient messages in powered state to check voltage sensing circuit{}".format(bg.li_red,bg.rs))
         else:
-            if(avg_v/powered/1.414 < 250 and avg_v/powered/1.414 > 200 and maximum_v/1.414 < 260 and minimum_v/1.414 >180):
+            if(avg_v/powered/1.414 < config['voltage']+20 and avg_v/powered/1.414 > config['voltage']-20 and maximum_v/1.414 < config['voltage']+40 and minimum_v/1.414 > config['voltage']-40):
                 print("{}Voltage{} \taverage: {:.2f} \tmin: {:.2f} \tmax: {:.2f}".format(bg.li_green,bg.rs,avg_v/powered/1.414, minimum_v/1.414, maximum_v/1.414))
             else:
                 print("{}Voltage{} \taverage: {:.2f} \tmin: {:.2f} \tmax: {:.2f}".format(bg.li_red,bg.rs,avg_v/powered/1.414, minimum_v/1.414, maximum_v/1.414))
 
-            if(avg_f/powered > 49 and avg_f/powered < 51 and maximum_f < 55 and minimum_f > 45):
+            if((avg_f/powered > 49 and avg_f/powered < 51 and maximum_f < 55 and minimum_f > 45) or (avg_f/powered > 59 and avg_f/powered < 61 and maximum_f < 65 and minimum_f > 55)):
                 print("{}Frequency{} \taverage: {:.2f} \t\tmin: {:.2f} \tmax: {:.2f}".format(bg.li_green,bg.rs,avg_f/powered, minimum_f, maximum_f))
             else:
                 print("{}Frequency{} \taverage: {:.2f} \t\tmin: {:.2f} \tmax: {:.2f}".format(bg.li_red,bg.rs,avg_f/powered, minimum_f, maximum_f))
