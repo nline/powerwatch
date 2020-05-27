@@ -50,6 +50,20 @@ if __name__ == '__main__':
 
         print(device_id)
 
+        r = requests.post("https://api.particle.io/v1/devices",
+            data = {'id': device_id, 'access_token':particle_key})
+        resp = json.loads(r.text)
+        if 'ok' in resp:
+            if(resp['ok'] is False):
+                if 'error' in resp:
+                    print('{}Claiming device failed'.format(bg.li_red,bg.rs))
+                elif 'errors' in resp:
+                    print('{}Claiming device failed'.format(bg.li_red,bg.rs))
+            else:
+                pass
+        else:
+            print('{}Claiming device failed. Bad response{}'.format(bg.li_red,bg.rs))
+
         r = requests.get("https://api.particle.io/v1/devices/" + device_id +"?access_token=" + particle_key)
         resp = json.loads(r.text)
         if 'error' in resp:
