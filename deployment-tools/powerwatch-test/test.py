@@ -54,6 +54,9 @@ if __name__ == '__main__':
         resp = json.loads(r.text)
         if 'error' in resp:
             print("{}Error getting device information - maybe it hasn't connected to the cloud?{}".format(bg.li_red,bg.rs))
+            print("{}".format(bg.li_red))
+            print(resp)
+            print("{}".format(bg.rs))
             continue
 
         r = requests.get("https://api.particle.io/v1/products/" + str(resp['product_id']) + "/devices?access_token=" + particle_key + '&perPage=10000&sortAttr=firmwareVersion&sortDir=desc')
