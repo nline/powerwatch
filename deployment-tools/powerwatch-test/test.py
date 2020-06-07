@@ -95,7 +95,7 @@ if __name__ == '__main__':
         #update the postgres devices table
         #check to see if the device already exists
         cursor.execute("SELECT DISTINCT time, core_id, is_powered, last_unplug_millis, last_plug_millis, sd_present, sd_log_size," + 
-                        "grid_voltage, grid_frequency, shield_id, state_of_charge, cell_voltage, die_temperature, x_acceleration, y_acceleration, z_acceleration, dequeue_size  from powerwatch where core_id = %s AND time < NOW() AND time > NOW() - INTERVAL '2 hours' ORDER BY time ASC",(device_id,))
+                        "grid_voltage, grid_frequency, shield_id, state_of_charge, cell_voltage, die_temperature, x_acceleration, y_acceleration, z_acceleration, dequeue_size  from powerwatch where core_id = %s AND time < NOW() AND time > NOW() - INTERVAL '2 hours' AND time_source = 'particle' ORDER BY time ASC",(device_id,))
         result = cursor.fetchall()
 
         print()
