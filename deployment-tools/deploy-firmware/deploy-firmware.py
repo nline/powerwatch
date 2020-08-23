@@ -29,6 +29,7 @@ else:
 #check the file name to see if it is a file or folder
 file_list = []
 for f in args.fname:
+    print("File: {}".format(f))
     if os.path.isfile(f):
         file_list.append(f)
     elif os.path.isdir(f):
