@@ -121,18 +121,11 @@ deploy:
   skip_cleanup: true
   draft: ${DRAFT}
   on:
-    repo: nline/powerwatch
+    branch: master
 
-  #deploy for dev environment
+  #deploy for dev and staging environments automatically
   provider: script
   script: ./deployment-tools/deploy-firmware/deploy-firmware.py -f ${BUILD_PATH}/${MCU}_${HARDWARE_VERSION}_${PRODUCT}.bin -a $PARTICLE_API_KEY -t ${BRANCHTAG}-${TRAVIS_COMMIT::8}
   on:
     all_branches: true
-    condition: $TRAVIS_BRANCH =~ ^(dev-).*$ && $TYPE == "DEV"
-
-  #deploy for staging environment
-  provider: script
-  script: ./deployment-tools/deploy-firmware/deploy-firmware.py -f ${BUILD_PATH}/${MCU}_${HARDWARE_VERSION}_${PRODUCT}.bin -a $PARTICLE_API_KEY -t ${BRANCHTAG}-${TRAVIS_COMMIT::8}
-  on:
-    all_branches: true
-    condition: $TRAVIS_BRANCH == "staging" && $TYPE == "STAGING"
+    condition: (branch =~ ^(dev-).*$ AND env(TYPE) == "DEV") OR (branch == "staging" AND env(TYPE) == "STAGING")
