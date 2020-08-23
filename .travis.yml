@@ -5,6 +5,7 @@ addons:
     packages:
     - expect
     - mercurial
+    - python3-pip
 
 cache:
   directories:
