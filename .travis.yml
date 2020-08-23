@@ -125,6 +125,7 @@ deploy:
 
   #deploy for dev and staging environments automatically
   - provider: script
+    skip_cleanup: true
     script: ./deployment-tools/deploy-firmware/deploy-firmware.py -f ${BUILD_PATH}/${MCU}_${HARDWARE_VERSION}_${PRODUCT}.bin -a $PARTICLE_API_KEY -t ${BRANCHTAG}-${TRAVIS_COMMIT::8}
     on:
       all_branches: true
