@@ -9,19 +9,22 @@ import json
 parser = argparse.ArgumentParser(description = 'Deploy particle firmware')
 parser.add_argument('-f','--fname', type=str, required=True,action='append')
 parser.add_argument('-t','--title', type=str, required=True)
+parser.add_argument('-a','--api', type=str, required=False)
 parser.add_argument('-d','--filter',type=str,required=False)
 
 args = parser.parse_args()
 
-#get the key from the particle file/login
-key_file = open(os.environ['HOME'] + '/.particle/particle.config.json','r')
 particle_key = None
-try:
-    keys = json.loads(key_file.read())
-    particle_key = keys['access_token']
-except:
-    print("Install particle CLI and login with 'particle login' to generate a key file. Exiting.")
-    sys.exit(1)
+if args.api:
+    particle_key = args.api
+else:
+    key_file = open(os.environ['HOME'] + '/.particle/particle.config.json','r')
+    try:
+        keys = json.loads(key_file.read())
+        particle_key = keys['access_token']
+    except:
+        print("Install particle CLI and login with 'particle login' to generate a key file. Exiting.")
+        sys.exit(1)
 
 #check the file name to see if it is a file or folder
 file_list = []

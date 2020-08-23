@@ -4,79 +4,107 @@ addons:
   apt:
     packages:
     - expect
+
 cache:
   directories:
   - node_modules
   - "$HOME/bin"
+
 env:
   global:
   - GITHUB_EMAIL=josh@nline.io
   - GITHUB_USER=adkinsjd
+  - secure: rbIShbH60M5CN9Dvu0Ex8MSAusVdynoc+8ircxayWik5/4BcxY1xxUFViGQGxfiszpAEF8LliHhqKdRbNF326A3NNICpgpw0JtyGAt8EX65rQTJ2kepsE5tBKiSAIQ7dB6szqB0+t1fru55IzGrRJAwE7uAPditaSGK8GjWyokNTwvWmjGZ0C7BKDlorZubjDQCMXwP/1THVqi0BGO89ehEVkKXwCR3JVwIeaWvt/uEBGwgCBvbXNTFK/at2fL6jmc9tbyU9KX8C2tTO6eBKYBW+8KlzVbaHIKDEscWBEoFLR3D3OT+DQ+Y4mmWwGTfByvTe4+1xUwlBD1a117CgBdTnHz8q57uZsnC+Wdqluy4kd1fnEYyXRrMDZk8fytC7yleDl56mkHGHUGtMpPPxalYpUCxkGb8Ywrf72IJeqoXEldI7VipD09H1Ple0WLXy+0V2J7RqA0X1tcLbEdTOX0q1uwkjuxW0r3HOe6u47//bUHW6pjix5rMJZEgRPAc/ZsGK95JvqJDuuZ6XAB4xGbJW6RJhRPG05lgg8bh/Dr9NAdMwDQjyXEfd5wcnEF1SYlxye2tosnWoU4wcjmq+CboLX2anuXLMV+6qQEqzVHyAQfzi4ljYEr1iC1DVNDpDMd3QINt7+k5h5J9cvvtDu403SD20KDt5Anu1aCnEGhs=
+
 install:
 - bash <( curl -sL https://particle.io/install-cli )
 - export PATH="$PATH:$HOME/bin"
+
 jobs:
   include:
-    - stage: build
-      env: 
-        - BUILD_PATH=firmware/plugwatch_F/firmware
-        - MCU=PARTICLE
-        - HARDWARE_VERSION=F
-        - PRODUCT=7010
-        - DRAFT=true
-    - env: 
-        - BUILD_PATH=firmware/plugwatch_F/firmware
-        - MCU=PARTICLE
-        - HARDWARE_VERSION=F
-        - PRODUCT=7011
-        - DRAFT=true
-    - env: 
-        - BUILD_PATH=firmware/plugwatch_F/firmware
-        - MCU=PARTICLE
-        - HARDWARE_VERSION=F
-        - PRODUCT=8462
-        - DRAFT=true
-    - env: 
-        - BUILD_PATH=firmware/plugwatch_F/firmware
-        - MCU=PARTICLE
-        - HARDWARE_VERSION=F
-        - PRODUCT=8797
-        - DRAFT=true
-    - env: 
-        - BUILD_PATH=firmware/plugwatch_F/firmware
-        - MCU=PARTICLE
-        - HARDWARE_VERSION=F
-        - PRODUCT=8379
-        - DRAFT=true
-    - env: 
-        - BUILD_PATH=firmware/plugwatch_F/firmware
-        - MCU=PARTICLE
-        - HARDWARE_VERSION=F
-        - PRODUCT=8605
-        - DRAFT=true
-    - env: 
-        - BUILD_PATH=firmware/plugwatch_F/firmware
-        - MCU=PARTICLE
-        - HARDWARE_VERSION=F
-        - PRODUCT=9393
-        - DRAFT=true
-    - env: 
-        - BUILD_PATH=firmware/plugwatch_I/firmware/particle
-        - MCU=PARTICLE
-        - HARDWARE_VERSION=I
-        - PRODUCT=10935
-        - DRAFT=true
-    - stage: final #set draft to false in the last one so that we publish all the artifacts
-      env: 
-        - BUILD_PATH=firmware/plugwatch_I/firmware/particle
-        - MCU=PARTICLE
-        - HARDWARE_VERSION=I
-        - PRODUCT=10804
-        - DRAFT=false
+  - stage: build
+    env:
+    - BUILD_PATH=firmware/plugwatch_F/firmware
+    - MCU=PARTICLE
+    - HARDWARE_VERSION=F
+    - PRODUCT=7010
+    - TYPE=PROD
+    - DRAFT=true
+  - env:
+    - BUILD_PATH=firmware/plugwatch_F/firmware
+    - MCU=PARTICLE
+    - HARDWARE_VERSION=F
+    - PRODUCT=7011
+    - TYPE=PROD
+    - DRAFT=true
+  - env:
+    - BUILD_PATH=firmware/plugwatch_F/firmware
+    - MCU=PARTICLE
+    - HARDWARE_VERSION=F
+    - PRODUCT=8462
+    - TYPE=PROD
+    - DRAFT=true
+  - env:
+    - BUILD_PATH=firmware/plugwatch_F/firmware
+    - MCU=PARTICLE
+    - HARDWARE_VERSION=F
+    - PRODUCT=8797
+    - TYPE=PROD
+    - DRAFT=true
+  - env:
+    - BUILD_PATH=firmware/plugwatch_F/firmware
+    - MCU=PARTICLE
+    - HARDWARE_VERSION=F
+    - TYPE=PROD
+    - PRODUCT=8379
+    - DRAFT=true
+  - env:
+    - BUILD_PATH=firmware/plugwatch_F/firmware
+    - MCU=PARTICLE
+    - HARDWARE_VERSION=F
+    - TYPE=PROD
+    - PRODUCT=8605
+    - DRAFT=true
+  - env:
+    - BUILD_PATH=firmware/plugwatch_F/firmware
+    - MCU=PARTICLE
+    - HARDWARE_VERSION=F
+    - PRODUCT=9393
+    - TYPE=PROD
+    - DRAFT=true
+  - env:
+    - BUILD_PATH=firmware/plugwatch_I/firmware/particle
+    - MCU=PARTICLE
+    - HARDWARE_VERSION=I
+    - PRODUCT=10935
+    - TYPE=PROD
+    - DRAFT=true
+  - env:
+    - BUILD_PATH=firmware/plugwatch_I/firmware/particle
+    - MCU=PARTICLE
+    - HARDWARE_VERSION=I
+    - PRODUCT=11516
+    - TYPE=STAGING
+    - DRAFT=true
+  - env:
+    - BUILD_PATH=firmware/plugwatch_I/firmware/particle
+    - MCU=PARTICLE
+    - HARDWARE_VERSION=I
+    - PRODUCT=11815
+    - TYPE=DEV
+    - DRAFT=true
+  - stage: final
+    env:
+    - BUILD_PATH=firmware/plugwatch_I/firmware/particle
+    - MCU=PARTICLE
+    - HARDWARE_VERSION=I
+    - PRODUCT=10804
+    - TYPE=PROD
+    - DRAFT=false
 
 script:
 - ./.particle-cli-login.expect "$particle_email" "$particle_password" "$(which particle)"
-- ./firmware/build.py -f ${BUILD_PATH} -p ${PRODUCT} -o ${BUILD_PATH}/${MCU}_${HARDWARE_VERSION}_${PRODUCT}.bin
+- "./firmware/build.py -f ${BUILD_PATH} -p ${PRODUCT} -o ${BUILD_PATH}/${MCU}_${HARDWARE_VERSION}_${PRODUCT}.bin"
 
 before_deploy:
 - git config --local user.name ${GITHUB_USER}
@@ -94,3 +122,17 @@ deploy:
   draft: ${DRAFT}
   on:
     repo: nline/powerwatch
+
+  #deploy for dev environment
+  provider: script
+  script: ./deployment-tools/deploy-firmware/deploy-firmware.py -f ${BUILD_PATH}/${MCU}_${HARDWARE_VERSION}_${PRODUCT}.bin -a $PARTICLE_API_KEY -t ${BRANCHTAG}-${TRAVIS_COMMIT::8}
+  on:
+    all_branches: true
+    condition: $TRAVIS_BRANCH =~ ^(dev-).*$ && $TYPE == "DEV"
+
+  #deploy for staging environment
+  provider: script
+  script: ./deployment-tools/deploy-firmware/deploy-firmware.py -f ${BUILD_PATH}/${MCU}_${HARDWARE_VERSION}_${PRODUCT}.bin -a $PARTICLE_API_KEY -t ${BRANCHTAG}-${TRAVIS_COMMIT::8}
+  on:
+    all_branches: true
+    condition: $TRAVIS_BRANCH == "staging" && $TYPE == "STAGING"
