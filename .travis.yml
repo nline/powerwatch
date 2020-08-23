@@ -128,4 +128,4 @@ deploy:
     script: ./deployment-tools/deploy-firmware/deploy-firmware.py -f ${BUILD_PATH}/${MCU}_${HARDWARE_VERSION}_${PRODUCT}.bin -a $PARTICLE_API_KEY -t ${BRANCHTAG}-${TRAVIS_COMMIT::8}
     on:
       all_branches: true
-      condition: ((branch =~ ^(dev-).*$ && env(TYPE) = "DEV") || (branch = "staging" && env(TYPE) = "STAGING"))
+      condition: ((branch =~ ^(dev-).*$) && (env(TYPE) = "DEV")) || ((branch = "staging") && (env(TYPE) = "STAGING"))
