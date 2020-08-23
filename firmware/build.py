@@ -18,7 +18,7 @@ if args.mcu and args.mcu == "STM32":
         os.environ['OUTPUT_PATH'] = '/'.join(args.output.split('/')[:-1])
         os.environ['OUTPUT_BIN'] = args.output.split('/')[-1]
 
-    return subprocess.call(['make',
+    subprocess.check_call(['make',
                     '-C',
                     args.firmware])
 else:
