@@ -36,6 +36,9 @@ install:
 - popd
 - export PATH=$HOME/arm-gcc-toolchain/bin:$PATH
 
+#Install mbed dependencies
+- python3 -m pip install jinja2 pyyaml intervaltree mbed_ls mbed_host_tests mbed_greentea fuzzywuzzy pyelftools jsonschema manifest_tool mbed_cloud_sdk icetea
+
 jobs:
   include:
   - stage: build
