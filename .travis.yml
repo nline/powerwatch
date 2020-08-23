@@ -111,7 +111,14 @@ jobs:
     - BUILD_PATH=firmware/plugwatch_I/stm_bootloader
     - MCU=STM32
     - HARDWARE_VERSION=I
-    - PRODUCT=ALL
+    - PRODUCT=BOOTLOADER_ALL
+    - TYPE=ALL
+    - DRAFT=true
+  - env:
+    - BUILD_PATH=firmware/plugwatch_I/firmware/stm
+    - MCU=STM32
+    - HARDWARE_VERSION=I
+    - PRODUCT=APP_ALL
     - TYPE=ALL
     - DRAFT=true
   - stage: final
