@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import os
+import shutil
 import yaml
 import subprocess
 import argparse
@@ -14,13 +15,18 @@ parser.add_argument('-o','--output',type=str,required=False)
 args = parser.parse_args()
 
 if args.mcu and args.mcu == "STM32":
+    build_dir = args.firmware.rstrip('/')
+    output_dir = "/".join(args.output.split('/')[:-1])
+    fname = args.output.split('/')[-1]
     if args.output:
-        os.environ['OUTPUT_PATH'] = "."
-        os.environ['OUTPUT_BIN'] = args.output.split('/')[-1]
+        os.environ['OUTPUT_PATH'] = "./build"
+        os.environ['OUTPUT_BIN'] = fname
 
     subprocess.check_call(['make',
                     '-C',
                     args.firmware])
+
+    shutil.move(build_dir + '/build/' + fname, output_dir + '/' + fname)
 else:
     #write the product_id header file with the two defines
     if args.product:
