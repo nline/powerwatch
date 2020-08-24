@@ -1,8 +1,9 @@
 #This makefile is a supporting makefile for mbed apps
 #It sets up variables so that it can call the Linux-specific JLinkMakefile
 
-OUTPUT_PATH := $(APP_DIR)/build/$(TARGET)/$(TOOLCHAIN)/
-OUTPUT_BIN :=  $(notdir $(APP_DIR:%/=%)).bin
+OUTPUT_PATH ?= $(APP_DIR)/build/$(TARGET)/$(TOOLCHAIN)/
+OUTPUT_BIN ?=  $(notdir $(APP_DIR:%/=%)).bin
+OUTPUT_NAME =  $(basename $(OUTPUT_BIN))
 
 CURRENT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
@@ -23,7 +24,7 @@ all:
 ifndef MBED_CHECK
 	$(error You must install the mbed-cli tools (try pip install mbed-cli))
 else
-	mbed-cli compile -m $(TARGET) --source $(APP_DIR) $(APP_COMPILE_FLAGS) -t $(TOOLCHAIN) --build $(OUTPUT_PATH) --profile $(BUILD_PROFILE)
+	mbed-cli compile -m $(TARGET) --source $(APP_DIR) $(APP_COMPILE_FLAGS) -t $(TOOLCHAIN) --build $(OUTPUT_PATH) -N $(OUTPUT_NAME) --profile $(BUILD_PROFILE)
 endif
 
 JLINK_OPTIONS = -device $(JLINK_DEVICE) -if swd -speed 1000
