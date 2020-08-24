@@ -1,7 +1,7 @@
 #This makefile is a supporting makefile for mbed apps
 #It sets up variables so that it can call the Linux-specific JLinkMakefile
 
-OUTPUT_PATH = $(APP_DIR)/build/$(TARGET)/$(TOOLCHAIN)/
+OUTPUT_PATH := $(APP_DIR)/build/$(TARGET)/$(TOOLCHAIN)/
 OUTPUT_BIN :=  $(notdir $(APP_DIR:%/=%)).bin
 
 CURRENT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))

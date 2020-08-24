@@ -4,6 +4,9 @@ addons:
   apt:
     packages:
     - expect
+    - mercurial
+    - python3-pip
+    - python3-setuptools
 
 cache:
   directories:
@@ -19,6 +22,22 @@ env:
 install:
 - bash <( curl -sL https://particle.io/install-cli )
 - export PATH="$PATH:$HOME/bin"
+
+#Install mbed-cli
+- python3 -m pip install mbed-cli
+
+#Install arm gcc for mbed
+- pushd .
+- cd ~
+- mkdir arm-gcc-toolchain
+- wget -O $HOME/arm-gcc-toolchain/gcc.tar.bz2 "https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2?revision=108bd959-44bd-4619-9c19-26187abf5225&la=en&hash=E788CE92E5DFD64B2A8C246BBA91A249CB8E2D2D"
+- cd arm-gcc-toolchain
+- tar -jxf gcc.tar.bz2 --strip=1
+- popd
+- export PATH=$HOME/arm-gcc-toolchain/bin:$PATH
+
+#Install mbed dependencies
+- python3 -m pip install jinja2 pyyaml intervaltree mbed_ls mbed_host_tests mbed_greentea fuzzywuzzy pyelftools jsonschema manifest_tool mbed_cloud_sdk icetea
 
 jobs:
   include:
@@ -93,6 +112,20 @@ jobs:
     - PRODUCT=11815
     - TYPE=DEV
     - DRAFT=true
+  - env:
+    - BUILD_PATH=firmware/plugwatch_I/stm_bootloader
+    - MCU=STM32
+    - HARDWARE_VERSION=I
+    - PRODUCT=BOOTLOADER_ALL
+    - TYPE=ALL
+    - DRAFT=true
+  - env:
+    - BUILD_PATH=firmware/plugwatch_I/firmware/stm
+    - MCU=STM32
+    - HARDWARE_VERSION=I
+    - PRODUCT=APP_ALL
+    - TYPE=ALL
+    - DRAFT=true
   - stage: final
     env:
     - BUILD_PATH=firmware/plugwatch_I/firmware/particle
@@ -104,7 +137,7 @@ jobs:
 
 script:
 - ./.particle-cli-login.expect "$particle_email" "$particle_password" "$(which particle)"
-- "./firmware/build.py -f ${BUILD_PATH} -p ${PRODUCT} -o ${BUILD_PATH}/${MCU}_${HARDWARE_VERSION}_${PRODUCT}.bin"
+- "./firmware/build.py -f ${BUILD_PATH} -p ${PRODUCT} -m ${MCU} -o ${BUILD_PATH}/${MCU}_${HARDWARE_VERSION}_${PRODUCT}.bin"
 
 before_deploy:
 - git config --local user.name ${GITHUB_USER}
@@ -114,25 +147,19 @@ before_deploy:
 - git tag ${BRANCHTAG}-${TRAVIS_COMMIT::8}
 
 deploy:
-  provider: releases
-  api_key:
-    secure: vfzXMO5+BeqxTpfc8oZez5Vqll/oXbHFBksmk1yYjsA41w/u2BM3YK+IKjsOFnTxjuwpIYNl/jagj5I6E23tF44htwiO6mmMmBwmjDDGpNf/c8RR2GnDbnAbE5yeHiv4fa/et6FdyVAHpBZdK78/XcfEM87oWXLxH6o87Db6lGAiAGxjbGcO4/t3DBKlYYaICZ31QKiGsPFGEzFGhzB9J6LC9HGUJqbVfHH5TXI5cJflxJOelrEI4DtX//Kcf4YPa2Oxou5G6gCLuw+38HLPxOSkWtzo2rygGpfXANx094ycE33JYQBZNwyXRmZOtj42VTCBGtJER/fq/xVi4+pJT5oytVfdqGecJd3zVM2N7W+sCopyD2jw8KtrxRSNG2HGtUb4IBx9on1uwePvlueE9fUoLJ7pZm07VDyzOam0rtgyy7R7eTkMIo6jo81HBRyvqA0WbXYrbEBZdZ6M5f+3V/C/finGi4ejMWk+Q8QTdGVEgcXjhk5sLvOFusOMzqUsEMBd7kZKdYyQhs5iWICdOtFZdapeX3WaLutEQeE56vAkV7+d5DViDOrsAPG3kuNAlw83follIHcFZwBZFrfW1NYCyMBz2Hy+Dv8Tul/uq/Zl5rrdXThv0Ow6U8+AtAH5XViH17fY9oXQ358bJ0BFbtwvts3OwAxFbPlxUTCXSQ0=
-  file: ${BUILD_PATH}/${MCU}_${HARDWARE_VERSION}_${PRODUCT}.bin
-  skip_cleanup: true
-  draft: ${DRAFT}
-  on:
-    repo: nline/powerwatch
+  - provider: releases
+    api_key:
+      secure: vfzXMO5+BeqxTpfc8oZez5Vqll/oXbHFBksmk1yYjsA41w/u2BM3YK+IKjsOFnTxjuwpIYNl/jagj5I6E23tF44htwiO6mmMmBwmjDDGpNf/c8RR2GnDbnAbE5yeHiv4fa/et6FdyVAHpBZdK78/XcfEM87oWXLxH6o87Db6lGAiAGxjbGcO4/t3DBKlYYaICZ31QKiGsPFGEzFGhzB9J6LC9HGUJqbVfHH5TXI5cJflxJOelrEI4DtX//Kcf4YPa2Oxou5G6gCLuw+38HLPxOSkWtzo2rygGpfXANx094ycE33JYQBZNwyXRmZOtj42VTCBGtJER/fq/xVi4+pJT5oytVfdqGecJd3zVM2N7W+sCopyD2jw8KtrxRSNG2HGtUb4IBx9on1uwePvlueE9fUoLJ7pZm07VDyzOam0rtgyy7R7eTkMIo6jo81HBRyvqA0WbXYrbEBZdZ6M5f+3V/C/finGi4ejMWk+Q8QTdGVEgcXjhk5sLvOFusOMzqUsEMBd7kZKdYyQhs5iWICdOtFZdapeX3WaLutEQeE56vAkV7+d5DViDOrsAPG3kuNAlw83follIHcFZwBZFrfW1NYCyMBz2Hy+Dv8Tul/uq/Zl5rrdXThv0Ow6U8+AtAH5XViH17fY9oXQ358bJ0BFbtwvts3OwAxFbPlxUTCXSQ0=
+    file: ${BUILD_PATH}/${MCU}_${HARDWARE_VERSION}_${PRODUCT}.bin
+    skip_cleanup: true
+    draft: ${DRAFT}
+    on:
+      branch: master
 
-  #deploy for dev environment
-  provider: script
-  script: ./deployment-tools/deploy-firmware/deploy-firmware.py -f ${BUILD_PATH}/${MCU}_${HARDWARE_VERSION}_${PRODUCT}.bin -a $PARTICLE_API_KEY -t ${BRANCHTAG}-${TRAVIS_COMMIT::8}
-  on:
-    all_branches: true
-    condition: $TRAVIS_BRANCH =~ ^(dev-).*$ && $TYPE == "DEV"
-
-  #deploy for staging environment
-  provider: script
-  script: ./deployment-tools/deploy-firmware/deploy-firmware.py -f ${BUILD_PATH}/${MCU}_${HARDWARE_VERSION}_${PRODUCT}.bin -a $PARTICLE_API_KEY -t ${BRANCHTAG}-${TRAVIS_COMMIT::8}
-  on:
-    all_branches: true
-    condition: $TRAVIS_BRANCH == "staging" && $TYPE == "STAGING"
+  #deploy for dev and staging environments automatically
+  - provider: script
+    skip_cleanup: true
+    script: ./deployment-tools/deploy-firmware/deploy-firmware.py -f ${BUILD_PATH}/${MCU}_${HARDWARE_VERSION}_${PRODUCT}.bin -a $PARTICLE_API_KEY -t ${BRANCHTAG}-${TRAVIS_COMMIT::8}
+    on:
+      all_branches: true
+      condition: ($TRAVIS_BRANCH =~ ^(dev-).*$ && $TYPE = "DEV") || ($TRAVIS_BRANCH = "staging" && $TYPE = "STAGING")
