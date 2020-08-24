@@ -15,7 +15,7 @@ args = parser.parse_args()
 
 if args.mcu and args.mcu == "STM32":
     if args.output:
-        os.environ['OUTPUT_PATH'] = '/'.join(args.output.split('/')[:-1])
+        #os.environ['OUTPUT_PATH'] = '/'.join(args.output.split('/')[:-1])
         os.environ['OUTPUT_BIN'] = args.output.split('/')[-1]
 
     subprocess.check_call(['make',
