@@ -1,32 +1,25 @@
 PowerWatch Test
 =====
 
-Made to test running powerwatches with a bardcode scanner. Only
-checks devices in a specific product
-
-Prints the powerwatch firmware version, whether it is claimed or not
-and a bunch of metrics from the database about the powerwatch device being tested
-
-Requires test-config.json to point to the right database and such
+Made to test running powerwatches with a bardcode scanner. 
 
 ## Usage
 
 ### Install dependencies
 
-```
-$ pip3 install psycopg2
-$ pip3 install requests
-$ pip3 install pyyaml
-```
+#### Google Cloud
+You must have permissions to access database secrets to run this code.
 
-### Get the configuration file
-
-The test script relies on a config file that contains secrets. 
-The easiest way to get the file is from cloud secrets, which requires
-installing the gcloud CLI (https://cloud.google.com/sdk/install). After install:
+Install gcloud: https://cloud.google.com/sdk/docs/install
 
 ```
-$ gcloud secrets versions access latest --secret powerwatch-test-ghana > test-config.json
+$ gcloud auth login
+```
+
+#### Python dependencies
+```
+$ pip3 install pipenv
+$ pipenv install
 ```
 
 ### Run the script
@@ -34,8 +27,8 @@ $ gcloud secrets versions access latest --secret powerwatch-test-ghana > test-co
 Run
 
 ```
-$ ./test.py
+$ pipenv run ./test.py
 ```
 
 And scan a QR code with the barcode scanner. If all the fields are green then
-the powerwatch has passed the test! The powerwatch probably needs to be running for a while before it will pass.
+the powerwatch has passed the test! The powerwatch needs to be running for 2 hours before it will pass.

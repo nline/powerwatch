@@ -1,0 +1,16 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+sty = "1.0.0rc1"
+requests = "*"
+pyyaml = "*"
+psycopg2 = "*"
+google-cloud-secret-manager = "*"
+
+[pipenv]
+allow_prereleases = true

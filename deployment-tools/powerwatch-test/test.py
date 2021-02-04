@@ -9,46 +9,81 @@ import json
 import yaml
 import psycopg2
 import math
+from google.cloud import secretmanager
+import warnings
+warnings.filterwarnings("ignore", "Your application has authenticated using end user credentials")
 
-config_file = open('test-config.json','r')
-config = yaml.safe_load(config_file)
+voltage = 120
 
-
-#now query the database
-connection = psycopg2.connect(dbname=config['postgresDatabase'], user=config['postgresUser'], host=config['postgresHost'], password=config['postgresPassword'])
-cursor = connection.cursor();
-
-def print_intro(config):
+def print_intro(loction, device_id):
     print()
     print()
     print("############################")
     print("Powerwatch testing script")
-    print("domain: " + config['postgresHost'])
+    print("Device ID: " + device_id)
+    print("Device Location: " + location)
     print("############################")
     print()
     print()
-    print("Waiting for particle ID. Please enter or scan particle ID....")
+
+def getTestCredentials(location):
+    ## Create the Secret Manager client. Suppress warning
+    client = secretmanager.SecretManagerServiceClient()
+
+    try:
+        response = client.access_secret_version(request={"name": "projects/powerwatch-backend/secrets/" + location + "-values/versions/latest"})
+    except:
+        print("{}".format(bg.li_red))
+        print("Error accessing database credentials for devices in " + location)
+        print("{}".format(bg.rs))
+        raise RuntimeError
+
+    #parse as yaml
+    payload = response.payload.data.decode("UTF-8")
+    location_dct = yaml.safe_load(payload)
+
+    try:
+        response = client.access_secret_version(request={"name": "projects/powerwatch-backend/secrets/aeris-token/versions/latest"})
+    except:
+        print("{}".format(bg.li_red))
+        print("Error accessing aeris token credentials")
+        print("{}".format(bg.rs))
+        raise RuntimeError
+
+    #parse as yaml
+    aerisToken = response.payload.data.decode("UTF-8").strip()
+
+    return location_dct['powerwatch-timescale']['database']['readOnlyUsername'], location_dct['powerwatch-timescale']['database']['readOnlyPassword'], location_dct['powerwatch-postgres-poster']['particle']['authToken'], location_dct['powerwatch-postgres-poster']['particleConfig']['product_ids'], aerisToken
+    
 
 if __name__ == '__main__':
 
-    #get the key from the particle file/login
-    key_file = open(os.environ['HOME'] + '/.particle/particle.config.json','r')
-    particle_key = None
-    try:
-        keys = json.loads(key_file.read())
-        particle_key = keys['access_token']
-    except:
-        print("Install particle CLI and login with 'particle login' to generate a key file. Exiting.")
-        sys.exit(1)
-
-
     while True:
-        print_intro(config)
-        device_id = input("Enter the device ID to test: ").strip()
-        if device_id.find(':') != -1:
-            device_id = device_id.split(':')[1]
+        print()
+        print("Waiting for device ID. Please enter or scan device ID....")
+        #receive input and get the domain and device ID for this query
+        received = input("Enter the device ID to test: ").strip()
+        if received.find(':') != -1:
+            device_id = received.split(':')[1]
+            location = received.split('.')[0]
+            if location is None or device_id is None:
+                print("Invalid device ID. Retry")
+                continue
+        else:
+            print("Invalid device ID. Retry")
+            continue
 
-        print(device_id)
+        print_intro(location, device_id)
+
+        #get the secret values for this location
+        try:
+            user, password, particle_key, product_ids, aerisToken = getTestCredentials(location)
+        except RuntimeError as e:
+            continue
+
+        #login to the database
+        connection = psycopg2.connect(dbname='powerwatch', user=user, host='timescale.' + location + '.powerwatch.io', password=password)
+        cursor = connection.cursor();
 
         r = requests.post("https://api.particle.io/v1/devices",
             data = {'id': device_id, 'access_token':particle_key})
@@ -83,8 +118,7 @@ if __name__ == '__main__':
                 final_device = device
                 break
 
-      
-        r = requests.post("https://aeradminapi.aeris.com/AerAdmin_WS_5_0/rest/devices/details?apiKey=" + config['aerisToken'],
+        r = requests.post("https://aeradminapi.aeris.com/AerAdmin_WS_5_0/rest/devices/details?apiKey=" + aerisToken,
              json = {'accountID':23963,
                     'email':'josh@nline.io',
                     'ICCID': resp['iccid']
@@ -99,15 +133,15 @@ if __name__ == '__main__':
         result = cursor.fetchall()
 
         print()
-        if resp['product_id'] == config['productID']:
+        if resp['product_id'] in product_ids:
             print("Product ID: {}{}{}".format(bg.li_green,resp['product_id'],bg.rs))
         else:
             print("Product ID: {}{}{}".format(bg.li_red,resp['product_id'],bg.rs))
 
-        if final_device['firmware_version'] == config['firmwareVersion']:
-            print("Firmware: {}{}{}".format(bg.li_green,final_device['firmware_version'],bg.rs))
-        else:
-            print("Firmware: {}{}{}".format(bg.li_red,final_device['firmware_version'],bg.rs))
+        #if final_device['firmware_version'] == config['firmwareVersion']:
+        #    print("Firmware: {}{}{}".format(bg.li_green,final_device['firmware_version'],bg.rs))
+        #else:
+        #    print("Firmware: {}{}{}".format(bg.li_red,final_device['firmware_version'],bg.rs))
 
         if final_device['owner'] == "nklugman@berkeley.edu":
             print("Owner: {}{}{}".format(bg.li_green,final_device['owner'],bg.rs))
@@ -259,7 +293,7 @@ if __name__ == '__main__':
         if(powered == 0):
             print("{}Insufficient messages in powered state to check voltage sensing circuit{}".format(bg.li_red,bg.rs))
         else:
-            if(avg_v/powered/1.414 < config['voltage']+20 and avg_v/powered/1.414 > config['voltage']-20 and maximum_v/1.414 < config['voltage']+40 and minimum_v/1.414 > config['voltage']-40):
+            if(avg_v/powered/1.414 < voltage+20 and avg_v/powered/1.414 > voltage-20 and maximum_v/1.414 < voltage+40 and minimum_v/1.414 > voltage-40):
                 print("{}Voltage{} \taverage: {:.2f} \tmin: {:.2f} \tmax: {:.2f}".format(bg.li_green,bg.rs,avg_v/powered/1.414, minimum_v/1.414, maximum_v/1.414))
             else:
                 print("{}Voltage{} \taverage: {:.2f} \tmin: {:.2f} \tmax: {:.2f}".format(bg.li_red,bg.rs,avg_v/powered/1.414, minimum_v/1.414, maximum_v/1.414))
@@ -269,4 +303,5 @@ if __name__ == '__main__':
             else:
                 print("{}Frequency{} \taverage: {:.2f} \t\tmin: {:.2f} \tmax: {:.2f}".format(bg.li_red,bg.rs,avg_f/powered, minimum_f, maximum_f))
 
-
+        #close the connection
+        connection.close()
