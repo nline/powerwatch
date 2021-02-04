@@ -12,6 +12,12 @@ You must have permissions to access database secrets to run this code.
 
 Install gcloud: https://cloud.google.com/sdk/docs/install
 
+You could also try this brew package on mac...
+```
+$ brew cask install google-cloud-sdk
+```
+
+then
 ```
 $ gcloud auth login
 ```
