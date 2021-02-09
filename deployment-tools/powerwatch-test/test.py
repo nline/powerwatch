@@ -13,6 +13,9 @@ from google.cloud import secretmanager
 import warnings
 warnings.filterwarnings("ignore", "Your application has authenticated using end user credentials")
 
+parser = argparse.ArgumentParser(description = 'Test powerwatch firmware')
+parser.add_argument('-d','--deployment',type=str,required=False)
+
 voltage = 120
 
 def print_intro(loction, device_id):
@@ -58,6 +61,8 @@ def getTestCredentials(location):
 
 if __name__ == '__main__':
 
+    args = parser.parse_args()
+
     while True:
         print()
         print("Waiting for device ID. Please enter or scan device ID....")
@@ -65,8 +70,17 @@ if __name__ == '__main__':
         received = input("Enter the device ID to test: ").strip()
         if received.find(':') != -1:
             device_id = received.split(':')[1]
-            location = received.split('.')[0]
-            if location is None or device_id is None:
+            location = None
+            if len(received.split('.')) > 1:
+                location = received.split('.')[0]
+            elif args.deployment:
+                location = args.deployment
+            
+            if location is None:
+                print("Device location not encoded in QR Code. Please input location with flag './test.py -d [deployment_locaiont]'")
+                continue
+
+            if device_id is None:
                 print("Invalid device ID. Retry")
                 continue
         else:
