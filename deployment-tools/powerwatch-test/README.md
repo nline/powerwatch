@@ -36,5 +36,11 @@ Run
 $ pipenv run ./test.py
 ```
 
+or to specify a default deployment location
+
+```
+$ pipenv run ./test.py -d [location]
+```
+
 And scan a QR code with the barcode scanner. If all the fields are green then
 the powerwatch has passed the test! The powerwatch needs to be running for 2 hours before it will pass.
