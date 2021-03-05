@@ -122,6 +122,10 @@ if __name__ == '__main__':
             print("{}".format(bg.rs))
             continue
 
+        if 'iccid' not in resp:
+            print("{}Error - device has never connected to cloud - check the antenna.{}".format(bg.li_red,bg.rs))
+            continue
+
         r = requests.get("https://api.particle.io/v1/products/" + str(resp['product_id']) + "/devices?access_token=" + particle_key + '&perPage=10000&sortAttr=firmwareVersion&sortDir=desc')
         devices = json.loads(r.text)
 
