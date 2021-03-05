@@ -9,7 +9,7 @@ verify_ssl = true
 sty = "1.0.0rc1"
 requests = "*"
 pyyaml = "*"
-psycopg2 = "*"
+psycopg2-binary = "*"
 google-cloud-secret-manager = "*"
 
 [pipenv]
