@@ -297,6 +297,10 @@ if __name__ == '__main__':
         else:
             print("{}Last accel orientation{}\tpitch: {:.2f}\troll: {:.2f}".format(bg.li_red,bg.rs,pitch,roll))
 
+        if roll < -135 and roll > -136 and pitch > 35 and pitch < 36:
+            print("{}Accelerometer I2C bus hung{}".format(bg.li_red,bg.rs))
+            continue
+
         print()
         if(avg_soc/len(result) < 100 and avg_soc/len(result) > 50 and avg_cv/len(result) > 3.7 and avg_cv/len(result) < 4.15):
             print("{}State of Charge{} \taverage: {:.2f} \tmin: {:.2f} \tmax: {:.2f}".format(bg.li_green,bg.rs,avg_soc/len(result), minimum_soc, maximum_soc))
